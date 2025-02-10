@@ -1,0 +1,19 @@
+Command to connect to mysql data in the terminal 
+
+mysql -h vlai-rds.cb40uq8wcu0z.ap-south-1.rds.amazonaws.com -P 3306 -u admin -p
+
+mysqldump -u admin -p indiArunachal > indiArunachal_content_operations.sql
+
+
+\! clear
+To clear the temrinal in mysql
+
+
+DB_HOST=vlai-rds.cb40uq8wcu0z.ap-south-1.rds.amazonaws.com
+DB_PORT=3306
+DB_USER=admin
+DB_PASSWORD=vlai27735
+DB_NAME=VyaparLaunchpad
+
+
+

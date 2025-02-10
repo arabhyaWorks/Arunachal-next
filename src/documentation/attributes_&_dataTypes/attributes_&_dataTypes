@@ -1,0 +1,90 @@
+Let me help you design the system and create the SQL schema based on the requirements. First, let's analyze and design the system architecture, then create the corresponding SQL schema.
+
+System Design:
+
+1. Core Entities:
+- Tribes
+- Categories
+- Attributes
+- AttributeTypes
+- TribeAttributes (mapping)
+- CategoryAttributes (mapping)
+
+2. Key Concepts:
+- All tribes share the same attribute structure (governed by a central configuration)
+- Categories can have varying attributes
+- Attributes can have different data types
+- Both tribes and categories can store attributes with different data types
+
+Let me create a detailed database schema:
+
+
+
+Let me explain the schema and provide the SQL to create these tables:
+
+Key aspects of this design:
+
+1. Attribute Types and Values:
+- The `attribute_types` table defines the basic types of attributes (text, media, array, etc.)
+- The `attributes` table defines specific attributes that can be used
+- Values are stored as JSONB to support different data structures as shown in your examples
+
+2. Tribe Attributes:
+- `tribe_attribute_config` governs which attributes are active for all tribes
+- All tribes share the same attribute structure through this configuration
+- New attributes can be added/removed by modifying this configuration
+
+3. Category Attributes:
+- Categories can have their own unique set of attributes
+- No central configuration table for categories, allowing flexibility
+- Each category can have different attributes
+
+4. Value Storage:
+- Both `tribe_attributes` and `category_attributes` use JSONB to store values
+- This allows for flexible data storage matching your attribute object examples:
+  - Normal text
+  - Media storage arrays
+  - Normal arrays with labels
+  - Any other structured data
+
+Example of how to store different attribute types:
+
+```json
+// Normal Text
+{
+    "type": "normalText",
+    "value": "naisi tribes has origins in the ancient times",
+    "metadata": {}
+}
+
+// Media Storage
+{
+    "type": "mediaStorage",
+    "value": [
+        {"type": "image", "url": "http://..."},
+        {"type": "video", "url": "http://..."}
+    ],
+    "metadata": {}
+}
+
+// Normal Array
+{
+    "type": "normalArray",
+    "value": {
+        "label": "genre of the tribal song",
+        "items": ["folk", "folklore", "religious"]
+    },
+    "metadata": {}
+}
+```
+
+This design provides:
+- Flexibility for different attribute types
+- Central governance for tribe attributes
+- Independent attribute management for categories
+- Efficient querying and indexing
+- Data integrity through referential constraints
+- Support for metadata and validation rules
+
+Would you like me to explain any specific aspect in more detail or provide example queries for common operations?
+
