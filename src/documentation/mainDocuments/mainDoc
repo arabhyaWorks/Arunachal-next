@@ -1,0 +1,246 @@
+Project Documentation: “Indigenous Arunachal”
+
+This documentation provides a comprehensive overview of the Indigenous Arunachal project. It covers:
+	1.	Project Overview & Goals
+	2.	Core Concepts & Data Models
+	3.	API Endpoints (Tribes, Categories, Attributes, Committees, Content, etc.)
+	4.	Content Approval Mechanism
+	5.	Detailed Database Schema
+	6.	Implementation Notes & Future Steps
+
+1. Project Overview
+
+Indigenous Arunachal is designed to collect, manage, and publish tribal and cultural data—especially focusing on tribes and their cultural expressions like folk dances, songs, and more. The platform allows creating, editing, and approving content through a committee-based approval workflow.
+
+1.1 Key Use Cases
+	•	Tribes:
+	•	Create and manage data/attributes (like “Tribe-About,” “Tribe-History,” etc.).
+	•	Each tribe automatically has a Committee responsible for approving tribe-related content before it goes live.
+	•	Categories:
+	•	E.g., a “Folk Dance” category can have many category items (each item is a specific dance form).
+	•	Each item references one or more tribes (leading to multi-committee approval).
+	•	Attribute Management:
+	•	The system defines attributes (metadata fields) with different types (Text, Relations, Audio, etc.).
+	•	Tribe Attributes are managed separately from Category Attributes to keep them modular.
+
+1.2 Content Approval Flow
+
+Whenever users create or update content (e.g., the “History” of a tribe or the “Costumes” of a folk dance), the new/updated content is set to pending. A row is inserted or updated in content_approval, referencing the relevant committee(s). Only when all committees required have approved does the content become active.
+
+2. Core Concepts & Data Models
+	1.	Tribes: Each tribe has a single Committee that governs its content.
+	2.	Categories: Each category can have multiple Attributes and multiple Items. An item can link to multiple tribes → leads to multiple committees’ approval.
+	3.	Attributes:
+	•	Global “Tribe” Attributes: Prefixed by tribe-, managed in tribe_attribute_config.
+	•	Category-specific Attributes: Managed in category_attribute_config.
+	•	Each attribute references an attribute_type (e.g., Text, Audio, Video, Document, or Relations).
+	4.	Committees:
+	•	Created automatically for each tribe.
+	•	Store members in committee_members (hierarchy levels for multi-level approval).
+	5.	Content:
+	•	Stored in a unified content table, referencing either a tribe, a category, or a category_item.
+	•	Has status = 'pending' | 'active' | 'archived'.
+	6.	Content Approval:
+	•	The content_approval table tracks which committee(s) must approve each piece of content.
+	•	Once all relevant content_approval rows are approved, the content is effectively “live.”
+
+3. API Endpoints
+
+Below is a modular breakdown of the main APIs.
+
+3.1 Tribe Attributes API
+
+Route: /api/tribe/attributes
+
+Method	Path	Purpose
+GET	/api/tribe/attributes	Lists all active tribe attributes (prefixed tribe-)
+POST	/api/tribe/attributes	Create new tribe attributes & config
+PATCH	/api/tribe/attributes?id=...	Update a tribe attribute (rename, reorder, etc.)
+DELETE	/api/tribe/attributes?id=...&deleteMode=soft/hard	Soft/Hard delete tribe attribute
+
+Key Points:
+	•	Soft Delete → sets is_active=false in tribe_attribute_config.
+	•	Hard Delete → removes from attributes and tribe_attribute_config.
+	•	Create automatically prefixes the name with "tribe-", ensuring a consistent naming scheme.
+
+3.2 Tribe API
+
+Route: /api/tribe
+
+Method	Path	Purpose
+POST	/api/tribe	Create a new tribe + default committee + default members
+GET	/api/tribe	Fetch all tribes & their attribute values
+PATCH	/api/tribe	Update a tribe (name, attributes, triggers re-approval)
+
+Highlights:
+	1.	Creating a Tribe
+	•	Inserts a row in tribes.
+	•	Creates a committee row for that tribe.
+	•	Assigns default members (Director, Deputy, etc.).
+	•	Optionally inserts initial content (attribute data) → each inserted content row is set to pending, and a content_approval row is created for the tribe’s committee.
+	2.	Updating a Tribe
+	•	If attributes are updated, content is reset to pending.
+	•	content_approval is either inserted or reset to pending for the tribe’s committee.
+
+3.3 Attribute Types API
+
+Route: /api/attributeTypes
+
+Method	Path	Purpose
+GET	/api/attributeTypes	Fetches all available attribute types
+
+Each attribute type describes how values are stored (Text, Audio, Video, Document, etc.) with optional value_structure for validation.
+
+3.4 Search API
+
+Route: /api/search
+
+Method	Path	Purpose
+GET	/api/search?term=xyz	Performs a FULLTEXT search in search_index
+
+Key Points:
+	•	The system indexes certain data in search_index.
+	•	Searching returns an array of { source_type, source_id, relevance }.
+	•	Clients can then follow up with a GET to the relevant endpoint to retrieve the full record.
+
+3.5 Committees API
+
+Route: /api/committees & sub-routes
+
+Method	Path	Purpose
+GET	/api/committees or /api/committees?id=...	Fetch all committees or a single committee
+PATCH	/api/committees?id=...	Update a committee’s name/purpose
+GET	/api/committees/[committeeId]/members	List the members of a specific committee
+POST	/api/committees/[committeeId]/members	Add a member to a committee
+PATCH	/api/committees/[committeeId]/members	Update a member’s hierarchy level, etc.
+DELETE	/api/committees/[committeeId]/members?memberId=...	Remove a committee member
+
+Notes:
+	•	Each committee references a tribe_id.
+	•	committee_members store membership with hierarchy_level.
+
+3.6 Category Attributes API
+
+Route: /api/category/attributes
+
+Method	Path	Purpose
+GET	/api/category/attributes?category_id=...	List all active attributes for a given category
+POST	/api/category/attributes	Create a new attribute for a category
+PATCH	/api/category/attributes?id=...&category_id=...	Update category attribute config (is_active, order, etc.)
+DELETE	/api/category/attributes?id=...&category_id=...	Soft-delete a category attribute
+
+3.7 Category API
+
+Route: /api/category
+
+Method	Path	Purpose
+POST	/api/category	Create a new category (e.g. “Folk Dances”)
+GET	/api/category	Get a list of all categories, or a single one
+
+When a category is created:
+	•	The system automatically inserts a “Tribe” attribute (of type 6 = “Relations”) into category_attribute_config, ensuring that any items in this category can reference relevant tribes.
+
+3.8 Category Items API
+
+Route: /api/category/items
+
+Method	Path	Purpose
+POST	/api/category/items	Creates a new category_item (e.g., a “Phangsao Dance”)
+GET	/api/category/items	Lists or retrieves details (attributes) for category items
+PATCH	/api/category/items	Updates a category item’s name, description, or attributes
+
+Multi-Committee Approval:
+	•	Each item must include a “Tribes” attribute.
+	•	For every referenced tribe, we upsert a content_approval row pointing to that tribe’s committee.
+	•	The item’s attribute content only goes “active” once all committees have approved.
+
+4. Content Approval Mechanism
+	1.	When Content is Created or Updated:
+	•	Insert a row in content (status = pending).
+	•	For each committee that needs to review (depends on the referenced tribes):
+	•	Insert or reset a row in content_approval with status='pending'.
+	•	current_level is set to the number of committee members for that tribe.
+	2.	Sequential or Parallel Approval (depending on your UI logic):
+	•	Committee members sign off in order of their hierarchy_level.
+	•	Once the final level approves, content_approval.status='approved'.
+	•	If an item references multiple committees, all must reach approved for the content to fully activate.
+	3.	Resetting to Pending:
+	•	Whenever content is edited, we set content.status='pending'.
+	•	The corresponding content_approval rows are also reset to 'pending'.
+
+5. Database Schema Overview
+
+Below is the high-level structure. For the full DDL and sample inserts, see the code block in the documentation above.
+	1.	tribes
+	•	Basic info about each tribe.
+	•	One committee per tribe → stored in committees.
+	2.	categories
+	•	Each category can define its own set of attributes (category_attribute_config).
+	•	Has multiple category_items.
+	3.	attributes and attribute_types
+	•	attribute_types: e.g., Text, Audio, Video, etc.
+	•	attributes: actual field definitions, can be shared across different modules if needed.
+	4.	content
+	•	Stores the actual attribute values for tribes or category items.
+	•	status indicates if pending, active, or archived.
+	5.	content_approval
+	•	For each piece of content, references one or more committees.
+	•	Tracks status, current_level, etc.
+	6.	committees + committee_members**
+	•	Each tribe has a row in committees.
+	•	committee_members includes hierarchy_level.
+	7.	Media Tables (audio, video, document)
+	•	If an attribute is of type “Audio,” the actual files are stored in audio table (or references to them). Similarly for video and document.
+	8.	search_index
+	•	Used for full-text searching.
+
+6. Implementation Notes
+	1.	Tribe and Category Attributes
+	•	tribe_attribute_config is used for globally applicable tribe fields.
+	•	category_attribute_config is used per category. This allows each category to have a unique set of attributes.
+	2.	Creating a Category
+	•	Automatically inserts a “Tribe” attribute (type “Relations”) into the category’s config, so each category_item can link to one or more tribes.
+	3.	Creating or Updating Content
+	•	For tribes: Single committee (the tribe’s).
+	•	For category items: Possibly multiple committees (one per tribe reference).
+	4.	Committee Hierarchy
+	•	In code, we default to a simple approach: Director (level 1), Deputy (2), Assistant (3), CBO (4).
+	•	The actual logic for who can “approve” or “reject” is not shown in detail here, but can be implemented in a separate approval API.
+	5.	Soft vs. Hard Deletion
+	•	For attributes, we often do soft deletes by setting is_active=false.
+	•	Hard deletes remove rows from the database entirely.
+	6.	Security & Roles
+	•	The system has default roles inserted: Director, Deputy Director, etc.
+	•	Each role can have a permissions JSON specifying what they can do.
+
+7. Example Workflow: Adding a Folk Dance
+	1.	Create Category: “Folk Dance.”
+	•	System automatically inserts a “Tribe” attribute (type 6) into category_attribute_config.
+	2.	Add Category Attributes: e.g., “Type of dance,” “Historical context,” “Costumes.”
+	3.	Create Category Item: “Phangsao Dance.”
+	•	Provide attributes, including the “Tribes” attribute → references tribe “Adi,” tribe “Nyishi,” etc.
+	•	Each attribute is stored in content with status='pending'.
+	•	For each referenced tribe’s committee, a row is inserted in content_approval.
+	4.	Approval:
+	•	Each committee sees the new content in their approval queue.
+	•	Once all committees have approved, the content row becomes active.
+
+8. Conclusion & Future Steps
+
+This system successfully unifies tribal data, category items, and a committee-based approval workflow. The API endpoints described above handle CRUD operations for:
+	•	Tribes & their attributes,
+	•	Categories & their attributes,
+	•	Category items with multi-committee content approval,
+	•	Searching,
+	•	Committees & membership,
+	•	Approvals (managed by referencing content_approval).
+
+Future Enhancements might include:
+	•	Real-time notifications when content requires approval.
+	•	Frontend UI for a “dashboard” where committee members see pending tasks.
+	•	More granular role-based access.
+	•	Advanced analytics or expansions for cultural data beyond just dance forms.
+
+Overall, this project lays a solid foundation for digitizing and preserving cultural data from the tribes of Arunachal, ensuring each piece of content is validated by the rightful tribal committees before going live.
+
+End of Documentation
