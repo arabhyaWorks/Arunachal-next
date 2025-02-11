@@ -17,6 +17,7 @@
     "@react-email/components": "^0.0.33",
     "bcryptjs": "^2.4.3",
     "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.475.0",

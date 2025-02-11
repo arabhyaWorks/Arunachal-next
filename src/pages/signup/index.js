@@ -1,155 +1,251 @@
-import { useState } from 'react';
-import { Eye, EyeOff, Mail, User, Phone, MapPin, Check } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import classNames from 'classnames';
+import { useState, useEffect } from "react";
+import { Eye, EyeOff, Mail, User, Phone, MapPin, Check } from "lucide-react";
+import { useRouter } from "next/router";
+import Image from "next/image";
+import classNames from "classnames";
 
 const tribes = [
-  'Adi',
-  'Apatani',
-  'Galo',
-  'Khamba',
-  'Kaman',
-  'Monpa',
-  'Nocte',
-  'Nyishi',
-  'Puroik',
-  'Tangsa',
-  'Tagin',
-  'Tutsa',
+  "Adi",
+  "Apatani",
+  "Galo",
+  "Khamba",
+  "Kaman",
+  "Monpa",
+  "Nocte",
+  "Nyishi",
+  "Puroik",
+  "Tangsa",
+  "Tagin",
+  "Tutsa",
 ];
 
-// Step types for signup flow
-type SignupStep = 'initial' | 'otp' | 'password' | 'security';
-
 export default function SignUp() {
-  const navigate = useNavigate();
+  const router = useRouter();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [currentStep, setCurrentStep] = useState<SignupStep>('initial');
-  const [otp, setOtp] = useState('');
-  const [selectedTribes, setSelectedTribes] = useState<string[]>([]);
-  const [securityQuestions, setSecurityQuestions] = useState([
-    { question: '', answer: '' },
-    { question: '', answer: '' },
-    { question: '', answer: '' }
-  ]);
+  const [currentStep, setCurrentStep] = useState("initial");
+  const [otp, setOtp] = useState("");
+  const [selectedTribes, setSelectedTribes] = useState([]);
+  const [securityQuestions, setSecurityQuestions] = useState([]);
 
   const [formData, setFormData] = useState({
-    tribes: [] as string[],
-    firstName: '',
-    lastName: '',
-    email: '',
-    mobile: '',
-    address: '',
-    password: '',
-    confirmPassword: ''
+    tribes: [],
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    address: "",
+    password: "user@123",
+    confirmPassword: "user@123",
   });
 
-  const handleInitialSubmit = async (e: React.FormEvent) => {
+  const handleInitialSubmit = async (e) => {
     e.preventDefault();
-    console.log('Starting initial submit with email:', formData.email);
-    
-    if (!formData.email || !formData.firstName || !formData.mobile || selectedTribes.length === 0) {
-      console.log('Form validation failed - missing required fields');
-      alert('Please fill in all required fields (Name, Email, Mobile and select at least one tribe)');
+
+    console.log("Starting initial submit with form data:", formData);
+
+    if (
+      !formData.email ||
+      !formData.firstName ||
+      !formData.mobile ||
+      !formData.password ||
+      !formData.confirmPassword
+    ) {
+      console.log("Form validation failed - missing required fields");
+      alert(
+        "Please fill in all required fields (Name, Email, Mobile No., Password)"
+      );
       return;
     }
 
     try {
-      // Send OTP email using Resend
-      console.log('Attempting to send OTP email');
-      const response = await fetch('/api/send-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          name: formData.firstName,
-          email: formData.email
-        })
+      const payload = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        phone: formData.mobile,
+        password: formData.password, // Default password for initial registration
+      };
+
+      console.log("Sending registration payload:", payload);
+
+      const response = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      console.log('OTP API Response:', response);
       const data = await response.json();
-      console.log('OTP API Data:', data);
+      console.log("Registration API Response:", data);
 
       if (!response.ok) {
-        console.error('API error:', data.error);
-        throw new Error(data.error || 'Failed to send OTP');
+        throw new Error(data.error || "Registration failed");
       }
-      if (data.success) {
-        console.log('OTP sent successfully');
-        localStorage.setItem('signup_email', formData.email);
-        localStorage.setItem('signup_otp', data.otp);
-        setCurrentStep('otp');
-      } else {
-        console.error('Failed to send OTP:', data.error);
-        alert('Failed to send OTP. Please try again.');
-      }
+
+      localStorage.setItem("signup_email", formData.email);
+      setCurrentStep("otp");
     } catch (error) {
-      console.error('Error sending OTP:', error);
-      alert(error instanceof Error ? error.message : 'Failed to send OTP. Please try again.');
+      console.error("Registration error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Registration failed. Please try again."
+      );
     }
   };
 
-  const handleOtpSubmit = (e: React.FormEvent) => {
+  const handleOtpSubmit = async (e) => {
     e.preventDefault();
-    console.log('Starting OTP verification');
-    
-    // Get stored email and OTP
-    const storedEmail = localStorage.getItem('signup_email');
-    const storedOtp = localStorage.getItem('signup_otp');
-    console.log('Stored email:', storedEmail);
-    console.log('Entered OTP:', otp);
-    console.log('Stored OTP:', storedOtp);
-    
-    // Verify OTP
-    if (storedEmail?.toLowerCase() === 'animesh11062005@gmail.com' && otp === 'DIA123') {
-      console.log('Special case OTP verification successful');
-      setCurrentStep('password');
-    } else if (storedOtp && otp === storedOtp) {
-      console.log('Regular OTP verification successful');
-      setCurrentStep('password');
-    } else {
-      console.log('OTP verification failed');
-      alert('Invalid OTP. Please try again.');
+    console.log("Starting OTP verification");
+
+    const storedEmail = localStorage.getItem("signup_email");
+
+    try {
+      const payload = {
+        email: storedEmail,
+        code: otp,
+      };
+
+      console.log("Sending OTP verification payload:", payload);
+
+      const response = await fetch("/api/auth/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log("OTP Verification API Response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "OTP verification failed");
+      }
+
+      localStorage.setItem("auth_token", data.token);
+      setCurrentStep("security");
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "OTP verification failed. Please try again."
+      );
     }
   };
 
-  const handlePasswordSubmit = (e: React.FormEvent) => {
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    setCurrentStep('security');
+    setCurrentStep("security");
   };
 
-  const handleSecuritySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Final submission with all data
-    navigate('/dashboard');
+  const handleSecurityQuestionChange = (index, field, value) => {
+    setSecurityQuestions((prev) => {
+      const updated = [...prev];
+      updated[index] = {
+        ...updated[index],
+        answer: field === "answer" ? value : updated[index]?.answer || "",
+      };
+      return updated;
+    });
   };
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value, type } = e.target;
+  const handleSecuritySubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const token = localStorage.getItem("auth_token");
+      const storedEmail = localStorage.getItem("signup_email");
+
+      const securityAnswers = securityQuestions.map((question) => ({
+        questionId: question.id,
+        answer: question.answer || "",
+      }));
+
+      const hasEmptyAnswers = securityAnswers.some((qa) => !qa.answer);
+      if (hasEmptyAnswers) {
+        alert("Please answer all security questions");
+        return;
+      }
+
+      const payload = {
+        securityAnswers,
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: storedEmail,
+      };
+
+      console.log("Sending security setup payload:", payload);
+
+      const response = await fetch("/api/auth/setup-security", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await response.json();
+      console.log("Security Setup API Response:", data);
+
+      if (!response.ok) {
+        throw new Error(data.error || "Security setup failed");
+      }
+
+      // Clean up localStorage
+      localStorage.removeItem("signup_email");
+      localStorage.removeItem("auth_token");
+
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Security setup error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Security setup failed. Please try again."
+      );
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
 
-  const handleTribesChange = (tribe: string) => {
-    setSelectedTribes(prev => 
-      prev.includes(tribe)
-        ? prev.filter(t => t !== tribe)
-        : [...prev, tribe]
+  const handleTribesChange = (tribe) => {
+    setSelectedTribes((prev) =>
+      prev.includes(tribe) ? prev.filter((t) => t !== tribe) : [...prev, tribe]
     );
   };
 
-  const handleSecurityQuestionChange = (index: number, field: 'question' | 'answer', value: string) => {
-    setSecurityQuestions(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], [field]: value };
-      return updated;
-    });
-  };
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("/api/admin/security-questions");
+        const data = await response.json();
+        console.log("Security Questions API Response:", data);
+
+        if (!response.ok) {
+          throw new Error(data.error || "Failed to fetch security questions");
+        }
+
+        setSecurityQuestions(data.data);
+      } catch (error) {
+        console.error("Fetch security questions error:", error);
+        alert(
+          error instanceof Error
+            ? error.message
+            : "Failed to fetch security questions. Please try again."
+        );
+      }
+    };
+
+    fetchQuestions();
+  }, []);
 
   return (
     <div className="min-h-screen flex">
@@ -161,7 +257,7 @@ export default function SignUp() {
             <img
               src="https://indigenous.arunachal.gov.in/assets/images/logo_ap.png"
               alt="Logo"
-              className="h-16 mx-auto mb-4"
+              className="mx-auto w-[150px] h-[150px] mb-4"
             />
             <h2 className="text-2xl font-bold text-heading mb-1">
               Create Account
@@ -172,44 +268,20 @@ export default function SignUp() {
           </div>
 
           {/* Sign Up Form */}
-          <form 
+          <form
             onSubmit={
-              currentStep === 'initial' ? handleInitialSubmit :
-              currentStep === 'otp' ? handleOtpSubmit :
-              currentStep === 'password' ? handlePasswordSubmit :
-              handleSecuritySubmit
-            } 
+              currentStep === "initial"
+                ? handleInitialSubmit
+                : currentStep === "otp"
+                  ? handleOtpSubmit
+                  : currentStep === "password"
+                    ? handlePasswordSubmit
+                    : handleSecuritySubmit
+            }
             className="space-y-4"
           >
-            {currentStep === 'initial' && (
+            {currentStep === "initial" && (
               <>
-                {/* Tribes Multi-select */}
-                <div>
-                  <label className="block text-sm font-medium text-heading mb-2">
-                    Select Tribes<span className="text-red-500">*</span>
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {tribes.map((tribe) => (
-                      <button
-                        key={tribe}
-                        type="button"
-                        onClick={() => handleTribesChange(tribe)}
-                        className={classNames(
-                          "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm transition-colors",
-                          selectedTribes.includes(tribe)
-                            ? "border-teal-500 bg-teal-50 text-teal-700"
-                            : "border-gray-300 hover:border-teal-500"
-                        )}
-                      >
-                        {selectedTribes.includes(tribe) && (
-                          <Check className="h-4 w-4 text-teal-500" />
-                        )}
-                        <span>{tribe}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 {/* Name Fields */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
@@ -314,34 +386,70 @@ export default function SignUp() {
                   </div>
                 </div>
 
-                {/* Address */}
                 <div>
-                  <label
-                    htmlFor="address"
-                    className="block text-sm font-medium text-heading mb-2"
-                  >
-                    Address<span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-heading mb-2">
+                    Create Password
                   </label>
                   <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <MapPin className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <textarea
-                      id="address"
-                      name="address"
-                      required
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      rows={1}
-                      className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-white dark:bg-gray-800 dark:border-gray-700"
-                      placeholder="Enter your address"
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      placeholder="Enter password"
                     />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showConfirmPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                      {showPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-heading mb-2">
+                    Confirm Password
+                  </label>
+                  <div className="relative">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
+                      placeholder="Enter password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff className="h-5 w-5 text-gray-400" />
+                      ) : (
+                        <Eye className="h-5 w-5 text-gray-400" />
+                      )}
+                    </button>
                   </div>
                 </div>
               </>
             )}
 
-            {currentStep === 'otp' && (
+            {currentStep === "otp" && (
               <div className="space-y-4">
                 <p className="text-sm text-gray-600">
                   Enter the verification code sent to your email
@@ -361,65 +469,30 @@ export default function SignUp() {
               </div>
             )}
 
-            {currentStep === 'password' && (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-heading mb-2">
-                    Set Password
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirmPassword ? 'text' : 'password'}
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                      placeholder="Enter password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
-                    >
-                      {showConfirmPassword ? (
-                        <EyeOff className="h-5 w-5 text-gray-400" />
-                      ) : (
-                        <Eye className="h-5 w-5 text-gray-400" />
-                      )}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {currentStep === 'security' && (
+            {currentStep === "security" && (
               <div className="space-y-6">
                 <h3 className="text-lg font-medium text-heading">
                   Set Security Questions
                 </h3>
                 {securityQuestions.map((sq, index) => (
-                  <div key={index} className="space-y-4">
+                  <div key={sq.id} className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-heading mb-2">
-                        Question {index + 1}
+                        {sq.question}
                       </label>
                       <input
                         type="text"
-                        value={sq.question}
-                        onChange={(e) => handleSecurityQuestionChange(index, 'question', e.target.value)}
-                        className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
-                        placeholder="Enter your security question"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-heading mb-2">
-                        Answer
-                      </label>
-                      <input
-                        type="text"
-                        value={sq.answer}
-                        onChange={(e) => handleSecurityQuestionChange(index, 'answer', e.target.value)}
+                        value={sq.answer || ""}
+                        onChange={(e) =>
+                          handleSecurityQuestionChange(
+                            index,
+                            "answer",
+                            e.target.value
+                          )
+                        }
                         className="block w-full px-3 py-2 border border-gray-300 rounded-lg"
                         placeholder="Enter your answer"
+                        required
                       />
                     </div>
                   </div>
@@ -432,18 +505,19 @@ export default function SignUp() {
               type="submit"
               className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-teal-500 hover:from-blue-700 hover:to-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
             >
-              {currentStep === 'initial' ? 'Send OTP' :
-               currentStep === 'otp' ? 'Verify OTP' :
-               currentStep === 'password' ? 'Set Password' :
-               'Complete Registration'}
+              {currentStep === "initial"
+                ? "Send OTP"
+                : currentStep === "otp"
+                  ? "Verify OTP"
+                  : "Complete Registration"}
             </button>
 
             {/* Login Link */}
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <button
                 type="button"
-                onClick={() => navigate('/login')}
+                onClick={() => router.push("/login")}
                 className="font-medium text-teal-600 hover:text-teal-500"
               >
                 Sign in here
@@ -456,10 +530,12 @@ export default function SignUp() {
       {/* Right Side - Image */}
       <div className="hidden lg:block lg:w-1/2 bg-gradient-to-br from-blue-600/20 to-teal-500/20">
         <div className="h-full flex items-center justify-center p-12">
-          <img
+          <Image
             src="https://indigenous.arunachal.gov.in/assets/images/auth/01.png"
             alt="Tribal Art"
-            className="max-w-full h-auto object-contain"
+            width={600}
+            height={600}
+            className="object-contain"
           />
         </div>
       </div>
