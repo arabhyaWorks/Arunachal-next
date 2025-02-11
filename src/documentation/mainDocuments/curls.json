@@ -1,0 +1,621 @@
+{
+	"info": {
+		"_postman_id": "cb6ac696-1a84-497e-867b-1c0b4c6cfe8a",
+		"name": "Attribute Types",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/attributeTypes",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"attributeTypes"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "bc6f37d4-7c54-4eeb-8db7-b19f4421ac2c",
+		"name": "Categories Attributes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "Create Attribute",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"category_id\": 1,\n  \"category_name\":\"Folk Dance\",\n  \"attribute_name\": \"Historical references of the parties\",\n  \"description\": \"Historical references of the parties\",\n  \"attribute_type_id\": 1,\n  \"is_required\": true,\n  \"user_id\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/category/attributes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"category",
+						"attributes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Attributes",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}/api/category/attributes?category_id=1",
+					"host": [
+						"{{endpoint}}"
+					],
+					"path": [
+						"api",
+						"category",
+						"attributes"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "41679856-c7e9-4ffd-9cf5-e050ca45859c",
+		"name": "Category creation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "api/category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/category",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/category",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Folk Dance\",\n    \"description\":\"Tradition dances of the tribes\",\n    \"user_id\":1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}api/category",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/category/items",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}api/category/items?category_id=1",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"category",
+						"items"
+					],
+					"query": [
+						{
+							"key": "category_id",
+							"value": "1"
+						},
+						{
+							"key": "item_id",
+							"value": "3",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/category/items",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"category_id\": 1,\n  \"name\": \"Phansao Dance\",\n  \"description\": \"Tribal dance from region X\",\n  \"user_id\": 1,\n  \"attributes\": [\n    {\n      \"attribute_id\": 4,\n      \"attribute_type_id\": 6,\n      \"attribute_name\": \"cat-FolkDance-Tribe\",\n      \"attribute_value\": {\n        \"value\": [\n          {\n            \"associated_table\": \"tribes\",\n            \"associated_table_id\": 1,\n            \"name\": \"Adi\"\n          },\n          {\n            \"associated_table\": \"tribes\",\n            \"associated_table_id\": 2,\n            \"name\": \"Padi Tribe\"\n          }\n        ]\n      }\n    }\n    // {\n    //   \"attribute_id\": 10,\n    //   \"attribute_type_id\": 1,\n    //   \"attribute_name\": \"cat-FolkParty-HistoricalReferencesOfTheParties\",\n    //   \"attribute_value\": { \"value\": \"This is the historical origin of the parties\" }\n    // }\n    // {\n    //   \"attribute_id\": 4,\n    //   \"attribute_type_id\": 1,\n    //   \"attribute_name\": \"cat-FolkDance-Tribe(s)\",\n    //   \"attribute_value\": { \"value\": \"This is the historical origin of the dance\" }\n    // }\n    // ,\n    // {\n    //   \"attribute_id\": 4,\n    //   \"attribute_type_id\": 9,\n    //   \"attribute_name\": \"cat-FolkDances-Videos\",\n    //   \"attribute_value\": [\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     }\n    //   ]\n    // }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}api/category/items",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"category",
+						"items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3000/api/category/items",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"item_id\": 2,\n  \"user_id\": 1,\n  \"name\": \"Updated Phangsao Dance\",\n  \"description\": \"Updated Tribal dance from region X\",\n  \"attributes\": [\n\n        {\n      \"attribute_id\": 4,\n      \"attribute_type_id\": 6,\n      \"attribute_name\": \"cat-FolkDance-Tribe\",\n      \"attribute_value\": {\n        \"value\": [\n          {\n            \"associated_table\": \"tribes\",\n            \"associated_table_id\": 1,\n            \"name\": \"Adi\"\n          },\n          {\n            \"associated_table\": \"tribes\",\n            \"associated_table_id\": 2,\n            \"name\": \"Padi Tribe\"\n          }\n        ]\n      }\n    },\n    // {\n    //   \"attribute_id\": 8,\n    //   \"attribute_type_id\": 9,\n    //   \"attribute_name\": \"cat-FolkDances-Videos\",\n    //   \"attribute_value\": [\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"Folk Dance Video\",\n    //       \"file_path\": \"storage/video/clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     }\n    //   ]\n    // }\n\n    // {\n    //   \"attribute_id\": 9,\n    //   \"attribute_type_id\": 6,\n    //   \"attribute_name\": \"cat-FolkDance-HistoricalReferencesOfTheParties\",\n    //   \"attribute_value\": {\n    //     \"value\": [\n    //       {\n    //         \"associated_table\": \"tribes\",\n    //         \"associated_table_id\": 1,\n    //         \"name\": \"this is tribe name\"\n    //       }\n    //     ]\n    //   }\n    // }\n\n    {\n      \"attribute_id\": 6,\n      \"attribute_type_id\": 1,\n      \"attribute_name\": \"cat-FolkDance-HistoricalReferencesOfTheParties\",\n      \"attribute_value\": { \"value\": \"This is the historical origin of the dance\" }\n    }\n    // {\n    //   \"attribute_id\": 4,\n    //   \"attribute_type_id\": 6,\n    //   \"attribute_name\": \"cat-FolkDance-Tribe\",\n    //   \"attribute_value\": {\n    //     \"value\": [\n    //       {\n    //         \"associated_table\": \"tribes\",\n    //         \"associated_table_id\": 1,\n    //         \"name\": \"Padi Tribe\"\n    //       }\n    //     ]\n    //   }\n    // }\n    // {\n    //   \"attribute_id\": 5,\n    //   \"attribute_type_id\": 1,\n    //   \"attribute_name\": \"cat-FolkDances-HistoricalOrigin\",\n    //   \"attribute_value\": { \"value\": \"Updated historical origin of the dance\" }\n    // },\n    // {\n    //   \"attribute_id\": 4,\n    //   \"attribute_type_id\": 9,\n    //   \"attribute_name\": \"cat-FolkDances-Videos\",\n    //   \"attribute_value\": [\n    //     {\n    //       \"id\": 13,\n    //       \"title\": \"Updated Folk Dance Video 1\",\n    //       \"file_path\": \"storage/video/updated_clip1.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Updated traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/updated_clip1.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"id\": 14,\n    //       \"title\": \"Updated Folk Dance Video 2\",\n    //       \"file_path\": \"storage/video/updated_clip2.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Updated traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/updated_clip2.jpg\",\n    //       \"media_type\": \"video\"\n    //     },\n    //     {\n    //       \"title\": \"New Folk Dance Video\",\n    //       \"file_path\": \"storage/video/new_clip.mp4\",\n    //       \"mime_type\": \"video/mp4\",\n    //       \"created_by\": 1,\n    //       \"description\": \"Newly added traditional dance performance\",\n    //       \"thumbnail_path\": \"storage/video/new_clip.jpg\",\n    //       \"media_type\": \"video\"\n    //     }\n    //   ]\n    // }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/category/items",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"category",
+						"items"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "67b97a5a-8116-4d11-afc1-a1142d9fd83a",
+		"name": "Committtee",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/committees",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"committees"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{endpoint}}api/committees/1/members",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/committees/1/members",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"committees",
+						"1",
+						"members"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "0b3252c9-e1f9-4109-83ae-516520e68607",
+		"name": "Search",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "api/search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/search?term=Adi Tribe",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"search"
+					],
+					"query": [
+						{
+							"key": "term",
+							"value": "Adi Tribe"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "7b1c7147-7bf2-4d9f-89b0-2d77d80f3bdc",
+		"name": "Test Queries",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "New Request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/testConnection",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"testConnection"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "513b345c-b2bc-4d24-86c0-1897039dcb3a",
+		"name": "Tribe Attributes",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "Get Tribe attributes",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{endpoint}}api/tribe/attributes",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"tribe",
+						"attributes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Tribe Attribute",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"attributes\": [\n      {\n        \"name\": \"Images of the Tribe\",\n        \"description\": \"Images of the tribe\",\n        \"is_required\": true,\n        \"attribute_type_id\": 2\n      }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tribe/attributes",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tribe",
+						"attributes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Detele Attribute",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/tribe/attributes?id=5&deleteMode=hard",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tribe",
+						"attributes"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "5"
+						},
+						{
+							"key": "deleteMode",
+							"value": "hard"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Tribe",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "      {\n        \"name\": \"Updated History\",\n        \"description\": \"Updated historical info\",\n        \"is_required\": false,\n        \"is_active\": true      \n      }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tribe/attributes?id=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tribe",
+						"attributes"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
+
+{
+	"info": {
+		"_postman_id": "b2831bd8-7b89-440b-95cd-57f4ebf6a82f",
+		"name": "Tribe Creation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40192594"
+	},
+	"item": [
+		{
+			"name": "api/tribe",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/api/tribe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/tribe",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"name\":\"Padi Tribe\",\n        \"attributes\": [\n        {\n          \"attribute_id\": 1,\n          \"attribute_name\": \"tribe-About\",\n          \"attribute_value\": { \"value\": \"Description about Adi tribe\" }\n        },\n        {\n          \"attribute_id\": 2,\n          \"attribute_name\": \"tribe-History\",\n          \"attribute_value\": { \"value\": \"Ancient history details\" }\n        },\n        {\n          \"attribute_id\": 3,\n          \"attribute_name\": \"tribe-Distribution\",\n          \"attribute_value\": { \"value\": \"Ancient history details\" }\n        }\n      ],\n      \"user_id\":\"1\"\n\n}\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{endpoint}}api/tribe",
+					"host": [
+						"{{endpoint}}api"
+					],
+					"path": [
+						"tribe"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "api/tribe",
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"tribe_id\":\"1\",\n        \"attributes\": [\n        {\n          \"attribute_id\": 3,\n          \"attribute_name\": \"tribe-Distribution\",\n          \"attribute_value\": { \"value\": \"this is a banger change\" }\n        }\n        ],\n      \"user_id\":\"1\"\n\n}\n\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/api/tribe",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"tribe"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

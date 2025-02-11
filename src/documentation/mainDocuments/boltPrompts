@@ -1,0 +1,139 @@
+Project Title:
+“Indigenous Folklore & Folk Music Portal” (Minimal UI)
+
+1. Overall Goal
+
+Build a no-frills, functionality-first frontend for managing:
+	•	Tribes (create, view, edit/update)
+	•	Categories (create, view, edit)
+	•	Category Items (each item is something like “Folk Dance,” “Folk Song,” etc.)
+	•	Attributes (for tribes or categories)
+	•	Committee data (read-only is enough in the basic UI)
+
+We have a set of REST APIs already available. We do not want advanced styling—keep the UI bare-bones. The focus is purely on forms/tables for CRUD.
+
+2. Pages and Components
+
+2.1 Tribe Management
+	1.	List Tribes
+	•	GET /api/tribe
+	•	Display each tribe (ID, Name), plus any associated attributes from the response.
+	•	Provide a button or link to “Edit” a single tribe’s attributes.
+	2.	Create Tribe
+	•	Form that POSTs to /api/tribe with fields:
+	•	name (text)
+	•	user_id (hardcode as “1” or let user input)
+	•	Optional: A way to add “Attributes” on creation (like “Tribe-About,” “Tribe-History,” etc.).
+	3.	Edit Tribe
+	•	PATCH to /api/tribe.
+	•	Allows selecting a tribe from the list, then updating name or any attributes.
+	•	Minimal form fields: tribe_id, user_id, plus a dynamic set of attribute fields.
+
+(We do not need fancy styling: a simple table for listing, a simple form for creating/updating.)
+
+2.2 Category Management
+	1.	List Categories
+	•	GET /api/category.
+	•	Show ID, Name, Description.
+	2.	Create Category
+	•	POST /api/category.
+	•	Fields: name, description, user_id.
+	•	On creation, system automatically adds a “Tribes” (Relations) attribute.
+	3.	Show Category Attributes
+	•	GET /api/category/attributes?category_id=...
+	•	Let user see and optionally create new attributes for that category (like “Title of the song,” “Duration,” “Genre,” etc.).
+	•	Minimal input fields for attribute name/description/type → POST /api/category/attributes.
+	4.	Edit (or soft-delete) Category Attributes
+	•	PATCH or DELETE to /api/category/attributes?id=...&category_id=....
+	•	Just basic toggles for is_active or changing display order.
+
+2.3 Category Items
+	1.	List Items (e.g., all “Folk Dances”)
+	•	GET /api/category/items?category_id=...
+	•	Display a table with item name, description.
+	2.	Create Item
+	•	POST /api/category/items.
+	•	Must let user set category_id, name, description, user_id.
+	•	Also set “Tribes” (the required “Relations” attribute) plus any other attributes.
+	•	Each attribute’s value is included in the attributes array.
+	3.	Update Item
+	•	PATCH /api/category/items.
+	•	A minimal form that, for a selected item, can change name, description, or add/edit attribute values.
+
+(Again, keep forms and tables simple, no styling needed.)
+
+2.4 Committee Data (Optional)
+	•	A basic page or section that GETs /api/committees or /api/committees?id=... and lists committees + members.
+	•	If possible, let user GET or POST to /api/committees/[committeeId]/members to see or add members.
+
+2.5 Search
+	•	A minimal page or input that calls GET /api/search?term=... and displays the results (source_type, source_id, relevance).
+
+3. API Endpoints (Summary)
+
+Here are the endpoints we want the frontend to call (we have them working on the backend):
+	•	Tribe:
+	•	GET /api/tribe (List all or single)
+	•	POST /api/tribe (Create)
+	•	PATCH /api/tribe (Update)
+	•	Tribe Attributes:
+	•	GET /api/tribe/attributes
+	•	POST /api/tribe/attributes
+	•	PATCH/DELETE /api/tribe/attributes
+	•	Category:
+	•	GET /api/category (List all or single)
+	•	POST /api/category (Create)
+	•	Category Attributes:
+	•	GET /api/category/attributes?category_id=...
+	•	POST /api/category/attributes
+	•	PATCH/DELETE /api/category/attributes?id=...&category_id=...
+	•	Category Items:
+	•	GET /api/category/items?category_id=... or ?item_id=...
+	•	POST /api/category/items
+	•	PATCH /api/category/items
+	•	Committees:
+	•	GET /api/committees or ?id=...
+	•	GET/POST/PATCH/DELETE /api/committees/[committeeId]/members
+	•	Search:
+	•	GET /api/search?term=...
+
+(All JSON bodies are described in detail above. We only want to hook them up to minimal forms.)
+
+4. Desired UI / Flow
+	•	A Main Menu with links to “Tribes,” “Categories,” “Category Items,” “Committees,” “Search,” etc.
+	•	Tribes Page:
+	1.	List: Show table of tribes.
+	2.	Create: A small form → “Tribe name,” “user_id,” plus optional attribute fields.
+	3.	Edit: Another small form → selects existing tribe, updates attributes.
+	•	Categories Page:
+	•	Show existing categories.
+	•	Create a new category (name, description, user_id).
+	•	Possibly a link to “Manage Attributes for Category” → leads to page listing attributes for that category + minimal forms to add new.
+	•	Category Items Page:
+	•	For a selected category, list items.
+	•	A form to create new items (including “Tribes” attribute).
+	•	A form to patch an existing item.
+	•	Committees Page:
+	•	Just retrieve committees and show members, optionally allow adding or removing members.
+	•	Search Page:
+	•	Input text → calls /api/search?term=... → shows results.
+
+We want no advanced CSS—plain HTML form elements are enough. The main objective is to provide quick data entry and retrieval for these endpoints.
+
+5. Implementation Hints for Bolt.new
+	•	Use minimal “Text Input” for name/description.
+	•	For attributes that reference multiple tribes, you can provide a simple multi-select or array-based input.
+	•	The responses from the endpoints are standard JSON. Display them in an unstyled table or basic list.
+	•	No fancy theming or grid systems—focus on hooking each endpoint to a “Form” or “Table” component.
+
+Thank You!
+
+This completes the desired functionality. Please generate a single or multi-page zero-style UI that covers:
+	1.	Tribe CRUD.
+	2.	Category CRUD.
+	3.	Category Attributes CRUD.
+	4.	Category Items CRUD (including tribe references).
+	5.	Committee viewing (optionally editing members).
+	6.	Simple search.
+
+Use the provided endpoints, minimal HTML forms, and no CSS.

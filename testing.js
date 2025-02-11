@@ -1,0 +1,314 @@
+const attributeTypes = [
+  {
+    id: 1,
+    name: "Text",
+    description: "Simple text content",
+    validation_rules: {
+      allow_html: false,
+      max_length: 50000,
+      min_length: 1,
+    },
+    value_structure: {
+      type: "normalText",
+      example: {
+        value: "String",
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 2,
+    name: "Array",
+    description: "List of values with labels",
+    validation_rules: {
+      max_items: 100,
+      allow_duplicates: false,
+    },
+    value_structure: {
+      type: "normalArray",
+      example: {
+        value: ["String1", "String2"],
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 3,
+    name: "Date",
+    description: "Date values",
+    validation_rules: {
+      format: "YYYY-MM-DD",
+      max_date: "2100-12-31",
+      min_date: "1800-01-01",
+    },
+    value_structure: {
+      type: "dateValue",
+      example: {
+        value: "YYYY-MM-DD",
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 4,
+    name: "Number",
+    description: "Numeric values",
+    validation_rules: {
+      precision: 2,
+      allow_decimal: true,
+    },
+    value_structure: {
+      type: "numberValue",
+      example: {
+        value: 3.14,
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 5,
+    name: "Boolean",
+    description: "True/False values",
+    validation_rules: {},
+    value_structure: {
+      type: "booleanValue",
+      example: {
+        value: true,
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 6,
+    name: "Relations",
+    description: "Stores references to other tables",
+    validation_rules: {
+      max_items: 50,
+      allow_duplicates: false,
+    },
+    value_structure: {
+      type: "relationsToOtherTables",
+      example: {
+        value: [
+          {
+            name: "Adi",
+            associated_table: "tribes",
+            associated_table_id: 1,
+          },
+        ],
+      },
+    },
+    meta_data: {},
+  },
+  {
+    id: 7,
+    name: "Image",
+    description: "Simple image storage",
+    validation_rules: {
+      max_size_mb: {
+        image: 10,
+      },
+      allowed_types: ["image/jpeg", "image/png", "image/webp"],
+    },
+    value_structure: {
+      type: "mediaStorage",
+      example: {
+        files: [
+          {
+            url: "https://example.com/img1.jpg",
+            type: "image/jpeg",
+            timestamp: "2025-02-09",
+            description: "Sample image",
+            aspect_ratio: "16:9",
+          },
+        ],
+      },
+    },
+    meta_data: {
+      type: "image",
+      schema: {
+        title: "string",
+        status: "string",
+        file_path: "string",
+        mime_type: "string",
+        created_at: "timestamp",
+        created_by: "int",
+        media_type: "image",
+        updated_at: "timestamp",
+        updated_by: "int",
+        description: "string",
+        thumbnail_path: "string",
+      },
+    },
+  },
+  {
+    id: 8,
+    name: "Audio",
+    description: "Audio storage with extended fields",
+    validation_rules: {
+      max_size_mb: {
+        audio: 100,
+      },
+      allowed_types: ["audio/mp3", "audio/wav"],
+    },
+    value_structure: {
+      type: "audio",
+      example: {
+        value: [11, 2121, 2121],
+      },
+    },
+    meta_data: {
+      type: "audio",
+      schema: {
+        genre: "array",
+        title: "string",
+        lyrics: "string",
+        status: "string",
+        composer: "string",
+        file_path: "string",
+        mime_type: "string",
+        created_at: "timestamp",
+        created_by: "int",
+        media_type: "audio",
+        performers: "array",
+        updated_at: "timestamp",
+        updated_by: "int",
+        description: "string",
+        instruments: "array",
+        thumbnail_path: "string",
+      },
+    },
+  },
+  {
+    id: 9,
+    name: "Video",
+    description: "Video storage with extended fields",
+    validation_rules: {
+      max_size_mb: {
+        video: 500,
+      },
+      allowed_types: ["video/mp4"],
+    },
+    value_structure: {
+      type: "video",
+      example: {
+        value: [99, 100],
+      },
+    },
+    meta_data: {
+      type: "video",
+      schema: {
+        title: "string",
+        status: "string",
+        file_path: "string",
+        mime_type: "string",
+        created_at: "timestamp",
+        created_by: "int",
+        media_type: "video",
+        updated_at: "timestamp",
+        updated_by: "int",
+        description: "string",
+        thumbnail_path: "string",
+      },
+    },
+  },
+  {
+    id: 10,
+    name: "Document",
+    description: "PDF or doc file storage",
+    validation_rules: {
+      max_size_mb: {
+        document: 100,
+      },
+      allowed_types: ["application/pdf"],
+    },
+    value_structure: {
+      type: "document",
+      example: {
+        value: [123, 456],
+      },
+    },
+    meta_data: {
+      type: "document",
+      schema: {
+        title: "string",
+        status: "string",
+        file_path: "string",
+        mime_type: "string",
+        created_at: "timestamp",
+        created_by: "int",
+        media_type: "document",
+        updated_at: "timestamp",
+        updated_by: "int",
+        description: "string",
+        thumbnail_path: "string",
+      },
+    },
+  },
+];
+
+const attributes = [
+    {
+        "id": 1,
+        "name": "tribe-About",
+        "description": "Description about the tribe",
+        "attribute_type_id": 1,
+        "is_required": 1,
+        "is_active": 1
+    },
+    {
+        "id": 2,
+        "name": "tribe-History",
+        "description": "Historical information of tribe",
+        "attribute_type_id": 1,
+        "is_required": 1,
+        "is_active": 1
+    },
+    {
+        "id": 3,
+        "name": "tribe-Distribution",
+        "description": "Geographical distribution of tribe",
+        "attribute_type_id": 1,
+        "is_required": 1,
+        "is_active": 1
+    },
+    {
+        "id": 5,
+        "name": "tribe-Tribe-RegionOrCulturalOrigin",
+        "description": "Region or Cultural Origin",
+        "attribute_type_id": 1,
+        "is_required": 0,
+        "is_active": 1
+    },
+    {
+        "id": 6,
+        "name": "tribe-Tribe-VideosOfTheTribes",
+        "description": "Videos of the tribes",
+        "attribute_type_id": 9,
+        "is_required": 0,
+        "is_active": 1
+    },
+    {
+        "id": 7,
+        "name": "tribe-Tribe-VideosOfTheTribe",
+        "description": "videos of the tribe",
+        "attribute_type_id": 9,
+        "is_required": 0,
+        "is_active": 1
+    },
+    {
+        "id": 8,
+        "name": "tribe-Tribe-SongsOfTheTribes",
+        "description": "Songs of the tribes",
+        "attribute_type_id": 8,
+        "is_required": 0,
+        "is_active": 1
+    }
+]
+const getAttributeTypeId = (attributeId) => {
+  const attribute = attributes.find((attr) => attr.id === attributeId);
+  return attribute.attribute_type_id;
+};
+
+const attributeType = getAttributeTypeId(6);
+console.log(attributeType);

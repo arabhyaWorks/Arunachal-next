@@ -27,7 +27,7 @@ async function getTribeAttributes(req, res) {
   try {
     const connection = await pool.getConnection();
     const [rows] = await connection.query(`
-      SELECT a.id, a.name, a.description, a.attribute_type_id, tac.is_active
+      SELECT a.id, a.name, a.description, a.attribute_type_id, a.is_required, tac.is_active
       FROM attributes a
       JOIN tribe_attribute_config tac ON a.id = tac.attribute_id
       WHERE a.name LIKE 'tribe-%' AND tac.is_active = true
@@ -260,5 +260,3 @@ async function deleteTribeAttributes(req, res) {
     return res.status(500).json({ success: false, error: error.message });
   }
 }
-
-// okay thik hai jo hamari problem this ki jab user nya attribute create karega to stucture ka kaise hoga, wo hamara attribute type se define hoga aur usme emamples bhi hain ki content table value field ke andar kaisa data jana chahiye so lets get back to the api development
