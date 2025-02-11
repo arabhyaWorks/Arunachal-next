@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent 
-} from '@/components/ui/card';
+import React, { useState, useEffect } from "react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Loader2, AlertTriangle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import {
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent
-} from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Loader2, AlertTriangle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import RenderAttributes from '../components/Attributes';
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import RenderAttributes from "../components/Attributes";
 
 const TribeManagement = () => {
   // Core data states
@@ -26,19 +22,19 @@ const TribeManagement = () => {
   const [attributes, setAttributes] = useState([]);
   const [attributeTypes, setAttributeTypes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState('create');
+  const [activeTab, setActiveTab] = useState("create");
 
   // Form states
-  const [newTribeName, setNewTribeName] = useState('');
+  const [newTribeName, setNewTribeName] = useState("");
   const [attributeValues, setAttributeValues] = useState({});
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   // New attribute form states
   const [newAttribute, setNewAttribute] = useState({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     is_required: false,
-    attribute_type_id: ''
+    attribute_type_id: "",
   });
 
   useEffect(() => {
@@ -49,37 +45,37 @@ const TribeManagement = () => {
 
   const fetchAttributeTypes = async () => {
     try {
-      const response = await fetch('/api/attributeTypes');
+      const response = await fetch("/api/attributeTypes");
       const data = await response.json();
       // Direct array response without .data wrapper
       setAttributeTypes(data.data);
     } catch (error) {
-      console.error('Error fetching attribute types:', error);
+      console.error("Error fetching attribute types:", error);
       setAttributeTypes([]);
     }
   };
 
   const fetchTribes = async () => {
     try {
-      const response = await fetch('/api/tribe');
+      const response = await fetch("/api/tribe");
       const data = await response.json();
       if (data.success) {
         setTribes(data.data);
       }
     } catch (error) {
-      console.error('Error fetching tribes:', error);
+      console.error("Error fetching tribes:", error);
     }
   };
 
   const fetchAttributes = async () => {
     try {
-      const response = await fetch('/api/tribe/attributes');
+      const response = await fetch("/api/tribe/attributes");
       const data = await response.json();
       if (data.success) {
         setAttributes(data.data);
       }
     } catch (error) {
-      console.error('Error fetching attributes:', error);
+      console.error("Error fetching attributes:", error);
     }
   };
 
@@ -89,20 +85,24 @@ const TribeManagement = () => {
   };
 
   const handleStructureChange = (id, value) => {
-    if([8, 9, 10].includes(getAttributeTypeId(id))) {
-      return value.value
+    if ([8, 9, 10].includes(getAttributeTypeId(id))) {
+      return value.value;
     }
-    return { value: value }
-  }
+    return value;
+  };
 
   const validateRequiredAttributes = () => {
-    const requiredAttributes = attributes.filter(attr => attr.is_required);
-    const missingRequired = requiredAttributes.filter(attr => 
-      !attributeValues[attr.id] || !attributeValues[attr.id].trim()
+    const requiredAttributes = attributes.filter((attr) => attr.is_required);
+    const missingRequired = requiredAttributes.filter(
+      (attr) => !attributeValues[attr.id] || !attributeValues[attr.id].trim()
     );
-    
+
     if (missingRequired.length > 0) {
-      setError(`Missing required attributes: ${missingRequired.map(attr => attr.name).join(', ')}`);
+      setError(
+        `Missing required attributes: ${missingRequired
+          .map((attr) => attr.name)
+          .join(", ")}`
+      );
       return false;
     }
     return true;
@@ -111,103 +111,132 @@ const TribeManagement = () => {
   const handleCreateTribe = async (e) => {
     e.preventDefault();
     // if (!validateRequiredAttributes()) return;
-    
+
     setLoading(true);
-    setError('');
-    
+    setError("");
+
     try {
       console.log(attributeValues);
-      console.log(attributes)
+      console.log(attributes);
       const attributeArray = Object.entries(attributeValues)
         .filter(([id, value]) => value) // Only include attributes with values
         .map(([id, value]) => {
-          const attribute = attributes.find(attr => attr.id.toString() === id);
+          const attribute = attributes.find(
+            (attr) => attr.id.toString() === id
+          );
 
-          console.log(value)
-          
+          console.log(value);
+
           return {
             attribute_id: parseInt(id),
             attribute_name: attribute.name,
-            attribute_value: handleStructureChange(parseInt(id), value)
+            attribute_value: handleStructureChange(parseInt(id), value),
           };
         });
 
-        console.log(attributeArray);
+      console.log(attributeArray);
 
-      // const response = await fetch('/api/tribe', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({
-      //     name: newTribeName,
-      //     attributes: attributeArray,
-      //     user_id: 1
-      //   })
-      // });
+      const response = await fetch('/api/tribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: newTribeName,
+          attributes: attributeArray,
+          user_id: 1
+        })
+      });
 
-      // const data = await response.json();
-      // if (data.success) {
-      //   setNewTribeName('');
-      //   setAttributeValues({});
-      //   fetchTribes();
-      //   setError('');
-      // } else {
-      //   setError(data.error || 'Failed to create tribe');
-      // }
+      const data = await response.json();
+      if (data.success) {
+        setNewTribeName('');
+        setAttributeValues({});
+        fetchTribes();
+        setError('');
+      } else {
+        setError(data.error || 'Failed to create tribe');
+      }
     } catch (error) {
-      setError('Error creating tribe: ' + error.message);
+      setError("Error creating tribe: " + error.message);
     }
     setLoading(false);
   };
 
   const formatAttributeName = (name) => {
     return name
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join('');
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join("");
   };
 
   const handleCreateAttribute = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       // Format the attribute name
       const formattedName = formatAttributeName(newAttribute.name);
-      const attributeName = formattedName.startsWith('tribe-') 
-        ? formattedName 
+      const attributeName = formattedName.startsWith("tribe-")
+        ? formattedName
         : `tribe-${formattedName}`;
 
-      const response = await fetch('/api/tribe/attributes', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/tribe/attributes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          attributes: [{
-            name: attributeName,
-            description: newAttribute.description,
-            is_required: newAttribute.is_required,
-            attribute_type_id: parseInt(newAttribute.attribute_type_id)
-          }]
-        })
+          attributes: [
+            {
+              name: attributeName,
+              description: newAttribute.description,
+              is_required: newAttribute.is_required,
+              attribute_type_id: parseInt(newAttribute.attribute_type_id),
+            },
+          ],
+        }),
       });
 
       const data = await response.json();
       if (data.success) {
         setNewAttribute({
-          name: '',
-          description: '',
+          name: "",
+          description: "",
           is_required: false,
-          attribute_type_id: ''
+          attribute_type_id: "",
         });
         fetchAttributes();
-        setError('');
+        setError("");
       } else {
-        setError(data.error || 'Failed to create attribute');
+        setError(data.error || "Failed to create attribute");
       }
     } catch (error) {
-      setError('Error creating attribute: ' + error.message);
+      setError("Error creating attribute: " + error.message);
     }
     setLoading(false);
+  };
+
+  const ShowAttributeData = ({ attribute }) => {
+    console.log(attribute);
+
+    return (
+      <div>
+        <Label>{attribute.attribute_description}</Label>
+        {
+          [8,9,10].includes(attribute.attribute_type_id) ? (
+            <div>
+              {JSON.stringify(attribute.attribute_value)}
+            </div>
+          ):(
+            <div>
+              {/* {JSON.stringify(attribute.attribute_value.value.value)} */}
+              {
+                attribute.attribute_value.value
+              }
+              {attribute.attribute_type_id}
+            </div>
+          )
+        }
+      </div>
+    );
   };
 
   return (
@@ -242,20 +271,31 @@ const TribeManagement = () => {
                     required
                   />
                 </div>
-                
-                {attributes.map(attr => (
+
+                {attributes.map((attr) => (
                   <div key={attr.id} className="space-y-2">
                     {/* <Label>
                       {attr.name} {attr.is_required && <span className="text-red-500">*</span>}
                     </Label> */}
-                    <div className="text-sm text-gray-500">{attr.description}</div>
+                    <div className="text-sm text-gray-500">
+                      {attr.description}
+                    </div>
                     {/* {renderAttributeInput(attr)} */}
-                    <RenderAttributes attribute={attr} attributeValues={attributeValues} setAttributeValues={setAttributeValues} attributeTypes={attributeTypes} />
+                    <RenderAttributes
+                      attribute={attr}
+                      attributeValues={attributeValues}
+                      setAttributeValues={setAttributeValues}
+                      attributeTypes={attributeTypes}
+                    />
                   </div>
                 ))}
 
                 <Button type="submit" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Create Tribe'}
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Create Tribe"
+                  )}
                 </Button>
               </form>
             </TabsContent>
@@ -267,7 +307,12 @@ const TribeManagement = () => {
                   <Input
                     type="text"
                     value={newAttribute.name}
-                    onChange={(e) => setNewAttribute(prev => ({...prev, name: e.target.value}))}
+                    onChange={(e) =>
+                      setNewAttribute((prev) => ({
+                        ...prev,
+                        name: e.target.value,
+                      }))
+                    }
                     required
                     placeholder="e.g., History of Tribe (will be prefixed with 'tribe-')"
                   />
@@ -278,22 +323,32 @@ const TribeManagement = () => {
                   <Input
                     type="text"
                     value={newAttribute.description}
-                    onChange={(e) => setNewAttribute(prev => ({...prev, description: e.target.value}))}
+                    onChange={(e) =>
+                      setNewAttribute((prev) => ({
+                        ...prev,
+                        description: e.target.value,
+                      }))
+                    }
                     placeholder="Description of what this attribute represents"
                   />
                 </div>
 
                 <div>
                   <Label>Attribute Type</Label>
-                  <Select 
+                  <Select
                     value={newAttribute.attribute_type_id}
-                    onValueChange={(value) => setNewAttribute(prev => ({...prev, attribute_type_id: value}))}
+                    onValueChange={(value) =>
+                      setNewAttribute((prev) => ({
+                        ...prev,
+                        attribute_type_id: value,
+                      }))
+                    }
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select attribute type" />
                     </SelectTrigger>
                     <SelectContent>
-                      {attributeTypes.map(type => (
+                      {attributeTypes.map((type) => (
                         <SelectItem key={type.id} value={type.id.toString()}>
                           {type.name} - {type.description}
                         </SelectItem>
@@ -306,30 +361,47 @@ const TribeManagement = () => {
                   <Switch
                     id="required"
                     checked={newAttribute.is_required}
-                    onCheckedChange={(checked) => setNewAttribute(prev => ({...prev, is_required: checked}))}
+                    onCheckedChange={(checked) =>
+                      setNewAttribute((prev) => ({
+                        ...prev,
+                        is_required: checked,
+                      }))
+                    }
                   />
                   <Label htmlFor="required">Required Attribute</Label>
                 </div>
 
                 <Button type="submit" disabled={loading}>
-                  {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : 'Create Attribute'}
+                  {loading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    "Create Attribute"
+                  )}
                 </Button>
               </form>
 
               <div className="mt-8">
-                <h3 className="text-lg font-medium mb-4">Existing Attributes</h3>
+                <h3 className="text-lg font-medium mb-4">
+                  Existing Attributes
+                </h3>
                 <div className="space-y-4">
-                  {attributes.map(attr => {
-                    const type = attributeTypes.find(t => t.id === attr.attribute_type_id);
+                  {attributes.map((attr) => {
+                    const type = attributeTypes.find(
+                      (t) => t.id === attr.attribute_type_id
+                    );
                     return (
                       <div key={attr.id} className="p-4 border rounded">
                         <div className="font-medium">{attr.name}</div>
-                        <div className="text-sm text-gray-600">{attr.description}</div>
+                        <div className="text-sm text-gray-600">
+                          {attr.description}
+                        </div>
                         <div className="text-sm mt-1">
-                          <span className="font-medium">Type:</span> {type?.name || 'Unknown'}
+                          <span className="font-medium">Type:</span>{" "}
+                          {type?.name || "Unknown"}
                         </div>
                         <div className="text-sm">
-                          <span className="font-medium">Required:</span> {attr.is_required ? 'Yes' : 'No'}
+                          <span className="font-medium">Required:</span>{" "}
+                          {attr.is_required ? "Yes" : "No"}
                         </div>
                       </div>
                     );
@@ -340,21 +412,24 @@ const TribeManagement = () => {
 
             <TabsContent value="view">
               <div className="space-y-6">
-                {tribes.map(tribe => (
+                {tribes.map((tribe) => (
                   <div key={tribe.tribe_id} className="p-4 border rounded">
                     <h3 className="text-xl font-medium mb-2">{tribe.name}</h3>
                     <div className="space-y-2">
                       {tribe.attributes.map((attr, idx) => (
                         <div key={idx} className="text-sm">
-                          <span className="font-medium">{attr.attribute_name}: </span>
-                          <span>
-                            {/* {typeof attr.attribute_value.value === 'object' 
+                          {/* <span className="font-medium">{attr.attribute_name}: </span> */}
+                          {/* <span>
+                            {typeof attr.attribute_value.value === 'object' 
                               ? JSON.stringify(attr.attribute_value.value)
-                              : attr.attribute_value.value.toString()} */}
+                              : attr.attribute_value.value.toString()}
                               {
                                 JSON.stringify(attr.attribute_value)
                               }
-                          </span>
+
+                          </span> */}
+
+                          <ShowAttributeData attribute={attr} />
                           {}
                         </div>
                       ))}

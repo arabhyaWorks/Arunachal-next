@@ -2,6 +2,9 @@
 -- 1. Database and Core User/Role Tables
 -- ======================================================
 
+-- Drop Database 
+DROP DATABASE IF EXISTS indigenous_arunachal;
+
 -- Create Database
 CREATE DATABASE IF NOT EXISTS indigenous_arunachal 
     CHARACTER SET utf8mb4 
@@ -24,13 +27,12 @@ CREATE TABLE roles (
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     registration_number VARCHAR(50) UNIQUE NOT NULL,
-    username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     role_id INT NOT NULL,
-    status ENUM('active', 'inactive', 'suspended', 'blocked') DEFAULT 'inactive',
+    status ENUM('unverified', 'verified', 'active', 'inactive', 'suspended', 'blocked') DEFAULT 'unverified',
     phone VARCHAR(20),
     last_login TIMESTAMP NULL,
     login_attempts INT DEFAULT 0,
@@ -41,7 +43,6 @@ CREATE TABLE users (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id),
     INDEX idx_email (email),
-    INDEX idx_username (username),
     INDEX idx_role (role_id),
     INDEX idx_status (status)
 ) ENGINE=InnoDB;
@@ -53,6 +54,11 @@ CREATE TABLE security_questions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_question (question(100))
 ) ENGINE=InnoDB;
+
+INSERT INTO security_questions (question) VALUES 
+("What is the name of your first pet?"),
+("In which city were you born?"),
+("What is your mother's maiden name?");
 
 -- User Security Answers Table
 CREATE TABLE user_security_answers (
@@ -510,3 +516,106 @@ INSERT INTO tribe_attribute_config (attribute_id, display_order)
 SELECT id, ROW_NUMBER() OVER (ORDER BY id)
 FROM attributes
 WHERE name LIKE 'tribe%';
+
+
+
+-- =================================================
+-- 7. Roles and Users Initialization
+-- =================================================
+
+
+INSERT INTO roles (name, description, permissions)
+VALUES
+('Director',
+ 'Full system access',
+ '{
+   "actions":{
+     "view":true,
+     "add":true,
+     "edit":true,
+     "delete":true,
+     "all":true
+   }
+ }'),
+('Deputy Director',
+ 'View only all contents',
+ '{
+   "actions":{
+     "view":true,
+     "add":false,
+     "edit":false,
+     "delete":false,
+     "all":true
+   }
+ }'),
+('Assistant Director',
+ 'View only all contents',
+ '{
+   "actions":{
+     "view":true
+   }
+ }'),
+('CBO',
+ 'View only all contents',
+ '{
+   "actions":{
+     "view":true
+   }
+ }'),
+('CMS Manager',
+ 'Add, view, edit, delete all contents',
+ '{
+   "actions":{
+     "view":true,
+     "add_all":true,
+     "edit_all":true,
+     "delete_all":true
+   }
+ }'),
+('Content Creator',
+ 'Add, edit, delete own; view all',
+ '{
+   "actions":{
+     "view":true,
+     "add_own":true,
+     "edit_own":true,
+     "delete_own":true
+   }
+ }'),
+('Artist',
+ 'Add, edit, delete own; view all',
+ '{
+   "actions":{
+     "view":true,
+     "add_own":true,
+     "edit_own":true,
+     "delete_own":true
+   }
+ }'),
+('Guest',
+ 'View only all contents',
+ '{
+   "actions":{
+     "view":true
+   }
+ }');
+
+
+ INSERT INTO users (
+    registration_number,
+    email,
+    password_hash,
+    first_name,
+    last_name,
+    role_id,
+    status
+)
+VALUES
+('REG0001','director@example.com','hashedpwd','Director','User',1,'active'),
+('REG0002','deputy@example.com','hashedpwd','Deputy','User',2,'active'),
+('REG0003','assistant@example.com','hashedpwd','Assistant','User',3,'active'),
+('REG0004','cbo@example.com','hashedpwd','Cbo','Member',4,'active'),
+('REG0005','cms@example.com','hashedpwd','Cms','Manager',5,'active'),
+('REG0006','creator@example.com','hashedpwd','Creator','User',6,'active'),
+('REG0007','artist@example.com','hashedpwd','Artist','User',7,'active'),
+('REG0008','guest@example.com','hashedpwd','Guest','User',8,'active');
