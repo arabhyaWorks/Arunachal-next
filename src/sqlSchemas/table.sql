@@ -281,10 +281,32 @@ CREATE TABLE user_audit_logs (
 -- 5. Media Management Tables
 -- ======================================================
 
+CREATE TABLE image (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  associated_tribe_id INT,
+  associated_category_id INT,
+  associated_category_item_id INT,
+  file_path VARCHAR(500) NOT NULL,
+  media_type ENUM('image') NOT NULL DEFAULT 'image',
+  mime_type VARCHAR(100) NOT NULL,
+  status ENUM('pending','active','archived') DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  created_by INT,
+  updated_by INT,
+  FOREIGN KEY (created_by) REFERENCES users(id),
+  FOREIGN KEY (updated_by) REFERENCES users(id)
+) ENGINE=InnoDB;
+
 CREATE TABLE audio (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT,
+  associated_tribe_id INT,
+  associated_category_id INT,
+  associated_category_item_id INT,
   file_path VARCHAR(500) NOT NULL,
   thumbnail_path VARCHAR(500),
   lyrics TEXT,
@@ -307,6 +329,9 @@ CREATE TABLE video (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT,
+  associated_tribe_id INT,
+  associated_category_id INT,
+  associated_category_item_id INT,
   file_path VARCHAR(500) NOT NULL,
   thumbnail_path VARCHAR(500),
   media_type ENUM('video') NOT NULL DEFAULT 'video',
@@ -324,6 +349,9 @@ CREATE TABLE document (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   description TEXT,
+  associated_tribe_id INT,
+  associated_category_id INT,
+  associated_category_item_id INT,
   file_path VARCHAR(500) NOT NULL,
   thumbnail_path VARCHAR(500),
   media_type ENUM('document') NOT NULL DEFAULT 'document',
@@ -431,7 +459,7 @@ VALUES
     "example": {
       "value": [
         {
-          "associated_table": "tribes",
+          " ": "tribes",
           "associated_table_id": 1,
           "name": "Adi"
         }

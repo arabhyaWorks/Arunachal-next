@@ -2,14 +2,189 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-
-  font-family: Arial, Helvetica, sans-serif;
+/* Light & Dark Mode Transition */
+html {
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
 }
 
-@layer base {
-  :root {
+.dark .bg-white {
+  background-color: #2d3748 !important; /* Adjust to your preferred dark mode color */
+}
 
-    --radius: 0.5rem;
-  }
+/* Header Dark Mode */
+.dark .bg-white\/95 {
+  background-color: rgba(45, 55, 72, 0.95) !important;
+}
+
+.dark .backdrop-blur-sm {
+  backdrop-filter: blur(8px) brightness(80%);
+}
+
+/* Navigation Pills Dark Mode */
+.dark .bg-gradient-to-r.from-blue-600.to-teal-500 {
+  opacity: 0.9;
+}
+
+.dark .text-gray-700 {
+  color: #e2e8f0 !important;
+}
+
+/* Search Input Dark Mode */
+.dark input[type='text'].bg-gray-50 {
+  background-color: #1f2937 !important;
+  border-color: #4a5568;
+}
+
+.dark input[type='text']::placeholder {
+  color: #a0aec0;
+}
+
+/* Login Button Dark Mode */
+.dark .bg-gradient-to-r.from-blue-600.to-teal-500:hover {
+  filter: brightness(110%);
+}
+
+/* Dark Mode Styles */
+.dark {
+  background-color: #1a202c;
+  color: #f5f8fa;
+}
+
+.dark input {
+  background-color: #2d3748;
+  color: white;
+  border-color: #4a5568;
+}
+
+.dark .bg-white {
+  background-color: #2d3748 !important;
+}
+
+.bg-header {
+  /* bg-[#f0ffff]/95 */
+  background-color: #f0ffff;
+  opacity: 95%;
+}
+
+.dark .bg-header {
+  background-color: #151a23;
+}
+
+.text-heading {
+  /* text-[#165263] */
+  color: #165263;
+}
+
+.text-subheading {
+  /* text-[#0e7b90] */
+  color: #0e7b90;
+
+}
+
+.dark .text-heading {
+  color: #f5f8fa !important;
+}
+
+.dark .text-subheading,
+.dark .text-gray-500,
+.dark .text-gray-400 {
+  color: #a0aec0 !important;
+}
+
+.dark .border-gray-100,
+.dark .border-gray-200 {
+  border-color: #4a5568 !important;
+}
+
+.dark .shadow-sm,
+.dark .shadow-md,
+.dark .shadow-lg {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .bg-gray-50 {
+  background-color: #374151 !important;
+}
+
+.dark .bg-gray-100 {
+  background-color: #1f2937 !important;
+}
+
+.dark .hover\:bg-gray-50:hover {
+  background-color: #374151 !important;
+}
+
+.dark .hover\:bg-gray-100:hover {
+  background-color: #1f2937 !important;
+}
+
+.dark .hover\:bg-gray-200:hover {
+  background-color: #374151 !important;
+}
+
+/* Dark mode card styles */
+.dark .bg-gradient-to-b.from-white {
+  background-image: linear-gradient(to bottom, #2d3748, #1f2937) !important;
+}
+
+.dark .bg-gradient-to-t.from-black\/70 {
+  background-image: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.9),
+    transparent
+  ) !important;
+}
+
+/* Dark mode search input */
+.dark input[type='text'] {
+  background-color: #1f2937;
+  border-color: #4a5568;
+  color: #f5f8fa;
+}
+
+.dark input[type='text']::placeholder {
+  color: #a0aec0;
+}
+
+/* Dark mode festival cards */
+.dark .bg-gradient-to-r.from-blue-600.to-teal-500 {
+  opacity: 0.9;
+}
+
+.dark .bg-gradient-to-r.from-blue-50.to-teal-50 {
+  background-image: linear-gradient(to right, #2d3748, #285e61) !important;
+}
+
+.dark .text-green-800 {
+  color: #9ae6b4 !important;
+}
+
+.dark .border-teal-100 {
+  border-color: #285e61 !important;
+}
+
+/* Dark mode footer */
+.dark footer.bg-gradient-to-b {
+  background-image: linear-gradient(to bottom, #1a202c, #0f172a) !important;
+}
+
+.dark .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Dark mode hover states */
+.dark .group:hover .group-hover\:text-teal-600 {
+  color: #4fd1c5 !important;
+}
+
+.dark .hover\:text-teal-600:hover {
+  color: #4fd1c5 !important;
+}
+
+.dark .hover\:text-teal-700:hover {
+  color: #38b2ac !important;
+}
+
+.dark .hover\:text-teal-300:hover {
+  color: #81e6d9 !important;
 }
