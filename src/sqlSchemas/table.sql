@@ -459,7 +459,7 @@ VALUES
     "example": {
       "value": [
         {
-          " ": "tribes",
+          "associated_table": "tribes",
           "associated_table_id": 1,
           "name": "Adi"
         }

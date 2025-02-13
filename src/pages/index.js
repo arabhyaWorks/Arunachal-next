@@ -1,3 +1,6 @@
+"use client";
+
+
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -125,7 +128,7 @@ const TribeManagement = () => {
             (attr) => attr.id.toString() === id
           );
 
-          console.log(value);
+          // console.log(value);
 
           return {
             attribute_id: parseInt(id),

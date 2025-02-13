@@ -127,7 +127,7 @@ async function createCategoryItem(req, res) {
         const { attribute_id, attribute_type_id, attribute_name, attribute_value } = attr;
 
         // Process media if needed; otherwise, use the value directly.
-        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id);
+        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, null, category_id, itemId);
 
         // Insert into the content table with status 'pending'
         const [contentResult] = await connection.query(
@@ -347,7 +347,7 @@ async function updateCategoryItem(req, res) {
     if (Array.isArray(attributes) && attributes.length > 0) {
       for (const attr of attributes) {
         const { attribute_id, attribute_type_id, attribute_name, attribute_value } = attr;
-        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id);
+        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, null, );
 
         // Check if a content row exists for this attribute
         const [existingRow] = await connection.query(

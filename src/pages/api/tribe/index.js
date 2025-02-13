@@ -2,8 +2,6 @@ import pool from "../../../utils/db";
 import processMediaAttributes from "../../../utils/processMediaAttribute";
 import processMediaIfNeeded from '../../../utils/processMedia'
 
-// *** If you have a local "attributeTypes" import, do it here.
-// import attributeTypes from "../../../utils/attributeTypes"; // optional
 
 export default async function handler(req, res) {
   const { method } = req;
@@ -137,7 +135,8 @@ async function createTribe(req, res) {
           connection,
           attr.attribute_type_id,
           validValue,
-          user_id
+          user_id,
+          tribeId
         );
 
         // Insert into content
@@ -342,7 +341,8 @@ async function updateTribe(req, res) {
           connection,
           attribute_type_id,
           validValue,
-          user_id
+          user_id,
+          tribe_id
         );
 
         const strValue = JSON.stringify(storedValue);
