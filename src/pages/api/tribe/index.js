@@ -180,21 +180,276 @@ async function createTribe(req, res) {
 // 2) GET /api/tribe
 // Fetch all tribes & attributes
 // ----------------------------------------------------
+// async function getTribes(req, res) {
+//   let connection;
+//   try {
+//     connection = await pool.getConnection();
+//     // 1) Fetch all tribes
+//     const [tribes] = await connection.query(
+//       "SELECT id AS tribe_id, name FROM tribes"
+//     );
+//     if (tribes.length === 0) {
+//       connection.release();
+//       return res.status(200).json({ success: true, data: [] });
+//     }
+
+//     // 2) Fetch all attributes for these tribes
+//     const [attrs] = await connection.query(`
+//       SELECT
+//         c.associated_table_id AS tribe_id,
+//         c.attribute_id,
+//         a.name AS attribute_name,
+//         a.description AS attribute_description,
+//         a.attribute_type_id,
+//         c.value AS attribute_value
+//       FROM content c
+//       JOIN attributes a ON c.attribute_id = a.id
+//       WHERE c.associated_table = 'tribe'
+//     `);
+
+//     // 3) Merge attributes into a map of tribe_id => { tribe_id, name, attributes: [...] }
+//     const tribeMap = {};
+//     for (const t of tribes) {
+//       tribeMap[t.tribe_id] = {
+//         tribe_id: t.tribe_id,
+//         name: t.name,
+//         attributes: [],
+//       };
+//     }
+
+//     // Group attributes by tribe_id for batch processing
+//     const tribeAttributes = {};
+//     for (const r of attrs) {
+//       let parsedValue;
+//       if (typeof r.attribute_value === "string") {
+//         try {
+//           parsedValue = JSON.parse(r.attribute_value);
+//         } catch (e) {
+//           parsedValue = r.attribute_value;
+//         }
+//       } else {
+//         parsedValue = r.attribute_value;
+//       }
+
+//       const attribute = {
+//         attribute_id: r.attribute_id,
+//         attribute_name: r.attribute_name,
+//         attribute_description: r.attribute_description,
+//         attribute_type_id: r.attribute_type_id,
+//         attribute_value: parsedValue,
+//       };
+
+//       if (!tribeAttributes[r.tribe_id]) {
+//         tribeAttributes[r.tribe_id] = [];
+//       }
+//       tribeAttributes[r.tribe_id].push(attribute);
+//     }
+
+//     // Process media attributes for each tribe
+//     for (const tribeId in tribeAttributes) {
+//       const processedAttributes = await processMediaAttributes(connection, tribeAttributes[tribeId]);
+//       tribeMap[tribeId].attributes = processedAttributes;
+//     }
+
+//     // 4) Return as array
+//     const response = {
+//       success: true,
+//       data: Object.values(tribeMap),
+//     };
+
+//     connection.release();
+//     return res.status(200).json(response);
+
+//   } catch (error) {
+//     console.error("Error fetching tribes:", error);
+//     if (connection) connection.release();
+//     return res.status(500).json({ success: false, error: error.message });
+//   }
+// }
+
+
+
+
+
+// async function getTribes(req, res) {
+//   let connection;
+//   try {
+//     connection = await pool.getConnection();
+    
+//     // 1) Fetch all tribes
+//     const [tribes] = await connection.query(
+//       "SELECT id AS tribe_id, name FROM tribes"
+//     );
+    
+//     if (tribes.length === 0) {
+//       connection.release();
+//       return res.status(200).json({ success: true, data: [] });
+//     }
+
+//     // 2) Fetch all attributes for these tribes
+//     const [tribeAttrs] = await connection.query(`
+//       SELECT
+//         c.associated_table_id AS tribe_id,
+//         c.attribute_id,
+//         a.name AS attribute_name,
+//         a.description AS attribute_description,
+//         a.attribute_type_id,
+//         c.value AS attribute_value
+//       FROM content c
+//       JOIN attributes a ON c.attribute_id = a.id
+//       WHERE c.associated_table = 'tribe'
+//     `);
+
+//     // 3) Fetch all category items associated with any tribe
+//     const [categoryItems] = await connection.query(`
+//       SELECT 
+//         ci.id AS item_id,
+//         ci.category_id,
+//         ci.name AS item_name,
+//         ci.description AS item_description,
+//         cat.name AS category_name,
+//         c.attribute_id,
+//         c.value AS attribute_value,
+//         c.status AS content_status,
+//         a.name AS attribute_name,
+//         a.description AS attribute_description,
+//         a.attribute_type_id
+//       FROM category_items ci
+//       JOIN categories cat ON ci.category_id = cat.id
+//       JOIN content c ON c.associated_table = 'category_item' 
+//         AND c.associated_table_id = ci.id
+//       JOIN attributes a ON c.attribute_id = a.id
+//       WHERE EXISTS (
+//         SELECT 1 
+//         FROM content c2 
+//         WHERE c2.associated_table_id = ci.id 
+//         AND c2.associated_table = 'category_item'
+//         AND JSON_EXTRACT(c2.value, '$.value[0].associated_table') = 'tribes'
+//       )
+//     `);
+
+//     // 4) Initialize tribe map with basic structure
+//     const tribeMap = {};
+//     for (const t of tribes) {
+//       tribeMap[t.tribe_id] = {
+//         tribe_id: t.tribe_id,
+//         name: t.name,
+//         attributes: [],
+//         categories: {}
+//       };
+//     }
+
+//     // 5) Process tribe attributes
+//     for (const attr of tribeAttrs) {
+//       let parsedValue;
+//       try {
+//         parsedValue = typeof attr.attribute_value === 'string' 
+//           ? JSON.parse(attr.attribute_value) 
+//           : attr.attribute_value;
+//       } catch (e) {
+//         parsedValue = attr.attribute_value;
+//       }
+
+//       if (tribeMap[attr.tribe_id]) {
+//         tribeMap[attr.tribe_id].attributes.push({
+//           attribute_id: attr.attribute_id,
+//           attribute_name: attr.attribute_name,
+//           attribute_description: attr.attribute_description,
+//           attribute_type_id: attr.attribute_type_id,
+//           attribute_value: parsedValue
+//         });
+//       }
+//     }
+
+//     // 6) Process category items and their attributes
+//     const categoryItemMap = {};
+    
+//     for (const item of categoryItems) {
+//       const itemId = item.item_id;
+      
+//       // Parse the attribute value to get associated tribe
+//       let parsedAttrValue;
+//       try {
+//         parsedAttrValue = typeof item.attribute_value === 'string' 
+//           ? JSON.parse(item.attribute_value) 
+//           : item.attribute_value;
+//       } catch (e) {
+//         parsedAttrValue = item.attribute_value;
+//       }
+
+//       // If this is a tribe relation attribute, process it
+//       if (item.attribute_type_id === 6 && parsedAttrValue?.value?.[0]?.associated_table === 'tribes') {
+//         const tribeId = parsedAttrValue.value[0].associated_table_id;
+
+//         if (!categoryItemMap[itemId]) {
+//           categoryItemMap[itemId] = {
+//             item_id: itemId,
+//             category_id: item.category_id,
+//             category_name: item.category_name,
+//             name: item.item_name,
+//             description: item.item_description,
+//             attributes: []
+//           };
+//         }
+
+//         // Add attribute to category item
+//         categoryItemMap[itemId].attributes.push({
+//           attribute_id: item.attribute_id,
+//           attribute_name: item.attribute_name,
+//           attribute_description: item.attribute_description,
+//           attribute_type_id: item.attribute_type_id,
+//           attribute_value: parsedAttrValue,
+//           content_status: item.content_status
+//         });
+
+//         // Add category item to corresponding tribe's categories
+//         if (tribeMap[tribeId]) {
+//           if (!tribeMap[tribeId].categories[item.category_name]) {
+//             tribeMap[tribeId].categories[item.category_name] = [];
+//           }
+//           if (!tribeMap[tribeId].categories[item.category_name].find(ci => ci.item_id === itemId)) {
+//             tribeMap[tribeId].categories[item.category_name].push(categoryItemMap[itemId]);
+//           }
+//         }
+//       }
+//     }
+
+//     // 7) Process media attributes if needed
+//     for (const tribeId in tribeMap) {
+//       const processedAttributes = await processMediaAttributes(connection, tribeMap[tribeId].attributes);
+//       tribeMap[tribeId].attributes = processedAttributes;
+//     }
+
+//     connection.release();
+//     return res.status(200).json({
+//       success: true,
+//       data: Object.values(tribeMap)
+//     });
+
+//   } catch (error) {
+//     console.error("Error fetching tribes:", error);
+//     if (connection) connection.release();
+//     return res.status(500).json({ success: false, error: error.message });
+//   }
+// }
+
 async function getTribes(req, res) {
   let connection;
   try {
     connection = await pool.getConnection();
+    
     // 1) Fetch all tribes
     const [tribes] = await connection.query(
       "SELECT id AS tribe_id, name FROM tribes"
     );
+    
     if (tribes.length === 0) {
       connection.release();
       return res.status(200).json({ success: true, data: [] });
     }
 
     // 2) Fetch all attributes for these tribes
-    const [attrs] = await connection.query(`
+    const [tribeAttrs] = await connection.query(`
       SELECT
         c.associated_table_id AS tribe_id,
         c.attribute_id,
@@ -207,58 +462,149 @@ async function getTribes(req, res) {
       WHERE c.associated_table = 'tribe'
     `);
 
-    // 3) Merge attributes into a map of tribe_id => { tribe_id, name, attributes: [...] }
+    // 3) First get all category items that are associated with tribes
+    const [linkedCategoryItems] = await connection.query(`
+      SELECT DISTINCT
+        ci.id AS item_id,
+        ci.category_id,
+        c.associated_table_id,
+        JSON_EXTRACT(c.value, '$.value[0].associated_table_id') AS tribe_id
+      FROM category_items ci
+      JOIN content c ON c.associated_table = 'category_item' 
+        AND c.associated_table_id = ci.id
+      JOIN attributes a ON c.attribute_id = a.id
+      WHERE a.attribute_type_id = 6 
+      AND JSON_EXTRACT(c.value, '$.value[0].associated_table') = 'tribes'
+    `);
+
+    // Create a map of item_ids that are linked to tribes
+    const linkedItemIds = linkedCategoryItems.map(item => item.item_id);
+
+    // 4) Then fetch ALL attributes for those category items
+    const [categoryItems] = await connection.query(`
+      SELECT 
+        ci.id AS item_id,
+        ci.category_id,
+        ci.name AS item_name,
+        ci.description AS item_description,
+        cat.name AS category_name,
+        c.attribute_id,
+        c.value AS attribute_value,
+        c.status AS content_status,
+        a.name AS attribute_name,
+        a.description AS attribute_description,
+        a.attribute_type_id
+      FROM category_items ci
+      JOIN categories cat ON ci.category_id = cat.id
+      JOIN content c ON c.associated_table = 'category_item' 
+        AND c.associated_table_id = ci.id
+      JOIN attributes a ON c.attribute_id = a.id
+      WHERE ci.id IN (${linkedItemIds.join(',')})
+    `);
+
+    // 5) Initialize tribe map with basic structure
     const tribeMap = {};
     for (const t of tribes) {
       tribeMap[t.tribe_id] = {
         tribe_id: t.tribe_id,
         name: t.name,
         attributes: [],
+        categories: {}
       };
     }
 
-    // Group attributes by tribe_id for batch processing
-    const tribeAttributes = {};
-    for (const r of attrs) {
+    // 6) Process tribe attributes
+    for (const attr of tribeAttrs) {
       let parsedValue;
-      if (typeof r.attribute_value === "string") {
-        try {
-          parsedValue = JSON.parse(r.attribute_value);
-        } catch (e) {
-          parsedValue = r.attribute_value;
-        }
-      } else {
-        parsedValue = r.attribute_value;
+      try {
+        parsedValue = typeof attr.attribute_value === 'string' 
+          ? JSON.parse(attr.attribute_value) 
+          : attr.attribute_value;
+      } catch (e) {
+        parsedValue = attr.attribute_value;
       }
 
-      const attribute = {
-        attribute_id: r.attribute_id,
-        attribute_name: r.attribute_name,
-        attribute_description: r.attribute_description,
-        attribute_type_id: r.attribute_type_id,
-        attribute_value: parsedValue,
-      };
-
-      if (!tribeAttributes[r.tribe_id]) {
-        tribeAttributes[r.tribe_id] = [];
+      if (tribeMap[attr.tribe_id]) {
+        tribeMap[attr.tribe_id].attributes.push({
+          attribute_id: attr.attribute_id,
+          attribute_name: attr.attribute_name,
+          attribute_description: attr.attribute_description,
+          attribute_type_id: attr.attribute_type_id,
+          attribute_value: parsedValue
+        });
       }
-      tribeAttributes[r.tribe_id].push(attribute);
     }
 
-    // Process media attributes for each tribe
-    for (const tribeId in tribeAttributes) {
-      const processedAttributes = await processMediaAttributes(connection, tribeAttributes[tribeId]);
+    // 7) Process category items and their attributes
+    const categoryItemMap = {};
+    
+    // First, organize items by their IDs
+    for (const linkedItem of linkedCategoryItems) {
+      const tribeId = JSON.parse(linkedItem.tribe_id);
+      const itemId = linkedItem.item_id;
+
+      // Initialize the item in the map if it doesn't exist
+      if (!categoryItemMap[itemId]) {
+        const itemDetails = categoryItems.find(item => item.item_id === itemId);
+        if (itemDetails) {
+          categoryItemMap[itemId] = {
+            item_id: itemId,
+            category_id: itemDetails.category_id,
+            category_name: itemDetails.category_name,
+            name: itemDetails.item_name,
+            description: itemDetails.item_description,
+            attributes: []
+          };
+        }
+      }
+
+      // Add all attributes for this item
+      const itemAttributes = categoryItems.filter(item => item.item_id === itemId);
+      for (const attr of itemAttributes) {
+        let parsedValue;
+        try {
+          parsedValue = typeof attr.attribute_value === 'string' 
+            ? JSON.parse(attr.attribute_value) 
+            : attr.attribute_value;
+        } catch (e) {
+          parsedValue = attr.attribute_value;
+        }
+
+        if (categoryItemMap[itemId]) {
+          categoryItemMap[itemId].attributes.push({
+            attribute_id: attr.attribute_id,
+            attribute_name: attr.attribute_name,
+            attribute_description: attr.attribute_description,
+            attribute_type_id: attr.attribute_type_id,
+            attribute_value: parsedValue,
+            content_status: attr.content_status
+          });
+        }
+      }
+
+      // Add the item to the appropriate tribe's categories
+      if (tribeMap[tribeId]) {
+        const categoryName = categoryItemMap[itemId].category_name;
+        if (!tribeMap[tribeId].categories[categoryName]) {
+          tribeMap[tribeId].categories[categoryName] = [];
+        }
+        if (!tribeMap[tribeId].categories[categoryName].find(ci => ci.item_id === itemId)) {
+          tribeMap[tribeId].categories[categoryName].push(categoryItemMap[itemId]);
+        }
+      }
+    }
+
+    // 8) Process media attributes if needed
+    for (const tribeId in tribeMap) {
+      const processedAttributes = await processMediaAttributes(connection, tribeMap[tribeId].attributes);
       tribeMap[tribeId].attributes = processedAttributes;
     }
 
-    // 4) Return as array
-    const response = {
-      success: true,
-      data: Object.values(tribeMap),
-    };
-
     connection.release();
-    return res.status(200).json(response);
+    return res.status(200).json({
+      success: true,
+      data: Object.values(tribeMap)
+    });
 
   } catch (error) {
     console.error("Error fetching tribes:", error);
@@ -266,7 +612,6 @@ async function getTribes(req, res) {
     return res.status(500).json({ success: false, error: error.message });
   }
 }
-
 // ----------------------------------------------------
 // 3) PATCH /api/tribe
 // Add or update attribute content for an existing tribe

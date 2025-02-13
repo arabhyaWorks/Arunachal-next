@@ -547,7 +547,15 @@ INSERT INTO attributes (attribute_type_id, name, description, is_required) VALUE
     (1, 'tribe-About', 'Description about the tribe', true),
     (1, 'tribe-History', 'Historical information of tribe', true),
     (1, 'tribe-Distribution', 'Geographical distribution of tribe', true),
-    (9, 'tribe-Tribe-VideosOfTheTribe', 'Videos of the tribe', true);
+    (9, 'tribe-Tribe-VideosOfTheTribe', 'Videos of the tribe', true),
+    (1, 'tribe-Tribe-Regions', 'Regions of the tribe', true),
+    (1, 'tribe-Tribe-Population', 'Population of the tribe', true),
+    (1, 'tribe-Tribe-Language', 'Language of the tribe', true),
+    (2, 'tribe-Tribe-TraditionalDresses', 'Traditional dresses of the tribe', true),
+    (2, 'tribe-Tribe-Arts&Crafts', 'Arts & Crafts of the tribe', true),
+    (2, 'tribe-Tribe-TraditionalCuisine', 'Traditional Cuisine of the tribe', true);
+
+
 
 -- Configure display order for these tribe attributes using window function (MySQL 8.0+)
 INSERT INTO tribe_attribute_config (attribute_id, display_order)
