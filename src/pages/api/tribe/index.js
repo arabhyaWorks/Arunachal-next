@@ -1,5 +1,6 @@
 import pool from "../../../utils/db";
-import processMediaIfNeeded from "../../../utils/processMedia";
+import processMediaAttributes from "../../../utils/processMediaAttribute";
+import processMediaIfNeeded from '../../../utils/processMedia'
 
 // *** If you have a local "attributeTypes" import, do it here.
 // import attributeTypes from "../../../utils/attributeTypes"; // optional
@@ -30,7 +31,7 @@ async function createTribe(req, res) {
   try {
     const { name, attributes, user_id } = req.body;
 
-    if (!name || !user_id || !attributes[0].attribute_type_id) {
+    if (!name || !user_id) {
       return res
         .status(400)
         .json({ success: false, error: "Name and user_id are required" });
@@ -136,8 +137,7 @@ async function createTribe(req, res) {
           connection,
           attr.attribute_type_id,
           validValue,
-          user_id,
-          tribeId,
+          user_id
         );
 
         // Insert into content
@@ -182,8 +182,9 @@ async function createTribe(req, res) {
 // Fetch all tribes & attributes
 // ----------------------------------------------------
 async function getTribes(req, res) {
+  let connection;
   try {
-    const connection = await pool.getConnection();
+    connection = await pool.getConnection();
     // 1) Fetch all tribes
     const [tribes] = await connection.query(
       "SELECT id AS tribe_id, name FROM tribes"
@@ -206,7 +207,6 @@ async function getTribes(req, res) {
       JOIN attributes a ON c.attribute_id = a.id
       WHERE c.associated_table = 'tribe'
     `);
-    connection.release();
 
     // 3) Merge attributes into a map of tribe_id => { tribe_id, name, attributes: [...] }
     const tribeMap = {};
@@ -218,11 +218,13 @@ async function getTribes(req, res) {
       };
     }
 
+    // Group attributes by tribe_id for batch processing
+    const tribeAttributes = {};
     for (const r of attrs) {
       let parsedValue;
       if (typeof r.attribute_value === "string") {
         try {
-          parsedValue = JSON.parse(r.attribute_value); // e.g. { value: "some text" }
+          parsedValue = JSON.parse(r.attribute_value);
         } catch (e) {
           parsedValue = r.attribute_value;
         }
@@ -230,22 +232,38 @@ async function getTribes(req, res) {
         parsedValue = r.attribute_value;
       }
 
-      tribeMap[r.tribe_id].attributes.push({
+      const attribute = {
         attribute_id: r.attribute_id,
         attribute_name: r.attribute_name,
         attribute_description: r.attribute_description,
         attribute_type_id: r.attribute_type_id,
         attribute_value: parsedValue,
-      });
+      };
+
+      if (!tribeAttributes[r.tribe_id]) {
+        tribeAttributes[r.tribe_id] = [];
+      }
+      tribeAttributes[r.tribe_id].push(attribute);
+    }
+
+    // Process media attributes for each tribe
+    for (const tribeId in tribeAttributes) {
+      const processedAttributes = await processMediaAttributes(connection, tribeAttributes[tribeId]);
+      tribeMap[tribeId].attributes = processedAttributes;
     }
 
     // 4) Return as array
-    return res.status(200).json({
+    const response = {
       success: true,
       data: Object.values(tribeMap),
-    });
+    };
+
+    connection.release();
+    return res.status(200).json(response);
+
   } catch (error) {
     console.error("Error fetching tribes:", error);
+    if (connection) connection.release();
     return res.status(500).json({ success: false, error: error.message });
   }
 }
@@ -324,8 +342,7 @@ async function updateTribe(req, res) {
           connection,
           attribute_type_id,
           validValue,
-          user_id,
-          tribe_id,
+          user_id
         );
 
         const strValue = JSON.stringify(storedValue);
@@ -504,6 +521,62 @@ async function validateValue(connection, attribute_id, userValue) {
   }
 
   return { errorMsg: null, validValue: userValue };
+}
+
+
+// ----------------------------------------------------
+// createOrUpdateDocuments => modifies document table
+// ----------------------------------------------------
+async function createOrUpdateDocuments(connection, documents, user_id) {
+  if (!Array.isArray(documents) || documents.length === 0) return [];
+  const documentIds = [];
+
+  for (const doc of documents) {
+    const { id, title, description, file_path, thumbnail_path, mime_type, status } = doc;
+    if (!title || !file_path || !mime_type || !user_id) {
+      throw new Error("Missing required fields for document upload");
+    }
+
+    if (id) {
+      // update existing
+      await connection.query(
+        `UPDATE document
+         SET title=?, description=?, file_path=?, thumbnail_path=?,
+             mime_type=?, status=?, updated_by=?
+         WHERE id=?`,
+        [
+          title,
+          description || "",
+          file_path,
+          thumbnail_path || "",
+          mime_type,
+          status || "pending",
+          user_id,
+          id
+        ]
+      );
+      documentIds.push(id);
+    } else {
+      // create new
+      const [result] = await connection.query(
+        `INSERT INTO document
+         (title, description, file_path, thumbnail_path,
+          media_type, mime_type, status, created_by)
+         VALUES (?, ?, ?, ?, 'document', ?, ?, ?)`,
+        [
+          title,
+          description || "",
+          file_path,
+          thumbnail_path || "",
+          mime_type,
+          status || "pending",
+          user_id
+        ]
+      );
+      documentIds.push(result.insertId);
+    }
+  }
+  return documentIds;
 }
 
 // ----------------------------------------------------

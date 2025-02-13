@@ -1,6 +1,7 @@
 import pool from "../../../utils/db";
 import attributeTypes from "../../../utils/attributeTypes";
-import processMediaIfNeeded from '../../../utils/processMedia'
+import processMediaIfNeeded from '../../../utils/processMedia';
+import processMediaAttributes from '../../../utils/processMediaAttribute'
 
 // Assumed constant for "Relations" type (i.e. for tribe references)
 const RELATIONS_TYPE_ID = 6;
@@ -215,6 +216,9 @@ async function getCategoryItems(req, res) {
         };
       });
 
+      const processedAttributes = await processMediaAttributes(connection, attributes);
+
+
       return res.status(200).json({
         success: true,
         data: {
@@ -222,7 +226,7 @@ async function getCategoryItems(req, res) {
           category_id: item.category_id,
           name: item.name,
           description: item.description,
-          attributes,
+          attributes : processedAttributes,
         },
       });
     } else if (category_id) {
