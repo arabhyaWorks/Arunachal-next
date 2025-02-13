@@ -476,18 +476,14 @@ VALUES
   '{
     "type": "mediaStorage",
     "example": {
-      "files": [
-        {
+      "value":{
           "url": "https://example.com/img1.jpg",
-          "aspect_ratio": "16:9",
           "type": "image/jpeg",
-          "description": "Sample image",
           "timestamp": "2025-02-09"
         }
-      ]
     }
   }',
-  '{"type":"image","schema":{"title":"string","description":"string","file_path":"string","thumbnail_path":"string","media_type":"image","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
+  '{"type":"image","schema":{"title":"string","description":"string","associated_tribe_id": "string", "associated_category_id": "string", "associated_category_item_id": "string","file_path":"string","thumbnail_path":"string","media_type":"image","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
 ),
 -- 8) Audio
 (
@@ -500,7 +496,7 @@ VALUES
       "value": [11,2121,2121]
     }
   }',
-  '{"type":"audio","schema":{"title":"string","description":"string","file_path":"string","thumbnail_path":"string","lyrics":"string","genre":"array","composer":"string","performers":"array","instruments":"array","media_type":"audio","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
+  '{"type":"audio","schema":{"title":"string","description":"string","associated_tribe_id": "string", "associated_category_id": "string", "associated_category_item_id": "string", "file_path":"string","thumbnail_path":"string","lyrics":"string","genre":"array","composer":"string","performers":"array","instruments":"array","media_type":"audio","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
 ),
 -- 9) Video
 (
@@ -513,7 +509,7 @@ VALUES
       "value": [99,100]
     }
   }',
-  '{"type":"video","schema":{"title":"string","description":"string","file_path":"string","thumbnail_path":"string","media_type":"video","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
+  '{"type":"video","schema":{"title":"string","description":"string","associated_tribe_id": "string", "associated_category_id": "string", "associated_category_item_id": "string", "file_path":"string","thumbnail_path":"string","media_type":"video","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
 ),
 -- 10) Document
 (
@@ -526,7 +522,20 @@ VALUES
       "value": [123,456]
     }
   }',
-  '{"type":"document","schema":{"title":"string","description":"string","file_path":"string","thumbnail_path":"string","media_type":"document","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
+  '{"type":"document","schema":{"title":"string","description":"string","associated_tribe_id": "string", "associated_category_id": "string", "associated_category_item_id": "string", "file_path":"string","thumbnail_path":"string","media_type":"document","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
+),
+-- 11) Advanced Image
+(
+  'Advance Image',
+  'Advance image storage',
+  '{"allowed_types":["image/jpeg","image/png","image/webp"],"max_size_mb":{"image":10}}',
+  '{
+    "type": "mediaStorage",
+    "example": {
+      "value": [123,456]
+    }
+  }',
+  '{"type":"image","schema":{"title":"string","description":"string","associated_tribe_id": "string", "associated_category_id": "string", "associated_category_item_id": "string", "file_path":"string","media_type":"image","mime_type":"string","status":"string","created_at":"timestamp","updated_at":"timestamp","created_by":"int","updated_by":"int"}}'
 );
 
 -- ======================================================
@@ -537,7 +546,8 @@ VALUES
 INSERT INTO attributes (attribute_type_id, name, description, is_required) VALUES
     (1, 'tribe-About', 'Description about the tribe', true),
     (1, 'tribe-History', 'Historical information of tribe', true),
-    (1, 'tribe-Distribution', 'Geographical distribution of tribe', true);
+    (1, 'tribe-Distribution', 'Geographical distribution of tribe', true),
+    (9, 'tribe-Tribe-VideosOfTheTribe', 'Videos of the tribe', true);
 
 -- Configure display order for these tribe attributes using window function (MySQL 8.0+)
 INSERT INTO tribe_attribute_config (attribute_id, display_order)

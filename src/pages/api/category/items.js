@@ -1,5 +1,6 @@
 import pool from "../../../utils/db";
 import attributeTypes from "../../../utils/attributeTypes";
+import processMediaIfNeeded from '../../../utils/processMedia'
 
 // Assumed constant for "Relations" type (i.e. for tribe references)
 const RELATIONS_TYPE_ID = 6;
@@ -391,129 +392,6 @@ async function updateCategoryItem(req, res) {
   }
 }
 
-/* =========================================================================
-   HELPER FUNCTIONS
-   ========================================================================= */
-
-/**
- * processMediaIfNeeded:
- *   If the attribute_type_id indicates media (Audio, Video, Document),
- *   call the corresponding createOrUpdate functions.
- *   Otherwise, simply return the attribute_value.
- */
-async function processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id) {
-  let storedValue = attribute_value;
-  if (attribute_type_id === 8) {
-    storedValue = await createOrUpdateAudio(connection, attribute_value, user_id);
-  } else if (attribute_type_id === 9) {
-    storedValue = await createOrUpdateVideos(connection, attribute_value);
-  } else if (attribute_type_id === 10) {
-    storedValue = await createOrUpdateDocuments(connection, attribute_value, user_id);
-  }
-  return storedValue;
-}
-
-/**
- * createOrUpdateAudio:
- *   Combines your create and update logic for audio.
- */
-async function createOrUpdateAudio(connection, audioData, user_id) {
-  if (!Array.isArray(audioData) || audioData.length === 0) return [];
-  const audioIds = [];
-  for (const audio of audioData) {
-    const { id, title, description, file_path, thumbnail_path, lyrics, genre, composer, performers, instruments, mime_type } = audio;
-    if (!title || !file_path || !mime_type || !user_id) {
-      throw new Error("Missing required fields for audio upload");
-    }
-    if (id) {
-      await connection.query(
-        `UPDATE audio 
-         SET title=?, description=?, file_path=?, thumbnail_path=?, lyrics=?, 
-             genre=?, composer=?, performers=?, instruments=?, mime_type=?, updated_by=?
-         WHERE id=?`,
-        [
-          title, description || "", file_path, thumbnail_path || "", lyrics || "",
-          JSON.stringify(genre || []), composer || "",
-          JSON.stringify(performers || []), JSON.stringify(instruments || []),
-          mime_type, user_id, id,
-        ]
-      );
-      audioIds.push(id);
-    } else {
-      const [result] = await connection.query(
-        `INSERT INTO audio 
-         (title, description, file_path, thumbnail_path, lyrics, genre, composer, performers, instruments, mime_type, created_by) 
-         VALUES (?,?,?,?,?,?,?,?,?,?,?)`,
-        [
-          title, description || "", file_path, thumbnail_path || "", lyrics || "",
-          JSON.stringify(genre || []), composer || "",
-          JSON.stringify(performers || []), JSON.stringify(instruments || []),
-          mime_type, user_id,
-        ]
-      );
-      audioIds.push(result.insertId);
-    }
-  }
-  return audioIds;
-}
-
-async function createOrUpdateVideos(connection, videos) {
-  if (!Array.isArray(videos) || videos.length === 0) return [];
-  const videoIds = [];
-  for (const video of videos) {
-    const { id, title, description, file_path, thumbnail_path, mime_type, created_by, status } = video;
-    if (!title || !file_path || !mime_type || !created_by) {
-      throw new Error("Missing required fields for video upload");
-    }
-    if (id) {
-      await connection.query(
-        `UPDATE video 
-         SET title=?, description=?, file_path=?, thumbnail_path=?, mime_type=?, status=?, updated_by=?
-         WHERE id=?`,
-        [title, description || "", file_path, thumbnail_path || "", mime_type, status || "pending", created_by, id]
-      );
-      videoIds.push(id);
-    } else {
-      const [result] = await connection.query(
-        `INSERT INTO video 
-         (title, description, file_path, thumbnail_path, media_type, mime_type, status, created_by) 
-         VALUES (?, ?, ?, ?, 'video', ?, ?, ?)`,
-        [title, description || "", file_path, thumbnail_path || "", mime_type, status || "pending", created_by]
-      );
-      videoIds.push(result.insertId);
-    }
-  }
-  return videoIds;
-}
-
-async function createOrUpdateDocuments(connection, documents, user_id) {
-  if (!Array.isArray(documents) || documents.length === 0) return [];
-  const documentIds = [];
-  for (const doc of documents) {
-    const { id, title, description, file_path, thumbnail_path, mime_type, status } = doc;
-    if (!title || !file_path || !mime_type || !user_id) {
-      throw new Error("Missing required fields for document upload");
-    }
-    if (id) {
-      await connection.query(
-        `UPDATE document 
-         SET title=?, description=?, file_path=?, thumbnail_path=?, mime_type=?, status=?, updated_by=?
-         WHERE id=?`,
-        [title, description || "", file_path, thumbnail_path || "", mime_type, status || "pending", user_id, id]
-      );
-      documentIds.push(id);
-    } else {
-      const [result] = await connection.query(
-        `INSERT INTO document 
-         (title, description, file_path, thumbnail_path, media_type, mime_type, status, created_by)
-         VALUES (?, ?, ?, ?, 'document', ?, ?, ?)`,
-        [title, description || "", file_path, thumbnail_path || "", mime_type, status || "pending", user_id]
-      );
-      documentIds.push(result.insertId);
-    }
-  }
-  return documentIds;
-}
 
 /**
  * upsertApprovalsForTribes:

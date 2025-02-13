@@ -134,7 +134,13 @@ const TribeManagement = () => {
           };
         });
 
-      console.log(attributeArray);
+      console.log({
+        name: newTribeName,
+        attributes: attributeArray,
+        user_id: 1
+      });
+
+      
 
       const response = await fetch('/api/tribe', {
         method: 'POST',
