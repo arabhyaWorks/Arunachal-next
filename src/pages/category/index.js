@@ -152,14 +152,7 @@ const CategoryManagement = () => {
     setLoading(true);
     setError("");
     try {
-      const formattedName = formatAttributeName(newAttribute.name);
-      const attributeName = formattedName.startsWith("cat-")
-        ? formattedName
-        : `cat-${formatAttributeName(
-            categories.find(
-              (cat) => cat.id.toString() === selectedCategoryForAttr
-            )?.name || ""
-          )}-${formattedName}`;
+    
       const response = await fetch("/api/category/attributes", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -169,7 +162,7 @@ const CategoryManagement = () => {
             categories.find(
               (cat) => cat.id.toString() === selectedCategoryForAttr
             )?.name || "",
-          attribute_name: attributeName,
+          attribute_name: newAttribute.name,
           description: newAttribute.description,
           attribute_type_id: parseInt(newAttribute.attribute_type_id),
           is_required: newAttribute.is_required,

@@ -181,8 +181,6 @@ async function createTribe(req, res) {
 // Fetch all tribes & attributes
 // ----------------------------------------------------
 
-// Sending attributes as an array of objects
-// Returning all the tribes attributes and category with attributes
 // async function getTribes(req, res) {
 //   let connection;
 //   try {
@@ -227,18 +225,18 @@ async function createTribe(req, res) {
 //       AND JSON_EXTRACT(c.value, '$.value[0].associated_table') = 'tribes'
 //     `);
 
-//     // Initialize tribe map with basic structure
+//     // Initialize tribe map with basic structure; attributes as an object
 //     const tribeMap = {};
 //     for (const t of tribes) {
 //       tribeMap[t.tribe_id] = {
 //         tribe_id: t.tribe_id,
 //         name: t.name,
-//         attributes: [],
+//         attributes: {},
 //         categories: {},
 //       };
 //     }
 
-//     // Process tribe attributes
+//     // Process tribe attributes, storing them as an object keyed by attribute_name
 //     for (const attr of tribeAttrs) {
 //       let parsedValue;
 //       try {
@@ -251,17 +249,17 @@ async function createTribe(req, res) {
 //       }
 
 //       if (tribeMap[attr.tribe_id]) {
-//         tribeMap[attr.tribe_id].attributes.push({
+//         tribeMap[attr.tribe_id].attributes[attr.attribute_name] = {
 //           attribute_id: attr.attribute_id,
 //           attribute_name: attr.attribute_name,
 //           attribute_description: attr.attribute_description,
 //           attribute_type_id: attr.attribute_type_id,
 //           attribute_value: parsedValue,
-//         });
+//         };
 //       }
 //     }
 
-//     // Only process category items if there are any linked items
+//     // Process category items if there are any linked items
 //     if (linkedCategoryItems.length > 0) {
 //       const linkedItemIds = linkedCategoryItems.map((item) => item.item_id);
 
@@ -309,12 +307,12 @@ async function createTribe(req, res) {
 //               category_name: itemDetails.category_name,
 //               name: itemDetails.item_name,
 //               description: itemDetails.item_description,
-//               attributes: [],
+//               attributes: {}, // attributes as an object
 //             };
 //           }
 //         }
 
-//         // Add all attributes for this item
+//         // Add all attributes for this item as an object keyed by attribute_name
 //         const itemAttributes = categoryItems.filter(
 //           (item) => item.item_id === itemId
 //         );
@@ -330,14 +328,14 @@ async function createTribe(req, res) {
 //           }
 
 //           if (categoryItemMap[itemId]) {
-//             categoryItemMap[itemId].attributes.push({
+//             categoryItemMap[itemId].attributes[attr.attribute_name] = {
 //               attribute_id: attr.attribute_id,
 //               attribute_name: attr.attribute_name,
 //               attribute_description: attr.attribute_description,
 //               attribute_type_id: attr.attribute_type_id,
 //               attribute_value: parsedValue,
 //               content_status: attr.content_status,
-//             });
+//             };
 //           }
 //         }
 
@@ -364,9 +362,15 @@ async function createTribe(req, res) {
 //     for (const tribeId in tribeMap) {
 //       const processedAttributes = await processMediaAttributes(
 //         connection,
-//         tribeMap[tribeId].attributes
+//         Object.values(tribeMap[tribeId].attributes)
 //       );
-//       tribeMap[tribeId].attributes = processedAttributes;
+//       // (Optional) If you need the processed attributes back in an object keyed by attribute_name,
+//       // you can map them back into an object.
+//       const attributeObject = {};
+//       processedAttributes.forEach((attr) => {
+//         attributeObject[attr.attribute_name] = attr;
+//       });
+//       tribeMap[tribeId].attributes = attributeObject;
 //     }
 
 //     connection.release();
@@ -433,6 +437,7 @@ async function getTribes(req, res) {
         name: t.name,
         attributes: {},
         categories: {},
+        media: {} // This will hold media records
       };
     }
 
@@ -558,14 +563,75 @@ async function getTribes(req, res) {
       }
     }
 
-    // Process media attributes if needed
+    // Fetch media records (image, audio, video, document) for the tribes
+    const tribeIds = tribes.map((t) => t.tribe_id);
+
+    // Query each media table for records where associated_tribe_id is in the tribeIds list
+    const [images] = await connection.query(
+      "SELECT * FROM image WHERE associated_tribe_id IN (?)",
+      [tribeIds]
+    );
+    const [audios] = await connection.query(
+      "SELECT * FROM audio WHERE associated_tribe_id IN (?)",
+      [tribeIds]
+    );
+    const [videos] = await connection.query(
+      "SELECT * FROM video WHERE associated_tribe_id IN (?)",
+      [tribeIds]
+    );
+    const [documents] = await connection.query(
+      "SELECT * FROM document WHERE associated_tribe_id IN (?)",
+      [tribeIds]
+    );
+
+    // Group media by tribe and assign to the tribeMap
+    images.forEach((img) => {
+      const tribeId = img.associated_tribe_id;
+      if (tribeMap[tribeId]) {
+        if (!tribeMap[tribeId].media.images) {
+          tribeMap[tribeId].media.images = [];
+        }
+        tribeMap[tribeId].media.images.push(img);
+      }
+    });
+
+    audios.forEach((audio) => {
+      const tribeId = audio.associated_tribe_id;
+      if (tribeMap[tribeId]) {
+        if (!tribeMap[tribeId].media.audios) {
+          tribeMap[tribeId].media.audios = [];
+        }
+        tribeMap[tribeId].media.audios.push(audio);
+      }
+    });
+
+    videos.forEach((video) => {
+      const tribeId = video.associated_tribe_id;
+      if (tribeMap[tribeId]) {
+        if (!tribeMap[tribeId].media.videos) {
+          tribeMap[tribeId].media.videos = [];
+        }
+        tribeMap[tribeId].media.videos.push(video);
+      }
+    });
+
+    documents.forEach((doc) => {
+      const tribeId = doc.associated_tribe_id;
+      if (tribeMap[tribeId]) {
+        if (!tribeMap[tribeId].media.documents) {
+          tribeMap[tribeId].media.documents = [];
+        }
+        tribeMap[tribeId].media.documents.push(doc);
+      }
+    });
+
+    // Process media attributes if needed (this example assumes you want to process tribe attributes)
     for (const tribeId in tribeMap) {
       const processedAttributes = await processMediaAttributes(
         connection,
         Object.values(tribeMap[tribeId].attributes)
       );
-      // (Optional) If you need the processed attributes back in an object keyed by attribute_name,
-      // you can map them back into an object.
+      // Map them back into an object keyed by attribute_name.
       const attributeObject = {};
       processedAttributes.forEach((attr) => {
         attributeObject[attr.attribute_name] = attr;

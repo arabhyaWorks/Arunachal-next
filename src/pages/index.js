@@ -127,8 +127,6 @@ const TribeManagement = () => {
             (attr) => attr.id.toString() === id
           );
 
-          // console.log(value);
-
           return {
             attribute_id: parseInt(id),
             attribute_name: attribute.name,
@@ -143,26 +141,26 @@ const TribeManagement = () => {
         user_id: 1,
       });
 
-      // const response = await fetch("/api/tribe", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({
-      //     name: newTribeName,
-      //     attributes: attributeArray,
-      //     user_id: 1,
-      //   }),
-      // });
+      const response = await fetch("/api/tribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: newTribeName,
+          attributes: attributeArray,
+          user_id: 1,
+        }),
+      });
       
 
-      // const data = await response.json();
-      // if (data.success) {
-      //   setNewTribeName("");
-      //   setAttributeValues({});
-      //   fetchTribes();
-      //   setError("");
-      // } else {
-      //   setError(data.error || "Failed to create tribe");
-      // }
+      const data = await response.json();
+      if (data.success) {
+        setNewTribeName("");
+        setAttributeValues({});
+        fetchTribes();
+        setError("");
+      } else {
+        setError(data.error || "Failed to create tribe");
+      }
     } catch (error) {
       setError("Error creating tribe: " + error.message);
     }

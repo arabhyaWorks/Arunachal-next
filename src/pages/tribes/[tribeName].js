@@ -267,8 +267,8 @@ export default function TribePage() {
                 <MapPin className="h-4 w-4" />
                 <span>
                   {
-                    tribes[0]?.attributes["tribe-Settlements"].attribute_value
-                      .value
+                    tribes[0]?.attributes["tribe-Regions"].attribute_value
+                      .value.join(", ")
                   }
                 </span>
               </div>
@@ -509,7 +509,7 @@ export default function TribePage() {
                 className={`relative ${!showHistoryFull && "max-h-48 overflow-hidden"}`}
               >
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                  {tribes[0]?.attributes["tribe-About"].attribute_value.value}
+                  {tribes[0]?.attributes["tribe-History"].attribute_value.value}
                 </p>
                 {!showHistoryFull && (
                   <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-gray-800 to-transparent" />
@@ -606,7 +606,7 @@ export default function TribePage() {
                         tribes[0]?.attributes["tribe-Settlements"]
                           .attribute_value.value
                       }{" "}
-                      Approximately
+                      {/* Approximately */}
                     </span>
                   </div>
                 </div>
@@ -637,23 +637,23 @@ export default function TribePage() {
             </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-            {tribeData.gallery.map((image, index) => (
+            {tribes[0].attributes["tribe-ImagesOfTheTribe"].attribute_value.value.map((file, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 className="relative aspect-[4/3] rounded-xl overflow-hidden group cursor-pointer"
-                onClick={() => setSelectedImage(image)}
+                onClick={() => setSelectedImage(file.file_path)}
               >
                 <img
-                  src={image}
-                  alt={`${tribeData.name} Gallery ${index + 1}`}
+                  src={file.file_path}
+                  alt={`${file.title} Gallery ${index + 1}`}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                   <div className="absolute bottom-4 left-4">
-                    <p className="text-white text-sm font-medium">View Image</p>
+                    <p className="text-white text-sm font-medium">{file.title}</p>
                   </div>
                 </div>
               </motion.div>

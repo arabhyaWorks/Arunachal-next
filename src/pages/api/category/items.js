@@ -59,6 +59,7 @@ export default async function handler(req, res) {
 async function createCategoryItem(req, res) {
   try {
     const { category_id, name, description, user_id, attributes } = req.body;
+
     if (!category_id || !name || !user_id) {
       return res.status(400).json({
         success: false,
@@ -99,6 +100,7 @@ async function createCategoryItem(req, res) {
     // 3) Extract tribe references from the attributes.
     // We expect one of the attributes to be the "Tribes" attribute (i.e. attribute_type_id === RELATIONS_TYPE_ID)
     let tribeReferences = null;
+    let associated_tribe_id = null;
     for (const attr of attributes) {
       if (attr.attribute_type_id === RELATIONS_TYPE_ID) {
         tribeReferences = attr.attribute_value;
@@ -113,7 +115,10 @@ async function createCategoryItem(req, res) {
       });
     }
 
-    // 4) Insert the category item record
+    associated_tribe_id = tribeReferences.value[0].associated_table_id;
+    console.log("associated tribe id", associated_tribe_id);
+
+    // 4) Insert the category item ecord
     const [result] = await connection.query(
       `INSERT INTO category_items (category_id, name, description, created_by)
        VALUES (?, ?, ?, ?)`,
@@ -127,7 +132,7 @@ async function createCategoryItem(req, res) {
         const { attribute_id, attribute_type_id, attribute_name, attribute_value } = attr;
 
         // Process media if needed; otherwise, use the value directly.
-        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, null, category_id, itemId);
+        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, associated_tribe_id, category_id, itemId);
 
         // Insert into the content table with status 'pending'
         const [contentResult] = await connection.query(
