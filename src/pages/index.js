@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -88,7 +87,7 @@ const TribeManagement = () => {
   };
 
   const handleStructureChange = (id, value) => {
-    if ([8, 9, 10].includes(getAttributeTypeId(id))) {
+    if ([8, 9, 10,11].includes(getAttributeTypeId(id))) {
       return value.value;
     }
     return value;
@@ -133,6 +132,7 @@ const TribeManagement = () => {
           return {
             attribute_id: parseInt(id),
             attribute_name: attribute.name,
+            attribute_type_id: getAttributeTypeId(parseInt(id)),
             attribute_value: handleStructureChange(parseInt(id), value),
           };
         });
@@ -140,42 +140,36 @@ const TribeManagement = () => {
       console.log({
         name: newTribeName,
         attributes: attributeArray,
-        user_id: 1
+        user_id: 1,
       });
 
+      // const response = await fetch("/api/tribe", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     name: newTribeName,
+      //     attributes: attributeArray,
+      //     user_id: 1,
+      //   }),
+      // });
       
 
-      const response = await fetch('/api/tribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: newTribeName,
-          attributes: attributeArray,
-          user_id: 1
-        })
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setNewTribeName('');
-        setAttributeValues({});
-        fetchTribes();
-        setError('');
-      } else {
-        setError(data.error || 'Failed to create tribe');
-      }
+      // const data = await response.json();
+      // if (data.success) {
+      //   setNewTribeName("");
+      //   setAttributeValues({});
+      //   fetchTribes();
+      //   setError("");
+      // } else {
+      //   setError(data.error || "Failed to create tribe");
+      // }
     } catch (error) {
       setError("Error creating tribe: " + error.message);
     }
     setLoading(false);
   };
 
-  const formatAttributeName = (name) => {
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-      .join("");
-  };
+
 
   const handleCreateAttribute = async (e) => {
     e.preventDefault();
@@ -183,11 +177,7 @@ const TribeManagement = () => {
     setError("");
 
     try {
-      // Format the attribute name
-      const formattedName = formatAttributeName(newAttribute.name);
-      const attributeName = formattedName.startsWith("tribe-")
-        ? formattedName
-        : `tribe-${formattedName}`;
+
 
       const response = await fetch("/api/tribe/attributes", {
         method: "POST",
@@ -195,7 +185,7 @@ const TribeManagement = () => {
         body: JSON.stringify({
           attributes: [
             {
-              name: attributeName,
+              name: newAttribute.name,
               description: newAttribute.description,
               is_required: newAttribute.is_required,
               attribute_type_id: parseInt(newAttribute.attribute_type_id),
@@ -229,21 +219,11 @@ const TribeManagement = () => {
     return (
       <div>
         <Label>{attribute.attribute_description}</Label>
-        {
-          [8,9,10].includes(attribute.attribute_type_id) ? (
-            <div>
-              {JSON.stringify(attribute.attribute_value)}
-            </div>
-          ):(
-            <div>
-              {/* {JSON.stringify(attribute.attribute_value.value.value)} */}
-              {
-                attribute.attribute_value.value
-              }
-              {attribute.attribute_type_id}
-            </div>
-          )
-        }
+        {[8, 9, 10,11].includes(attribute.attribute_type_id) ? (
+          <div>{JSON.stringify(attribute.attribute_value)}</div>
+        ) : (
+          <div>{attribute.attribute_value.value}</div>
+        )}
       </div>
     );
   };
@@ -425,19 +405,8 @@ const TribeManagement = () => {
                   <div key={tribe.tribe_id} className="p-4 border rounded">
                     <h3 className="text-xl font-medium mb-2">{tribe.name}</h3>
                     <div className="space-y-2">
-                      {tribe.attributes.map((attr, idx) => (
+                      {Object.values(tribe.attributes).map((attr, idx) => (
                         <div key={idx} className="text-sm">
-                          {/* <span className="font-medium">{attr.attribute_name}: </span> */}
-                          {/* <span>
-                            {typeof attr.attribute_value.value === 'object' 
-                              ? JSON.stringify(attr.attribute_value.value)
-                              : attr.attribute_value.value.toString()}
-                              {
-                                JSON.stringify(attr.attribute_value)
-                              }
-
-                          </span> */}
-
                           <ShowAttributeData attribute={attr} />
                           {}
                         </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Calendar,
   MapPin,
@@ -34,8 +34,7 @@ import Header from "../../components/Header";
 
 const tribeData = {
   name: "Adi Tribe",
-  image:
-    "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
+  image: "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
   about:
     "The Adi, formerly known as Abor, are one of the most populous tribes of Arunachal Pradesh. They are believed to have migrated from southern China in the 16th century. The Adi are known for their rich cultural heritage, vibrant festivals, and unique traditions.",
   location: "East Siang, Upper Siang, Lower Dibang Valley",
@@ -45,8 +44,7 @@ const tribeData = {
     {
       name: "Solung",
       date: "September 1-5",
-      description:
-        "Harvest festival celebrating agricultural abundance",
+      description: "Harvest festival celebrating agricultural abundance",
       image:
         "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi2.jpg",
     },
@@ -60,8 +58,7 @@ const tribeData = {
     {
       name: "Etor",
       date: "January 15",
-      description:
-        "Festival of social bonding and community feast",
+      description: "Festival of social bonding and community feast",
       image:
         "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi4.jpg",
     },
@@ -193,6 +190,7 @@ const musicData = [
 ];
 
 export default function TribePage() {
+  const [tribes, setTribes] = useState([]);
   const [activeSection, setActiveSection] = useState("about");
   const [selectedImage, setSelectedImage] = useState(null);
   const [showHistoryFull, setShowHistoryFull] = useState(false);
@@ -205,18 +203,41 @@ export default function TribePage() {
     }
   };
 
+  const fetchTribes = async () => {
+    try {
+      const response = await fetch("/api/tribe");
+      const data = await response.json();
+      if (data.success) {
+        setTribes(data.data);
+        console.log("Tribes fetched successfully:", data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching tribes:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTribes();
+  }, []);
+
+  if (!tribes.length) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 relative">
       <Header />
+      <div className="bg-red-500"></div>
 
       <div className="relative h-[70vh] overflow-hidden mt-[100px]">
+        {/* Banner Image */}
         <motion.div
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
           transition={{ duration: 1.5 }}
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: `url(${tribeData.image})`,
+            backgroundImage: `url(${tribes[0]?.attributes["tribe-BannerImage"].attribute_value.value})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
             backgroundAttachment: "fixed",
@@ -233,7 +254,7 @@ export default function TribePage() {
               transition={{ duration: 0.6 }}
               className="text-4xl md:text-6xl font-bold text-white mb-4"
             >
-              {tribeData.name}
+              {tribes[0].name}
             </motion.h1>
 
             <motion.div
@@ -244,54 +265,31 @@ export default function TribePage() {
             >
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
                 <MapPin className="h-4 w-4" />
-                <span>{tribeData.location}</span>
+                <span>
+                  {
+                    tribes[0]?.attributes["tribe-Settlements"].attribute_value
+                      .value
+                  }
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
                 <Users className="h-4 w-4" />
-                <span>{tribeData.population}</span>
+                <span>
+                  {
+                    tribes[0]?.attributes["tribe-PopulationInNumbers"]
+                      .attribute_value.value
+                  }
+                </span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
                 <Languages className="h-4 w-4" />
-                <span>{tribeData.language}</span>
+                <span>
+                  {
+                    tribes[0]?.attributes["tribe-Language"].attribute_value
+                      .value
+                  }
+                </span>
               </div>
-            </motion.div>
-          </div>
-        </div>
-
-        <div className="absolute -bottom-16 left-0 right-0 z-20">
-          <div className="max-w-7xl mx-auto px-4">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex gap-2 overflow-x-auto scrollbar-hide"
-            >
-              {[
-                "about",
-                "gallery",
-                "festivals",
-                "history",
-                "distribution",
-                "videos",
-                "music",
-                "books",
-                "food",
-              ].map((section) => (
-                <button
-                  key={section}
-                  onClick={() => scrollToSection(section)}
-                  className={`
-                    px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap
-                    ${
-                      activeSection === section
-                        ? "bg-gradient-to-r from-blue-600 to-teal-500 text-white shadow-lg"
-                        : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"
-                    }
-                  `}
-                >
-                  {section.charAt(0).toUpperCase() + section.slice(1)}
-                </button>
-              ))}
             </motion.div>
           </div>
         </div>
@@ -319,30 +317,68 @@ export default function TribePage() {
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              {tribeData.about}
+              {tribes[0]?.attributes["tribe-About"].attribute_value.value}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {Object.entries(tribeData.traditions).map(([key, value]) => (
-                <div
-                  key={key}
-                  className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50"
-                >
-                  <h3 className="font-medium text-gray-900 dark:text-white mb-2">
-                    {value.title}
-                  </h3>
-                  <ul className="space-y-1">
-                    {value.items.map((item, i) => (
-                      <li
-                        key={i}
-                        className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-                      >
-                        <div className="w-1 h-1 rounded-full bg-teal-500" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {/* Tradiotional dresses */}
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50">
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                  Traditional Dresses
+                </h3>
+                <ul className="space-y-1">
+                  {tribes[0]?.attributes[
+                    "tribe-TraditionalDresses"
+                  ].attribute_value.value.map((item, i) => (
+                    <li
+                      key={i}
+                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                    >
+                      <div className="w-1 h-1 rounded-full bg-teal-500" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Arts and Crafts */}
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50">
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                  Arts & Crafts
+                </h3>
+                <ul className="space-y-1">
+                  {tribes[0]?.attributes[
+                    "tribe-Arts&Crafts"
+                  ].attribute_value.value.map((item, i) => (
+                    <li
+                      key={i}
+                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                    >
+                      <div className="w-1 h-1 rounded-full bg-teal-500" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Traditional Cuisine */}
+              <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50">
+                <h3 className="font-medium text-gray-900 dark:text-white mb-2">
+                  Traditional Cuisine
+                </h3>
+                <ul className="space-y-1">
+                  {tribes[0]?.attributes[
+                    "tribe-TraditionalCuisine"
+                  ].attribute_value.value.map((item, i) => (
+                    <li
+                      key={i}
+                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                    >
+                      <div className="w-1 h-1 rounded-full bg-teal-500" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </motion.div>
 
@@ -368,7 +404,9 @@ export default function TribePage() {
               </div>
               <div>
                 <p className="text-sm text-white/80">Major Festivals</p>
-                <p className="text-2xl font-bold">{tribeData.festivals.length}</p>
+                <p className="text-2xl font-bold">
+                  {tribeData.festivals.length}
+                </p>
               </div>
               <div>
                 <p className="text-sm text-white/80">Main Districts</p>
@@ -396,7 +434,7 @@ export default function TribePage() {
           </motion.div>
         </div>
 
-        <motion.div
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -444,7 +482,7 @@ export default function TribePage() {
               </motion.div>
             ))}
           </div>
-        </motion.div>
+        </motion.div> */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <motion.div
@@ -467,9 +505,11 @@ export default function TribePage() {
               </div>
             </div>
             <div className="prose prose-lg dark:prose-invert max-w-none">
-              <div className={`relative ${!showHistoryFull && "max-h-48 overflow-hidden"}`}>
+              <div
+                className={`relative ${!showHistoryFull && "max-h-48 overflow-hidden"}`}
+              >
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-                  {tribeData.history}
+                  {tribes[0]?.attributes["tribe-About"].attribute_value.value}
                 </p>
                 {!showHistoryFull && (
                   <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white dark:from-gray-800 to-transparent" />
@@ -484,6 +524,7 @@ export default function TribePage() {
             </div>
           </motion.div>
 
+          {/* GeoGraphic Distribution */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -504,35 +545,72 @@ export default function TribePage() {
               </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {Object.entries(tribeData.distribution).map(([key, value], index) => (
-                <motion.div
-                  key={key}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
-                >
-                  <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
-                    {key.split(/(?=[A-Z])/).join(" ")}
-                  </h3>
-                  <div className="space-y-2">
-                    {Array.isArray(value) ? (
-                      value.map((item, i) => (
-                        <div key={i} className="flex items-center gap-2">
-                          <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                          <span className="text-gray-700 dark:text-gray-300">
-                            {item}
-                          </span>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-700 dark:text-gray-300">
-                        {value}
-                      </p>
-                    )}
+              {/* Regions and Districts */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
+              >
+                <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
+                  Main Areas
+                </h3>
+                <div className="space-y-2">
+                  {tribes[0]?.attributes[
+                    "tribe-Regions"
+                  ].attribute_value.value.map((item, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                      <span className="text-gray-700 dark:text-gray-300">
+                        {item}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
+              >
+                <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
+                  Population
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    {/* <div className="w-1.5 h-1.5 rounded-full bg-teal-500" /> */}
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {
+                        tribes[0]?.attributes["tribe-PopulationInNumbers"]
+                          .attribute_value.value
+                      }{" "}
+                      Approximately
+                    </span>
                   </div>
-                </motion.div>
-              ))}
+                </div>
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
+              >
+                <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
+                  Settlements
+                </h3>
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-gray-700 dark:text-gray-300">
+                      {
+                        tribes[0]?.attributes["tribe-Settlements"]
+                          .attribute_value.value
+                      }{" "}
+                      Approximately
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </motion.div>
         </div>
@@ -634,9 +712,7 @@ export default function TribePage() {
             {/* <Books /> */}
           </div>
 
-          <div id="food">
-            {/* <Foods /> */}
-          </div>
+          <div id="food">{/* <Foods /> */}</div>
         </div>
       </div>
 

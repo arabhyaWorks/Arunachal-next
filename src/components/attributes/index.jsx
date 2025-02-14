@@ -459,7 +459,6 @@ export const ImageInput = ({ value = [], setValue }) => {
   );
 };
 
-
 export const TribeInput = ({ value = [], setValue }) => {
   const [tribes, setTribes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -547,10 +546,7 @@ export const TribeInput = ({ value = [], setValue }) => {
                 {tribes
                   .filter((tribe) => tribe.id != null)
                   .map((tribe) => (
-                    <SelectItem
-                      key={tribe.id}
-                      value={tribe.id.toString()}
-                    >
+                    <SelectItem key={tribe.id} value={tribe.id.toString()}>
                       {tribe.name}
                     </SelectItem>
                   ))}
@@ -621,7 +617,15 @@ const RenderAttributes = ({
     return (
       // <div className="space-y-2">
       // </div>
-      <TribeInput value={attributeValues[attribute.id]?.value || []} setValue={(newValue) => setAttributeValues((prev) => ({ ...prev, [attribute.id]: { value: newValue } }))} />
+      <TribeInput
+        value={attributeValues[attribute.id]?.value || []}
+        setValue={(newValue) =>
+          setAttributeValues((prev) => ({
+            ...prev,
+            [attribute.id]: { value: newValue },
+          }))
+        }
+      />
     );
   }
   if (attribute.attribute_type_id === 1) {
@@ -644,8 +648,16 @@ const RenderAttributes = ({
     return (
       <div>
         <Label>{attribute.description}</Label>
-        <ArrayInput value={arrayValue} setValue={setArrayValue} />
-        <button
+        <ArrayInput
+          value={attributeValues[attribute.id]?.value || []}
+          setValue={(newValue) =>
+            setAttributeValues((prev) => ({
+              ...prev,
+              [attribute.id]: { value: newValue },
+            }))
+          }
+        />
+        {/* <button
           onClick={() => {
             setAttributeValues((prev) => ({
               ...prev,
@@ -654,7 +666,7 @@ const RenderAttributes = ({
           }}
         >
           Submit
-        </button>
+        </button> */}
       </div>
     );
   }

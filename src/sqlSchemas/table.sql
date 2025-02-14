@@ -546,14 +546,18 @@ VALUES
 INSERT INTO attributes (attribute_type_id, name, description, is_required) VALUES
     (1, 'tribe-About', 'Description about the tribe', true),
     (1, 'tribe-History', 'Historical information of tribe', true),
-    (1, 'tribe-Distribution', 'Geographical distribution of tribe', true),
     (9, 'tribe-Tribe-VideosOfTheTribe', 'Videos of the tribe', true),
-    (1, 'tribe-Tribe-Regions', 'Regions of the tribe', true),
-    (1, 'tribe-Tribe-Population', 'Population of the tribe', true),
-    (1, 'tribe-Tribe-Language', 'Language of the tribe', true),
-    (2, 'tribe-Tribe-TraditionalDresses', 'Traditional dresses of the tribe', true),
-    (2, 'tribe-Tribe-Arts&Crafts', 'Arts & Crafts of the tribe', true),
-    (2, 'tribe-Tribe-TraditionalCuisine', 'Traditional Cuisine of the tribe', true);
+    (11, 'tribe-Tribe-ImagesOfTheTribe', 'Images of the tribe', true);
+    -- (2, 'tribe-Regions', 'Regions of the tribe', true);
+    -- (1, 'tribe-PopulationInNumbers', 'Population of the tribe', true),
+    -- (1, 'tribe-Settlements', 'Settlements of the tribe', true),
+    -- (1, 'tribe-Language', 'Language of the tribe', true),
+    -- (2, 'tribe-TraditionalDresses', 'Traditional dresses of the tribe', true),
+    -- (2, 'tribe-Arts&Crafts', 'Arts & Crafts of the tribe', true),
+    -- (2, 'tribe-TraditionalCuisine', 'Traditional Cuisine of the tribe', true),
+    -- (1, 'tribe-BannerImage', 'Link of the Banner Image', true),
+    -- (1, 'tribe-ThumbnailImage', 'Link of the thumbnail Image', true);
+    -- (11, 'tribe-ImagesOfTheTribe', 'Images of the tribe', true);
 
 
 
