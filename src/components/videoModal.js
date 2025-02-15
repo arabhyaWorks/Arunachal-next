@@ -1,65 +1,30 @@
-import React, { useState, useRef, useEffect } from "react";
-import YouTube from "react-youtube";
-import {
-  X,
-  Facebook,
-  Twitter,
-  Link,
-  Play,
-  Pause,
-  Volume2,
-  VolumeX,
-  Maximize,
+import React, { useRef, useState, useEffect } from 'react';
+import { 
+  Play, 
+  Pause, 
+  Volume2, 
+  VolumeX, 
+  Maximize, 
+  SkipBack, 
   SkipForward,
-  SkipBack,
-} from "lucide-react";
+  X 
+} from 'lucide-react';
 
-const VideoModal = ({
-  videoId,
-  isOpen,
-  onClose,
-  title,
-  description,
-  onVideoEnd,
-  videos,
-  setSelectedVideo,
-}) => {
+const VideoModal = ({ videoUrl, isOpen, onClose, title }) => {
+  const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const playerRef = useRef(null);
   const controlsTimeoutRef = useRef(null);
-  const timeTrackingIntervalRef = useRef(null);
-
-  const shareUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
   useEffect(() => {
-    // Hide controls after 3 seconds of inactivity
-    const hideControls = () => {
-      if (controlsTimeoutRef.current) {
-        clearTimeout(controlsTimeoutRef.current);
-      }
-      controlsTimeoutRef.current = setTimeout(() => {
-        if (isPlaying) {
-          setShowControls(false);
-        }
-      }, 3000);
-    };
-
-    hideControls();
-
-    return () => {
-      if (controlsTimeoutRef.current) {
-        clearTimeout(controlsTimeoutRef.current);
-      }
-      if (timeTrackingIntervalRef.current) {
-        clearInterval(timeTrackingIntervalRef.current);
-      }
-    };
-  }, [isPlaying]);
+    if (isOpen && videoRef.current) {
+      videoRef.current.load();
+    }
+  }, [isOpen, videoUrl]);
 
   const handleMouseMove = () => {
     setShowControls(true);
@@ -69,147 +34,109 @@ const VideoModal = ({
     if (isPlaying) {
       controlsTimeoutRef.current = setTimeout(() => {
         setShowControls(false);
-      }, 3000);
-    }
-  };
-
-  const startTimeTracking = (player) => {
-    if (timeTrackingIntervalRef.current) {
-      clearInterval(timeTrackingIntervalRef.current);
-    }
-    timeTrackingIntervalRef.current = setInterval(() => {
-      if (player) {
-        const currentTime = player.getCurrentTime();
-        const duration = player.getDuration();
-        setCurrentTime(currentTime);
-        setProgress((currentTime / duration) * 100);
-      }
-    }, 1000);
-  };
-
-  const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = Math.floor(seconds % 60);
-    return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
-  };
-
-  const handleVideoReady = (event) => {
-    playerRef.current = event.target;
-    setDuration(event.target.getDuration());
-  };
-
-  const handleStateChange = (event) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
-      setIsPlaying(true);
-      startTimeTracking(event.target);
-    } else if (event.data === window.YT.PlayerState.PAUSED) {
-      setIsPlaying(false);
-    } else if (event.data === window.YT.PlayerState.ENDED) {
-      onVideoEnd();
+      }, 2000);
     }
   };
 
   const togglePlay = () => {
-    if (playerRef.current) {
+    if (videoRef.current) {
       if (isPlaying) {
-        playerRef.current.pauseVideo();
+        videoRef.current.pause();
       } else {
-        playerRef.current.playVideo();
+        videoRef.current.play();
       }
       setIsPlaying(!isPlaying);
     }
   };
 
   const toggleMute = () => {
-    if (playerRef.current) {
-      if (isMuted) {
-        playerRef.current.unMute();
-      } else {
-        playerRef.current.mute();
-      }
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
       setIsMuted(!isMuted);
     }
   };
 
-  const handleProgressClick = (e) => {
-    if (playerRef.current) {
-      const progressBar = e.currentTarget;
-      const clickPosition =
-        (e.clientX - progressBar.getBoundingClientRect().left) /
-        progressBar.offsetWidth;
-      const newTime = clickPosition * duration;
-      playerRef.current.seekTo(newTime);
-      setProgress(clickPosition * 100);
+  const handleTimeUpdate = () => {
+    if (videoRef.current) {
+      const current = videoRef.current.currentTime;
+      const duration = videoRef.current.duration;
+      setCurrentTime(current);
+      setProgress((current / duration) * 100);
     }
   };
 
-  const shareOnFacebook = () => {
-    window.open(
-      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-        shareUrl
-      )}`,
-      "_blank"
-    );
+  const handleLoadedMetadata = () => {
+    if (videoRef.current) {
+      setDuration(videoRef.current.duration);
+    }
   };
 
-  const shareOnTwitter = () => {
-    window.open(
-      `https://twitter.com/intent/tweet?url=${encodeURIComponent(
-        shareUrl
-      )}&text=${encodeURIComponent(`Watch ${title}`)}`,
-      "_blank"
-    );
+  const handleProgressClick = (e) => {
+    if (videoRef.current) {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      const newTime = percentage * videoRef.current.duration;
+      videoRef.current.currentTime = newTime;
+    }
   };
 
-  const copyLink = () => {
-    navigator.clipboard.writeText(shareUrl);
-    alert("Link copied to clipboard!");
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const skipBackward = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime -= 10;
+    }
+  };
+
+  const skipForward = () => {
+    if (videoRef.current) {
+      videoRef.current.currentTime += 10;
+    }
+  };
+
+  const toggleFullscreen = () => {
+    if (videoRef.current) {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        videoRef.current.requestFullscreen();
+      }
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div
-     className="fixed inset-0  flex items-center justify-center">
-      <div
-        className="absolute inset-0 bg-black/90 backdrop-blur-sm"
-        onClick={onClose}
-      />
-      <div 
-      className="relative  w-full h-full bg-white overflow-hidden flex flex-col sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:m-4 sm:rounded-2xl">
-        {/* Close Button */}
-        <button
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center">
+      <div className="w-full max-w-6xl p-4">
+        {/* Close button */}
+        <button 
           onClick={onClose}
-          className="absolute top-2 right-2 z-10 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
+          className="absolute top-4 right-4 p-2 text-white hover:bg-white/20 rounded-full transition-colors z-50"
         >
-          <X className="h-5 w-5" />
+          <X className="w-6 h-6" />
         </button>
 
-        {/* Custom Video Player */}
-        <div
-          className="aspect-video w-full flex-shrink-0 relative bg-black"
+        <div 
+          className="aspect-video w-full relative bg-black rounded-lg overflow-hidden"
           onMouseMove={handleMouseMove}
           onMouseLeave={() => isPlaying && setShowControls(false)}
         >
-          <YouTube
-            videoId={videoId}
-            opts={{
-              width: "100%",
-              height: "100%",
-              playerVars: {
-                autoplay: 1,
-                controls: 0,
-                modestbranding: 1,
-                rel: 0,
-                showinfo: 0,
-                iv_load_policy: 3,
-                playsinline: 1,
-              },
-            }}
+          <video
+            ref={videoRef}
             className="w-full h-full"
-            onReady={handleVideoReady}
-            onStateChange={handleStateChange}
-          />
+            onTimeUpdate={handleTimeUpdate}
+            onLoadedMetadata={handleLoadedMetadata}
+            onEnded={() => setIsPlaying(false)}
+          >
+            <source src={videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
 
           {/* Custom Controls Overlay */}
           <div
@@ -217,6 +144,11 @@ const VideoModal = ({
               showControls ? "opacity-100" : "opacity-0"
             }`}
           >
+            {/* Title */}
+            <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/80 to-transparent p-4">
+              <h2 className="text-white text-lg font-semibold">{title}</h2>
+            </div>
+
             {/* Progress Bar */}
             <div className="absolute bottom-16 left-0 right-0 px-4">
               <div
@@ -265,98 +197,26 @@ const VideoModal = ({
 
                 <div className="flex items-center space-x-4">
                   <button
-                    onClick={() =>
-                      playerRef.current?.seekTo(
-                        playerRef.current.getCurrentTime() - 10
-                      )
-                    }
+                    onClick={skipBackward}
                     className="p-2 hover:bg-white/20 rounded-full transition-colors"
                   >
                     <SkipBack className="w-6 h-6 text-white" />
                   </button>
 
                   <button
-                    onClick={() =>
-                      playerRef.current?.seekTo(
-                        playerRef.current.getCurrentTime() + 10
-                      )
-                    }
+                    onClick={skipForward}
                     className="p-2 hover:bg-white/20 rounded-full transition-colors"
                   >
                     <SkipForward className="w-6 h-6 text-white" />
                   </button>
 
-                  <button className="p-2 hover:bg-white/20 rounded-full transition-colors">
+                  <button 
+                    onClick={toggleFullscreen}
+                    className="p-2 hover:bg-white/20 rounded-full transition-colors"
+                  >
                     <Maximize className="w-6 h-6 text-white" />
                   </button>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Video Info and Content */}
-        <div className="flex-1 overflow-y-auto">
-          {/* Title, Description and Share Section */}
-          <div className="p-4 border-b">
-            <h3 className="text-lg text-heading font-semibold text-gray-900 mb-1 line-clamp-2">
-              {title}
-            </h3>
-            <p className="text-sm text-subheading mb-3">{description}</p>
-            <div className="flex items-center gap-3 justify-end">
-              <button
-                onClick={shareOnFacebook}
-                className="p-2 hover:bg-blue-50 rounded-full text-blue-600 transition-colors"
-              >
-                <Facebook className="h-5 w-5" />
-              </button>
-              <button
-                onClick={shareOnTwitter}
-                className="p-2 hover:bg-blue-50 rounded-full text-blue-400 transition-colors"
-              >
-                <Twitter className="h-5 w-5" />
-              </button>
-              <button
-                onClick={copyLink}
-                className="p-2 hover:bg-blue-50 rounded-full text-gray-600 transition-colors"
-              >
-                <Link className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile: Related Videos */}
-          <div className="block sm:hidden">
-            <div className="p-4">
-              <h4 className="text-sm text-heading font-semibold text-gray-900 mb-3">
-                Related Videos
-              </h4>
-              <div className="space-y-4">
-                {videos.map((video, index) => (
-                  <div key={index} className="flex gap-3">
-                    <div
-                      onClick={() => setSelectedVideo(video)}
-                      className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0"
-                    >
-                      <img
-                        src={video.thumbnail_path}
-                        alt={video.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                        <Play className="h-8 w-8 text-white" />
-                      </div>
-                    </div>
-                    <div>
-                      <h5 className="text-sm font-medium text-heading text-gray-900 line-clamp-2 mb-1">
-                        {video.title}
-                      </h5>
-                      <p className="text-xs text-gray-600">
-                        {video.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
               </div>
             </div>
           </div>
