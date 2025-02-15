@@ -33,9 +33,9 @@ const VideoModal = ({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const playerRef = useRef<any>(null);
-  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const timeTrackingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const playerRef = useRef(null);
+  const controlsTimeoutRef = useRef(null);
+  const timeTrackingIntervalRef = useRef(null);
 
   const shareUrl = `https://www.youtube.com/watch?v=${videoId}`;
 

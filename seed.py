@@ -395,3 +395,61 @@ const musicData = [
       "https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81238ADI_FESTIVAL_SONG.mp3",
   },
 ];
+
+
+  const videos = [
+    {
+      title: "Traditional Dance Performance",
+      tribe: "Apatani",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg",
+      videoId: "lv_WGEHNtSo",
+      views: "2.3K",
+      duration: "4:15",
+    },
+    {
+      title: "Cultural Celebration",
+      tribe: "Nyishi",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/nyishi1.jpg",
+      videoId: "PTcoEqRmWp0",
+      views: "1.8K",
+      duration: "3:45",
+    },
+    {
+      title: "Nocte Ceremony",
+      tribe: "Nocte",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/nocte1.jpg",
+      videoId: "YrZkKMkbDk8",
+      views: "3.1K",
+      duration: "5:20",
+    },
+    {
+      title: "Festival Highlights",
+      tribe: "Tagin",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/tagin1.jpg",
+      videoId: "-MMv02n7IMM",
+      views: "2.7K",
+      duration: "6:10",
+    },
+    {
+      title: "Traditional Music",
+      tribe: "Adi",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
+      videoId: "h9a6Qvz5AYI",
+      views: "1.9K",
+      duration: "4:45",
+    },
+    {
+      title: "Heritage Showcase",
+      tribe: "Monpa",
+      tribeLogo:
+        "https://indigenous.arunachal.gov.in/upload/tribes/Content/Monpa1.jpg",
+      videoId: "GQIL8w1vwg8",
+      views: "2.5K",
+      duration: "5:30",
+    },
+  ];

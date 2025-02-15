@@ -719,7 +719,7 @@ export default function TribePage() {
                 </p>
               </div>
             </div>
-            <Video />
+            <Video videos={tribes[0].media.videos} />
           </motion.div>
 
           {/* Music Section */}
