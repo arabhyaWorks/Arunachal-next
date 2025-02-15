@@ -516,3 +516,94 @@ const dishes = [
       "A traditional rice cake often prepared during festivals and special occasions using rice flour and banana leaves.",
   },
 ];
+
+
+const festivals = [
+    {
+      month: 'January',
+      events: [
+        {
+          name: 'Si Donyi Hilo',
+          tribe: 'Tagin',
+          district: 'Upper Subansiri',
+          date: 'Sunday, 5th January - Monday, 6th January',
+        },
+        {
+          name: 'Tongya Festival',
+          tribe: 'Monpa',
+          district: 'Tawang',
+          date: 'Thursday, 9th January',
+        },
+        {
+          name: 'Sarok',
+          tribe: 'Aka',
+          district: 'Bichom',
+          date: 'Saturday, 11th January',
+        },
+      ],
+    },
+    {
+      month: 'February',
+      events: [
+        {
+          name: 'Reh',
+          tribe: 'Idu Mishmi',
+          district:
+            'Lower Dibang Valley, DibangValley, Lohit, Upper Siang, East Siang',
+          date: 'Saturday, 1st February',
+        },
+        {
+          name: 'Donyi Mari',
+          tribe: 'Galo',
+          district: 'Leparda Lower Siang, West Siang',
+          date: 'Wednesday, 5th February',
+        },
+        {
+          name: 'Lhachhuth',
+          tribe: 'Meyor',
+          district: 'Anjaw',
+          date: 'Wednesday, 5th February',
+        },
+      ],
+    },
+    {
+      month: 'March',
+      events: [
+        {
+          name: 'Losar',
+          tribe: 'Monpa, Shendukpen, Memba, Khamba & Meyor',
+          district: 'Tawang, West Kameng, Upper Siang & Anjaw',
+          date: 'February March - March',
+        },
+        {
+          name: 'Unying Aran Gidi',
+          tribe: 'Adi',
+          district: 'Siang, Upper Siang, East Siang, Lower Dibang Valley',
+          date: 'Friday, 7th March',
+        },
+      ],
+    },
+    {
+      month: 'April',
+      events: [
+        {
+          name: 'Mopin',
+          tribe: 'Galo',
+          district: 'Leparda Lower Siang, West Siang',
+          date: 'Saturday, 5th April - Tuesday, 8th April',
+        },
+        {
+          name: 'Poogtukuth',
+          tribe: 'Tutsa',
+          district: 'Changlang & Tirap',
+          date: 'Friday, 11th April',
+        },
+        {
+          name: 'Sangken',
+          tribe: 'Tai Khamti',
+          district: 'Namsai',
+          date: 'Monday, 14th April',
+        },
+      ],
+    },
+  ];

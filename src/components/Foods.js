@@ -1,8 +1,7 @@
 import { Info, User2, Bookmark, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-
-export default function Foods({dishes}) {
+export default function Foods({ dishes }) {
   return (
     <div
       id="cuisine"
@@ -98,7 +97,10 @@ export default function Foods({dishes}) {
               </div>
 
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                <span className="font-medium">Tribe:</span> {dish.tribe}
+                <span className="font-medium">Tribe:</span>{" "}
+                {dish.attributes["cat-Foods-Tribe"].attribute_value.value
+                  .map((item) => item.name)
+                  .join(", ")}
               </p>
 
               {/* Mobile-visible, desktop-hover description */}

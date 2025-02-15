@@ -436,7 +436,7 @@ export default function TribePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            {tribeData.festivals.map((festival, index) => (
+            {tribes[0].categories.Festivals.map((festival, index) => (
               <motion.div
                 key={festival.name}
                 initial={{ opacity: 0, y: 20 }}
@@ -457,7 +457,7 @@ export default function TribePage() {
                     </p>
                     <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
                       <Calendar className="h-4 w-4" />
-                      <span>{festival.date}</span>
+                      <span>{festival.attributes["cat-Festivals-DateOfCelebration"].attribute_value.value}</span>
                     </div>
                   </div>
                 </div>
