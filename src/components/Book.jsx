@@ -1,33 +1,6 @@
 import { Book, User2, Bookmark, ArrowRight } from "lucide-react";
 
-const books = [
-  {
-    title: "The Inheritance of Words",
-    author: "Mamang Dai",
-    tribes: ["Adi", "Tutsa", "Khamba"],
-    image: "https://zubaanbooks.com/wp-content/uploads/The-Inheritance-of-Words_FRONT-COVER.jpg.webp"
-  },
-  {
-    title: "Myth, Memory & Folktale",
-    author: "Stuart Blackburn",
-    tribes: ["Apatani", "Puroik", "Khamba"],
-    image: "https://m.media-amazon.com/images/I/81vIMyqAhrL._AC_UF1000,1000_QL80_.jpg"
-  },
-  {
-    title: "Tales of Our Ancestors",
-    author: "Tai Nyori",
-    tribes: ["Kaman", "Tutsa", "Khamba"],
-    image: "https://m.media-amazon.com/images/I/81czZPOrKyL._AC_UF1000,1000_QL80_.jpg"
-  },
-  {
-    title: "Hill Tribes of Arunachal",
-    author: "Ratan Bhattacharjee",
-    tribes: ["Adi"],
-    image: "https://cdn.exoticindia.com/images/products/original/books-2019-001/aze541.jpg"
-  }
-];
-
-export default function Books() {
+export default function Books({books}) {
   return (
     <div className="py-20  dark:from-[#2d3748] dark:to-[#1f2937]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,7 +30,7 @@ export default function Books() {
               {/* Book Cover */}
               <div className="relative h-[280px] overflow-hidden">
                 <img
-                  src={book.image}
+                  src={book.thumbnail_path}
                   alt={book.title}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
@@ -82,7 +55,7 @@ export default function Books() {
                   <span className="text-md text-semibold">{book.author}</span>
                 </div>
 
-                <div className="flex flex-wrap gap-1.5">
+                {/* <div className="flex flex-wrap gap-1.5">
                   {book.tribes.slice(0, 2).map((tribe, tribeIndex) => (
                     <span
                       key={tribeIndex}
@@ -96,7 +69,7 @@ export default function Books() {
                       +{book.tribes.length - 2}
                     </span>
                   )}
-                </div>
+                </div> */}
               </div>
             </div>
           ))}
@@ -112,7 +85,7 @@ export default function Books() {
               {/* Book Cover */}
               <div className="relative h-[250px] overflow-hidden ">
                 <img
-                  src={book.image}
+                  src={book.thumbnail_path}
                   alt={book.title}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
@@ -137,7 +110,7 @@ export default function Books() {
                   <span className="text-md text-bold">{book.author}</span>
                 </div>
 
-                <div className="flex flex-wrap gap-2">
+                {/* <div className="flex flex-wrap gap-2">
                   {book.tribes.map((tribe, tribeIndex) => (
                     <span
                       key={tribeIndex}
@@ -146,7 +119,7 @@ export default function Books() {
                       {tribe} Tribe
                     </span>
                   ))}
-                </div>
+                </div> */}
               </div>
             </div>
           ))}

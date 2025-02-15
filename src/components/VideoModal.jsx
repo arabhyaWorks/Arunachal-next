@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 const VideoModal = ({
-  videoId,
+  file_path,
   isOpen,
   onClose,
   selectedVideo,
@@ -37,7 +37,7 @@ const VideoModal = ({
   const controlsTimeoutRef = useRef(null);
   const timeTrackingIntervalRef = useRef(null);
 
-  const shareUrl = `https://www.youtube.com/watch?v=${videoId}`;
+  const shareUrl = `https://www.youtube.com/watch?v=${file_path}`;
 
   useEffect(() => {
     // Hide controls after 3 seconds of inactivity
@@ -193,7 +193,7 @@ const VideoModal = ({
           onMouseLeave={() => isPlaying && setShowControls(false)}
         >
           <YouTube
-            videoId={videoId}
+            file_path={file_path}
             opts={{
               width: "100%",
               height: "100%",
@@ -351,7 +351,7 @@ const VideoModal = ({
                       className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0"
                     >
                       <img
-                        src={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
+                        src={`https://img.youtube.com/vi/${video.file_path}/maxresdefault.jpg`}
                         alt={video.title}
                         className="w-full h-full object-cover"
                       />

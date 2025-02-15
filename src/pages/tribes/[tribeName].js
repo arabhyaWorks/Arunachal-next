@@ -746,11 +746,6 @@ export default function TribePage() {
             <MusicPlayer songs={tribes[0].media.audios} />
           </motion.div>
 
-          <div id="books" className="mb-12">
-            {/* <Books /> */}
-          </div>
-
-          <div id="food">{/* <Foods data={tribes}/> */}</div>
         </div>
       </div>
 
@@ -785,11 +780,11 @@ export default function TribePage() {
         )}
 
         <div id="books" className="mb-12">
-          <Books />
+          <Books books={tribes[0].media.documents} />
         </div>
 
         <div id="food">
-          <Foods />
+          <Foods dishes={tribes[0].categories.Foods} />
         </div>
       </AnimatePresence>
     </div>

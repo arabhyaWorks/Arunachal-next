@@ -1,42 +1,8 @@
 import { Info, User2, Bookmark, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-const dishes = [
-  {
-    name: "PO'ROK Amin",
-    image: "https://indigenous.arunachal.gov.in/assets/food/Ami.jpeg",
-    category: "Main Course",
-    tribe: "Traditional",
-    description:
-      "A traditional dish from Arunachal Pradesh made using local ingredients and traditional cooking methods.",
-  },
-  {
-    name: "Khow Lam",
-    image: "https://indigenous.arunachal.gov.in/assets/food/KhowLa.jpeg",
-    category: "Appetizer",
-    tribe: "Traditional",
-    description:
-      "A traditional pancake from the region, showcasing the rich culinary heritage of Arunachal Pradesh.",
-  },
-  {
-    name: "Zan",
-    image: "https://indigenous.arunachal.gov.in/assets/food/Za.jpeg",
-    category: "Staple",
-    tribe: "Traditional",
-    description:
-      'A hearty and nutritious dish made with millet or maize flour, also known as "Thukpa" in some regions.',
-  },
-  {
-    name: "Mirung Etting",
-    image: "https://indigenous.arunachal.gov.in/assets/food/Mirung_Ettin.jpeg",
-    category: "Side Dish",
-    tribe: "Traditional",
-    description:
-      "A traditional rice cake often prepared during festivals and special occasions using rice flour and banana leaves.",
-  },
-];
 
-export default function Foods() {
+export default function Foods({dishes}) {
   return (
     <div
       id="cuisine"
@@ -108,7 +74,7 @@ export default function Foods() {
           >
             <div className="aspect-[4/3] rounded-t-xl overflow-hidden relative">
               <img
-                src={dish.image}
+                src={dish.attributes["cat-Foods-Image"].attribute_value.value}
                 alt={dish.name}
                 className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
               />
@@ -118,7 +84,7 @@ export default function Foods() {
               {/* Category tag positioned over the image */}
               <div className="absolute bottom-3 left-3 z-10">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/90 text-white shadow-lg backdrop-blur-sm">
-                  {dish.category}
+                  {dish.attributes["cat-Foods-FoodType"].attribute_value.value}
                 </span>
               </div>
             </div>

@@ -270,7 +270,7 @@ async function createOrUpdateDocuments(
       status,
     } = doc;
 
-    if (!title || !file_path || !mime_type || !user_id) {
+    if (!title || !file_path || !user_id) {
       throw new Error("Missing required fields for document upload");
     }
 

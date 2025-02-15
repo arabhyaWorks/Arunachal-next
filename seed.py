@@ -340,12 +340,12 @@ if __name__ == "__main__":
     title: "The Inheritance of Words",
     author: "Mamang Dai",
     tribes: ["Adi", "Tutsa", "Khamba"],
-    image: "https://zubaanbooks.com/wp-content/uploads/The-Inheritance-of-Words_FRONT-COVER.jpg.webp"
+    image: "The Inheritance of Words"
   },
   {
     title: "Myth, Memory & Folktale",
     author: "Stuart Blackburn",
-    tribes: ["Apatani", "Puroik", "Khamba"],
+    tribes: [The Inheritance of Words],
     image: "https://m.media-amazon.com/images/I/81vIMyqAhrL._AC_UF1000,1000_QL80_.jpg"
   },
   {
@@ -365,7 +365,7 @@ if __name__ == "__main__":
 
 const musicData = [
   {
-    "Music Name": "Adi Folk Song",
+    "Music Name": "Myth, Memory & FolktaleMyth, Memory & Folktale",
     "Thumb Image Link":
       "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
     "Singer Name": "Traditional",
@@ -453,3 +453,66 @@ const musicData = [
       duration: "5:30",
     },
   ];
+
+const books = [
+  {
+    title: "The Inheritance of Words",
+    author: "Mamang Dai",
+    tribes: ["Adi", "Tutsa", "Khamba"],
+    image: "https://zubaanbooks.com/wp-content/uploads/The-Inheritance-of-Words_FRONT-COVER.jpg.webp"
+  },
+  {
+    title: "Myth, Memory & Folktale",
+    author: "Stuart Blackburn",
+    tribes: ["Apatani", "Puroik", "Khamba"],
+    image: "https://m.media-amazon.com/images/I/81vIMyqAhrL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    title: "Tales of Our Ancestors",
+    author: "Tai Nyori",
+    tribes: ["Kaman", "Tutsa", "Khamba"],
+    image: "https://m.media-amazon.com/images/I/81czZPOrKyL._AC_UF1000,1000_QL80_.jpg"
+  },
+  {
+    title: "Hill Tribes of Arunachal",
+    author: "Ratan Bhattacharjee",
+    tribes: ["Adi"],
+    image: "https://cdn.exoticindia.com/images/products/original/books-2019-001/aze541.jpg"
+  }
+];
+
+
+const dishes = [
+  {
+    name: "PO'ROK Amin",
+    image: "https://indigenous.arunachal.gov.in/assets/food/Ami.jpeg",
+    category: "Main Course",
+    tribe: "Traditional",
+    description:
+      "A traditional dish from Arunachal Pradesh made using local ingredients and traditional cooking methods.",
+  },
+  {
+    name: "Khow Lam",
+    image: "https://indigenous.arunachal.gov.in/assets/food/KhowLa.jpeg",
+    category: "Appetizer",
+    tribe: "Traditional",
+    description:
+      "A traditional pancake from the region, showcasing the rich culinary heritage of Arunachal Pradesh.",
+  },
+  {
+    name: "Zan",
+    image: "https://indigenous.arunachal.gov.in/assets/food/Za.jpeg",
+    category: "Staple",
+    tribe: "Traditional",
+    description:
+      'A hearty and nutritious dish made with millet or maize flour, also known as "Thukpa" in some regions.',
+  },
+  {
+    name: "Mirung Etting",
+    image: "https://indigenous.arunachal.gov.in/assets/food/Mirung_Ettin.jpeg",
+    category: "Side Dish",
+    tribe: "Traditional",
+    description:
+      "A traditional rice cake often prepared during festivals and special occasions using rice flour and banana leaves.",
+  },
+];
