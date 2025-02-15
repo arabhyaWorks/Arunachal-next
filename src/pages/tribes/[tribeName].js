@@ -27,7 +27,8 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../../components/Header";
-// import Video from "../../video";
+import Video from '../../components/video';
+import Foods from "../../components/Foods";
 // import MusicPlayer from "../../components/MusicPlayer";
 // import Books from "../../components/Books";
 // import Foods from "../../components/Foods";
@@ -209,7 +210,7 @@ export default function TribePage() {
       const data = await response.json();
       if (data.success) {
         setTribes(data.data);
-        console.log("Tribes fetched successfully:", data.data);
+        // console.log("Tribes fetched successfully:", data.data);
       }
     } catch (error) {
       console.error("Error fetching tribes:", error);
@@ -675,14 +676,14 @@ export default function TribePage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {tribeData.name} Videos
+                  {tribes[0].name} Videos
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400">
                   Watch our traditions come alive
                 </p>
               </div>
             </div>
-            {/* <Video /> */}
+            {/* <Video videos={tribes[0]?.media.videos} /> */}
           </motion.div>
 
           <motion.div
@@ -712,7 +713,10 @@ export default function TribePage() {
             {/* <Books /> */}
           </div>
 
-          <div id="food">{/* <Foods /> */}</div>
+          <div id="food">
+            {/* <Foods data={tribes}/> */}
+
+          </div>
         </div>
       </div>
 

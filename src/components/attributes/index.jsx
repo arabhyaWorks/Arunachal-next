@@ -223,7 +223,7 @@ export const AudioInput = ({ value = [], setValue }) => {
         composer: "",
         performers: [],
         instruments: [],
-        mime_type: "",
+        mime_type: "audio",
         created_by: 1,
       },
     ]);

@@ -71,7 +71,14 @@ async function processMediaIfNeeded(
 // ----------------------------------------------------
 // createOrUpdateAudio => modifies audio table
 // ----------------------------------------------------
-async function createOrUpdateAudio(connection, audioData, user_id) {
+async function createOrUpdateAudio(
+  connection,
+  audioData,
+  user_id,
+  associated_tribe_id,
+  associated_category_id,
+  associated_category_item_id
+) {
   if (!Array.isArray(audioData) || audioData.length === 0) return [];
   const audioIds = [];
 

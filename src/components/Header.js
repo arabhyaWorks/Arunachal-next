@@ -66,7 +66,11 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="bg-header mt-[-100px] fixed w-full z-50">
+    <header
+    style={{
+      zIndex: 11,
+    }}
+     className="bg-header mt-[-100px] fixed w-full ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 backdrop-blur-sm shadow-sm">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center gap-2 sm:gap-6 md:gap-6 xl:gap-6">
