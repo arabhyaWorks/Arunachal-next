@@ -28,10 +28,38 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import Header from "../../components/Header";
 import Video from "../../components/video";
+import Books from "../../components/Book";
 import Foods from "../../components/Foods";
-// import Books from "../../components/Books";
-// import Foods from "../../components/Foods";
+import MusicPlayer from "../../components/MusicPlayer";
 import { useRouter } from "next/router";
+// import musicData from './music.json'
+
+const musicData = [
+  {
+    'Music Name': 'Adi Folk Song',
+    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg',
+    'Singer Name': 'Traditional',
+    'Tribe Name': 'Adi Tribe',
+    'Duration': '03:45',
+    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81236KONGKU_RAYO_DANCE_OF_ADI.mp3'
+  },
+  {
+    'Music Name': 'Harvest Celebration',
+    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi2.jpg',
+    'Singer Name': 'Traditional',
+    'Tribe Name': 'Adi Tribe',
+    'Duration': '04:20',
+    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81237TRIBAL_SONG.mp3'
+  },
+  {
+    'Music Name': 'Festival Rhythms',
+    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi3.jpg',
+    'Singer Name': 'Traditional',
+    'Tribe Name': 'Adi Tribe',
+    'Duration': '05:15',
+    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81238ADI_FESTIVAL_SONG.mp3'
+  }
+];
 
 const tribeData = {
   name: "Adi Tribe",
@@ -414,6 +442,58 @@ export default function TribePage() {
           </motion.div>
         </div>
 
+        {/* Festival Calendar */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+              <Calendar className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Festival Calendar
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Annual celebrations and events
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            {tribeData.festivals.map((festival, index) => (
+              <motion.div
+                key={festival.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="relative rounded-xl bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 hover:shadow-lg transition-all border border-purple-100/50 dark:border-purple-700/30"
+              >
+                <div className="flex flex-col gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                      {festival.name}
+                    </h3>
+                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                      {festival.description}
+                    </p>
+                    <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
+                      <Calendar className="h-4 w-4" />
+                      <span>{festival.date}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
         {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -671,85 +751,28 @@ export default function TribePage() {
             )}
           </motion.div>
 
-          <motion.div
+          {/* Music Section */}
+          <motion.div 
+            id="music" 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="mt-6 bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md"
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mb-12"
           >
-            {/* Header Section */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 flex items-center justify-center">
-                  <Music className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                    Music Gallery
-                  </h2>
-                  <p className="text-gray-500 dark:text-gray-400">
-                    Experience the sounds of our culture
-                  </p>
-                </div>
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+                <Music className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {tribeData.name} Music
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Experience our traditional melodies
+                </p>
               </div>
             </div>
-
-            {/* Music Cards */}
-            {tribes[0]?.media?.audios?.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {tribes[0].media.audios.map((audio, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    className="relative flex flex-col bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow"
-                    onClick={() => setSelectedMusic(audio.file_path)}
-                  >
-                    {/* Thumbnail */}
-                    <div className="relative w-full h-56">
-                      <img
-                        src={audio.thumbnail_path}
-                        alt={audio.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
-                    </div>
-
-                    {/* Music Info */}
-                    <div className="p-4 flex flex-col gap-2">
-                      <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                        {audio.title}
-                      </h3>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">
-                        <strong>Composer:</strong> {audio.composer}
-                      </p>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">
-                        <strong>Performers:</strong>{" "}
-                        {audio.performers.join(", ")}
-                      </p>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">
-                        <strong>Genre:</strong> {audio.genre.join(", ")}
-                      </p>
-                      <p className="text-gray-500 dark:text-gray-300 text-sm">
-                        <strong>Duration:</strong> {audio.duration || "Unknown"}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-
-            {/* Audio Player (appears when a song is selected) */}
-            {selectedMusic && (
-              <div className="mt-6 bg-gray-200 dark:bg-gray-700 p-4 rounded-xl flex items-center gap-4">
-                <p className="text-gray-900 dark:text-white">Now Playing:</p>
-                <audio controls autoPlay key={selectedMusic} className="w-full">
-                  <source src={selectedMusic} type="audio/mp3" />
-                  Your browser does not support the audio element.
-                </audio>
-              </div>
-            )}
+            <MusicPlayer songs={musicData} />
           </motion.div>
 
           <div id="books" className="mb-12">
@@ -789,6 +812,14 @@ export default function TribePage() {
             </motion.div>
           </motion.div>
         )}
+
+        <div id="books" className="mb-12">
+          <Books />
+        </div>
+
+        <div id="food">
+          <Foods />
+        </div>
       </AnimatePresence>
     </div>
   );
