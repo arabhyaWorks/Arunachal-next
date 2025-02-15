@@ -12,6 +12,8 @@ export default async function handler(req, res) {
       return getTribes(req, res);
     case "PATCH":
       return updateTribe(req, res);
+    case "DELETE":
+      return deleteTribe(req, res);
     default:
       res.setHeader("Allow", ["GET", "POST", "PATCH"]);
       return res
@@ -19,6 +21,39 @@ export default async function handler(req, res) {
         .json({ success: false, error: "Method not allowed" });
   }
 }
+
+async function deleteTribe(req, res) {
+  let connection;
+  try {
+    connection = await pool.getConnection();
+    const { tribe_id } = req.query;
+
+    if (!tribe_id) {
+      return res.status(400).json({ success: false, error: "tribe_id is required" });
+    }
+
+    await connection.beginTransaction();
+
+    // Delete related data in proper order due to foreign key constraints
+    await connection.execute("DELETE FROM content_approval WHERE committee_id IN (SELECT id FROM committees WHERE tribe_id = ?)", [tribe_id]);
+    await connection.execute("DELETE FROM committee_members WHERE committee_id IN (SELECT id FROM committees WHERE tribe_id = ?)", [tribe_id]);
+    await connection.execute("DELETE FROM committees WHERE tribe_id = ?", [tribe_id]);
+    await connection.execute("DELETE FROM tribes WHERE id = ?", [tribe_id]);
+
+    await connection.commit();
+    connection.release();
+
+    return res.status(200).json({ success: true, message: "Tribe deleted successfully" });
+  } catch (error) {
+    if (connection) {
+      await connection.rollback();
+      connection.release();
+    }
+    console.error("Error deleting tribe:", error);
+    return res.status(500).json({ success: false, error: "Internal Server Error" });
+  }
+}
+
 
 // ----------------------------------------------------
 // 1) POST /api/tribe

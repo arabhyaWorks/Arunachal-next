@@ -32,34 +32,6 @@ import Books from "../../components/Book";
 import Foods from "../../components/Foods";
 import MusicPlayer from "../../components/MusicPlayer";
 import { useRouter } from "next/router";
-// import musicData from './music.json'
-
-const musicData = [
-  {
-    'Music Name': 'Adi Folk Song',
-    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg',
-    'Singer Name': 'Traditional',
-    'Tribe Name': 'Adi Tribe',
-    'Duration': '03:45',
-    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81236KONGKU_RAYO_DANCE_OF_ADI.mp3'
-  },
-  {
-    'Music Name': 'Harvest Celebration',
-    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi2.jpg',
-    'Singer Name': 'Traditional',
-    'Tribe Name': 'Adi Tribe',
-    'Duration': '04:20',
-    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81237TRIBAL_SONG.mp3'
-  },
-  {
-    'Music Name': 'Festival Rhythms',
-    'Thumb Image Link': 'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi3.jpg',
-    'Singer Name': 'Traditional',
-    'Tribe Name': 'Adi Tribe',
-    'Duration': '05:15',
-    'Music Link': 'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81238ADI_FESTIVAL_SONG.mp3'
-  }
-];
 
 const tribeData = {
   name: "Adi Tribe",
@@ -726,6 +698,7 @@ export default function TribePage() {
         </motion.div>
 
         <div className="space-y-6 mt-6">
+          {/* Videos Section */}
           <motion.div
             id="videos"
             initial={{ opacity: 0, y: 20 }}
@@ -739,21 +712,19 @@ export default function TribePage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {tribes[0].name} Videos
+                  {tribeData.name} Videos
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400">
                   Watch our traditions come alive
                 </p>
               </div>
             </div>
-            {tribes[0]?.media?.videos?.length > 0 && (
-              <Video videos={tribes[0].media.videos} />
-            )}
+            <Video />
           </motion.div>
 
           {/* Music Section */}
-          <motion.div 
-            id="music" 
+          <motion.div
+            id="music"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -772,7 +743,7 @@ export default function TribePage() {
                 </p>
               </div>
             </div>
-            <MusicPlayer songs={musicData} />
+            <MusicPlayer songs={tribes[0].media.audios} />
           </motion.div>
 
           <div id="books" className="mb-12">

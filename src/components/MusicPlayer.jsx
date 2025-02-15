@@ -134,7 +134,7 @@ const MusicPlayer = ({ songs }) => {
               <div className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0 bg-gradient-to-br from-blue-50 to-teal-50 dark:from-blue-900/30 dark:to-teal-900/30 p-0.5">
                 <div className="w-full h-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
                   <img
-                    src={song["Thumb Image Link"]}
+                    src={song["thumbnail_path"]}
                     alt={song["Music Name"]}
                     className="w-full h-full object-cover"
                   />
@@ -142,7 +142,7 @@ const MusicPlayer = ({ songs }) => {
               </div>
               <div className="flex-grow min-w-0">
                 <h3 className="text-base font-semibold text-heading mb-1 truncate">
-                  {song["Music Name"]}
+                  {song["title"]}
                 </h3>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
@@ -192,12 +192,12 @@ const MusicPlayer = ({ songs }) => {
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-4">
                 <img
-                  src={currentSong["Thumb Image Link"]}
+                  src={currentSong["thumbnail_path"]}
                   alt={currentSong["Music Name"]}
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div>
-                  <h4 className="font-semibold text-heading">{currentSong["Music Name"]}</h4>
+                  <h4 className="font-semibold text-heading">{currentSong["title"]}</h4>
                   <p className="text-sm text-subheading">{currentSong["Tribe Name"]}</p>
                 </div>
               </div>
@@ -306,7 +306,7 @@ const MusicPlayer = ({ songs }) => {
                     className="w-12 h-12 rounded object-cover"
                   />
                   <div className="flex-grow">
-                    <h5 className="font-medium text-heading">{song["Music Name"]}</h5>
+                    <h5 className="font-medium text-heading">{song["title"]}</h5>
                     <p className="text-sm text-subheading">{song["Tribe Name"]}</p>
                   </div>
                   <span className="text-sm text-gray-500">{song["Duration"]}</span>
@@ -319,7 +319,7 @@ const MusicPlayer = ({ songs }) => {
 
       <audio
         ref={audioRef}
-        src={currentSong["Music Link"]}
+        src={currentSong["file_path"]}
         onTimeUpdate={handleTimeUpdate}
         onEnded={handleNext}
       />

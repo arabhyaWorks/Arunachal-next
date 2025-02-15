@@ -5,6 +5,7 @@ import {
   Facebook,
   Twitter,
   Link,
+  Eye,
   Play,
   Pause,
   Volume2,
@@ -14,16 +15,17 @@ import {
   SkipBack,
 } from "lucide-react";
 
-const YoutubeModal = ({
+const VideoModal = ({
   videoId,
-  videoUri,
   isOpen,
   onClose,
+  selectedVideo,
+  setSelectedVideo,
   title,
-  description,
+  tribe,
+  tribeLogo,
   onVideoEnd,
   videos,
-  setSelectedVideo,
 }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
@@ -31,9 +33,9 @@ const YoutubeModal = ({
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [showControls, setShowControls] = useState(true);
-  const playerRef = useRef(null);
-  const controlsTimeoutRef = useRef(null);
-  const timeTrackingIntervalRef = useRef(null);
+  const playerRef = useRef<any>(null);
+  const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeTrackingIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const shareUrl = `https://www.youtube.com/watch?v=${videoId}`;
 
@@ -43,6 +45,7 @@ const YoutubeModal = ({
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
+      
       controlsTimeoutRef.current = setTimeout(() => {
         if (isPlaying) {
           setShowControls(false);
@@ -78,6 +81,7 @@ const YoutubeModal = ({
     if (timeTrackingIntervalRef.current) {
       clearInterval(timeTrackingIntervalRef.current);
     }
+
     timeTrackingIntervalRef.current = setInterval(() => {
       if (player) {
         const currentTime = player.getCurrentTime();
@@ -135,9 +139,7 @@ const YoutubeModal = ({
   const handleProgressClick = (e) => {
     if (playerRef.current) {
       const progressBar = e.currentTarget;
-      const clickPosition =
-        (e.clientX - progressBar.getBoundingClientRect().left) /
-        progressBar.offsetWidth;
+      const clickPosition = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth;
       const newTime = clickPosition * duration;
       playerRef.current.seekTo(newTime);
       setProgress(clickPosition * 100);
@@ -157,7 +159,7 @@ const YoutubeModal = ({
     window.open(
       `https://twitter.com/intent/tweet?url=${encodeURIComponent(
         shareUrl
-      )}&text=${encodeURIComponent(`Watch ${title}`)}`,
+      )}&text=${encodeURIComponent(`Watch ${title} - ${tribe} Tribe`)}`,
       "_blank"
     );
   };
@@ -170,13 +172,13 @@ const YoutubeModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0  flex items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
         className="absolute inset-0 bg-black/90 backdrop-blur-sm"
         onClick={onClose}
       />
-      <div className="relative  w-full h-full bg-white overflow-hidden flex flex-col sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:m-4 sm:rounded-2xl">
-        {/* Close Button */}
+      <div className="relative w-full h-full bg-white overflow-hidden flex flex-col sm:h-auto sm:max-h-[90vh] sm:max-w-4xl sm:m-4 sm:rounded-2xl">
+        {/* Close button */}
         <button
           onClick={onClose}
           className="absolute top-2 right-2 z-10 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
@@ -294,14 +296,25 @@ const YoutubeModal = ({
           </div>
         </div>
 
-        {/* Video Info and Content */}
+        {/* Video info and content */}
         <div className="flex-1 overflow-y-auto">
-          {/* Title, Description and Share Section */}
+          {/* Title and share section */}
           <div className="p-4 border-b">
-            <h3 className="text-lg text-heading font-semibold text-gray-900 mb-1 line-clamp-2">
-              {title}
-            </h3>
-            <p className="text-sm text-subheading mb-3">{description}</p>
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-teal-500 flex-shrink-0">
+                <img
+                  src={tribeLogo}
+                  alt={`${tribe} Tribe`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-grow">
+                <h3 className="text-lg text-heading font-semibold text-gray-900 mb-1 line-clamp-2">
+                  {title}
+                </h3>
+                <p className="text-sm text-subheading">{tribe} Tribe</p>
+              </div>
+            </div>
             <div className="flex items-center gap-3 justify-end">
               <button
                 onClick={shareOnFacebook}
@@ -317,7 +330,7 @@ const YoutubeModal = ({
               </button>
               <button
                 onClick={copyLink}
-                className="p-2 hover:bg-blue-50 rounded-full text-gray-600 transition-colors"
+                className="p-2 hover:bg-blue-50 rounded-full text-subheading transition-colors"
               >
                 <Link className="h-5 w-5" />
               </button>
@@ -338,21 +351,30 @@ const YoutubeModal = ({
                       className="relative w-32 h-20 rounded-lg overflow-hidden flex-shrink-0"
                     >
                       <img
-                        src={video.thumbnail_path}
+                        src={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
                         alt={video.title}
                         className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
                         <Play className="h-8 w-8 text-white" />
                       </div>
+                      <div className="absolute bottom-1 right-1 bg-black/70 text-white text-xs px-1 rounded">
+                        {video.duration}
+                      </div>
                     </div>
                     <div>
                       <h5 className="text-sm font-medium text-heading text-gray-900 line-clamp-2 mb-1">
                         {video.title}
                       </h5>
-                      <p className="text-xs text-gray-600">
-                        {video.description}
+                      <p className="text-xs text-subheading text-gray-600">
+                        {video.tribe} Tribe
                       </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Eye className="h-3 w-3 text-gray-400" />
+                        <span className="text-xs text-gray-500">
+                          {video.views}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -365,4 +387,4 @@ const YoutubeModal = ({
   );
 };
 
-export default YoutubeModal;
+export default VideoModal;
