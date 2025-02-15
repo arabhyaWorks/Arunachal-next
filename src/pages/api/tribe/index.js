@@ -218,10 +218,10 @@ async function createTribe(req, res) {
 //         c.associated_table_id,
 //         CAST(JSON_EXTRACT(c.value, '$.value[0].associated_table_id') AS UNSIGNED) AS tribe_id
 //       FROM category_items ci
-//       JOIN content c ON c.associated_table = 'category_item' 
+//       JOIN content c ON c.associated_table = 'category_item'
 //         AND c.associated_table_id = ci.id
 //       JOIN attributes a ON c.attribute_id = a.id
-//       WHERE a.attribute_type_id = 6 
+//       WHERE a.attribute_type_id = 6
 //       AND JSON_EXTRACT(c.value, '$.value[0].associated_table') = 'tribes'
 //     `);
 
@@ -265,7 +265,7 @@ async function createTribe(req, res) {
 
 //       // Fetch ALL attributes for those category items
 //       const [categoryItems] = await connection.query(`
-//         SELECT 
+//         SELECT
 //           ci.id AS item_id,
 //           ci.category_id,
 //           ci.name AS item_name,
@@ -279,7 +279,7 @@ async function createTribe(req, res) {
 //           a.attribute_type_id
 //         FROM category_items ci
 //         JOIN categories cat ON ci.category_id = cat.id
-//         JOIN content c ON c.associated_table = 'category_item' 
+//         JOIN content c ON c.associated_table = 'category_item'
 //           AND c.associated_table_id = ci.id
 //         JOIN attributes a ON c.attribute_id = a.id
 //         WHERE ci.id IN (${linkedItemIds.join(",")})
@@ -389,12 +389,19 @@ async function getTribes(req, res) {
   let connection;
   try {
     connection = await pool.getConnection();
+    const { tribeName } = req.query;
 
-    // 1) Fetch all tribes
-    const [tribes] = await connection.query(
-      "SELECT id AS tribe_id, name FROM tribes"
-    );
+    // Modify query to filter by tribeName if provided
+    let query = "SELECT id AS tribe_id, name FROM tribes";
+    let params = [];
 
+    if (tribeName) {
+      query += " WHERE name LIKE ?";
+      params.push(`%${tribeName}%`);
+    }
+
+    // Execute query with optional tribeName filter
+    const [tribes] = await connection.query(query, params);
     if (tribes.length === 0) {
       connection.release();
       return res.status(200).json({ success: true, data: [] });
@@ -437,7 +444,7 @@ async function getTribes(req, res) {
         name: t.name,
         attributes: {},
         categories: {},
-        media: {} // This will hold media records
+        media: {}, // This will hold media records
       };
     }
 
