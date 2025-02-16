@@ -30,7 +30,7 @@ export default function Books({books}) {
               {/* Book Cover */}
               <div className="relative h-[280px] overflow-hidden">
                 <img
-                  src={book.attributes["cat-Books-Thumbnail"].attribute_value.value}
+                  src={book.attributes["cat-BooksOfTheTribe-ThumbnailOfTheBook"].attribute_value.value}
                   alt={book.name}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
@@ -52,7 +52,7 @@ export default function Books({books}) {
                 
                 <div className="flex items-center gap-1.5 mb-3 text-subheading">
                   <User2 className="h-3.5 w-3.5" />
-                  <span className="text-md text-semibold">{book.attributes["cat-Books-Author"].attribute_value.value}</span>
+                  <span className="text-md text-semibold">{book.attributes["cat-BooksOfTheTribe-Author"].attribute_value.value}</span>
                 </div>
 
                 {/* <div className="flex flex-wrap gap-1.5">
@@ -85,7 +85,7 @@ export default function Books({books}) {
               {/* Book Cover */}
               <div className="relative h-[250px] overflow-hidden ">
                 <img
-                  src={book.attributes["cat-Books-Thumbnail"].attribute_value.value}
+                  src={book.attributes["cat-BooksOfTheTribe-ThumbnailOfTheBook"].attribute_value.value}
                   alt={book.name}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
@@ -107,7 +107,7 @@ export default function Books({books}) {
                 
                 <div className="flex items-center gap-2 mb-4 text-subheading">
                   <User2 className="h-4 w-4" />
-                  <span className="text-md text-bold">{book.attributes["cat-Books-Author"].attribute_value.value}</span>
+                  <span className="text-md text-bold">{book.attributes["cat-BooksOfTheTribe-Author"].attribute_value.value}</span>
                 </div>
 
                 {/* <div className="flex flex-wrap gap-2">

@@ -469,7 +469,6 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div>
-        ;
         {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -784,8 +783,8 @@ export default function TribePage() {
         )}
 
         <div id="books" className="mb-12">
-          {tribes[0].categories["Books Of The tribe"]?.length > 0 && (
-            <Books books={tribes[0].categories["Books Of The tribe"]} />
+          {tribes[0].categories["Books of the tribe"]?.length > 0 && (
+            <Books books={tribes[0].categories["Books of the tribe"]} />
           )}
         </div>
 
