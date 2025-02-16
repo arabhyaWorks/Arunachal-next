@@ -82,7 +82,7 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <div className="relative h-[450px] mt-[100px]">
+      <div className="relative h-[550px] mt-[100px]">
         <img
           src="https://firebasestorage.googleapis.com/v0/b/kathavachak-95a17.appspot.com/o/Banner%206_v2%20(1).jpg?alt=media&token=f4942c5b-638c-4f1a-b4be-6dbc53d4947d"
           alt="Arunachal Pradesh Culture"
