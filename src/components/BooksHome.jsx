@@ -1,47 +1,63 @@
 import { Book, User2, Bookmark, ArrowRight } from "lucide-react";
-
-const books = [
-  {
-    title: "The Inheritance of Words",
-    author: "Mamang Dai",
-    tribes: ["Adi", "Tutsa", "Khamba"],
-    image:
-      "https://zubaanbooks.com/wp-content/uploads/The-Inheritance-of-Words_FRONT-COVER.jpg.webp",
-  },
-  {
-    title: "Myth, Memory & Folktale",
-    author: "Stuart Blackburn",
-    tribes: ["Apatani", "Puroik", "Khamba"],
-    image:
-      "https://m.media-amazon.com/images/I/81vIMyqAhrL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    title: "Tales of Our Ancestors",
-    author: "Tai Nyori",
-    tribes: ["Kaman", "Tutsa", "Khamba"],
-    image:
-      "https://m.media-amazon.com/images/I/81czZPOrKyL._AC_UF1000,1000_QL80_.jpg",
-  },
-  {
-    title: "Hill Tribes of Arunachal",
-    author: "Ratan Bhattacharjee",
-    tribes: ["Adi"],
-    image:
-      "https://cdn.exoticindia.com/images/products/original/books-2019-001/aze541.jpg",
-  },
-];
+import { useState, useEffect } from "react";
 
 export default function Books() {
+  const [books, setBooksData] = useState([]);
+  
+  useEffect(() => {
+    async function fetchBooks() {
+      const response = await fetch(
+        "http://localhost:3000/api/category/items?category_id=4"
+      );
+      const data = await response.json();
+      if (data?.data) {
+        // Transform the data to match the UI requirements
+        const transformedBooks = data.data.map(book => {
+          const attributes = book.attributes || [];
+          
+          // Find the image attribute
+          const imageAttribute = attributes.find(
+            attr => attr.name === "cat-BooksOfTheTribe-ThumbnailOfTheBook"
+          );
+          
+          // Find the author attribute
+          const authorAttribute = attributes.find(
+            attr => attr.name === "cat-BooksOfTheTribe-Author"
+          );
+
+          // Find the tribe attribute
+          const tribeAttribute = attributes.find(
+            attr => attr.name === "cat-BooksOfTheTribe-Tribe"
+          );
+
+          // Extract tribes array
+          const tribes = tribeAttribute?.value?.value?.map(tribe => tribe.name) || [];
+
+          return {
+            id: book.id,
+            title: book.name,
+            description: book.description,
+            image: imageAttribute?.value?.value || "/placeholder-book.jpg",
+            author: authorAttribute?.value?.value || "Unknown Author",
+            tribes: tribes
+          };
+        });
+
+        setBooksData(transformedBooks);
+      }
+    }
+    fetchBooks();
+  }, []);
+
   return (
     <div className="py-20 dark:from-[#2d3748] dark:to-[#1f2937]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="relative mb-12">
           <div className="flex items-center gap-3 mb-2">
-            {/* Uncomment the Book icon below if needed */}
-            {/* <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+            <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
               <Book className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-            </div> */}
+            </div>
             <h2 className="text-3xl md:text-4xl font-bold text-heading">
               Folklore Stories & Books
             </h2>
@@ -54,9 +70,9 @@ export default function Books() {
 
         {/* Mobile Scrollable Books */}
         <div className="flex md:hidden overflow-x-auto pb-6 gap-4 snap-x snap-mandatory scrollbar-hide">
-          {books.map((book, index) => (
+          {books.map((book) => (
             <div
-              key={index}
+              key={book.id}
               className="snap-start flex-none w-[260px] group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700"
             >
               {/* Book Cover */}
@@ -107,9 +123,9 @@ export default function Books() {
 
         {/* Desktop Grid Layout */}
         <div className="hidden md:grid grid-cols-2 lg:grid-cols-4 gap-8">
-          {books.map((book, index) => (
+          {books.map((book) => (
             <div
-              key={index}
+              key={book.id}
               className="group relative bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700"
             >
               {/* Book Cover */}

@@ -1,38 +1,52 @@
 import { ArrowRight } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function Sports() {
-  const sportsData = [
-    {
-      name: "Archery",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/archery.png",
-      participants: "Individual",
-    },
-    {
-      name: "Wrestling",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/wrestling.jpg",
-      participants: "Duo",
-    },
-    {
-      name: "Boat Racing",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/baot-racing.jpg",
-      participants: "Team",
-    },
-    {
-      name: "Bamboo Pole Climbing",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/bamboo-pooling.jpg",
-      participants: "Individual",
-    },
-    {
-      name: "Pony Racing",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/pony-racing.jpg",
-      participants: "Individual",
-    },
-    {
-      name: "Animal Sports",
-      image: "https://indigenous.arunachal.gov.in/assets/sports/animalsports.jpg",
-      participants: "Group",
-    },
-  ];
+  const [sportsData, setSportsData] = useState([]);
+
+  useEffect(() => {
+    async function fetchSports() {
+      try {
+        const response = await fetch(
+          "http://localhost:3000/api/category/items?category_id=6"
+        );
+        const data = await response.json();
+        if (data?.data) {
+          // Transform the data to match the UI requirements
+          const transformedSports = data.data.map(sport => {
+            const attributes = sport.attributes || [];
+            
+            // Find the image attribute
+            const imageAttribute = attributes.find(
+              attr => attr.name === "cat-TraditionalSportsOfTheTribes-ThumbImageOfTheSport"
+            );
+            
+            // Find the tribe attribute
+            const tribeAttribute = attributes.find(
+              attr => attr.name === "cat-TraditionalSportsOfTheTribes-Tribe"
+            );
+
+            // Extract tribe name
+            const tribe = tribeAttribute?.value?.value?.[0]?.name || "Unknown Tribe";
+
+            return {
+              id: sport.id,
+              name: sport.name,
+              description: sport.description,
+              image: imageAttribute?.value?.value || "/placeholder-sport.jpg",
+              tribe: tribe,
+              participants: `${tribe} Tribe` // Using tribe name for participants label
+            };
+          });
+
+          setSportsData(transformedSports);
+        }
+      } catch (error) {
+        console.error("Error fetching sports data:", error);
+      }
+    }
+    fetchSports();
+  }, []);
 
   return (
     <div id="sports" className="py-20">
@@ -46,10 +60,11 @@ export default function Sports() {
             Discover ancient games that shaped our culture
           </p>
         </div>
+        
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {sportsData.map((sport) => (
             <div
-              key={sport.name}
+              key={sport.id}
               className="group cursor-pointer transform hover:-translate-y-1 transition-all duration-300"
             >
               <div className="relative h-[200px] rounded-xl border overflow-hidden mb-3 shadow-md group-hover:shadow-xl">
