@@ -457,7 +457,7 @@ const musicData = [
 const books = [
   {
     title: "The Inheritance of Words",
-    author: "Mamang Dai",
+    author: "The Inheritance of Words",
     tribes: ["Adi", "Tutsa", "Khamba"],
     image: "https://zubaanbooks.com/wp-content/uploads/The-Inheritance-of-Words_FRONT-COVER.jpg.webp"
   },

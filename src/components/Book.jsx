@@ -30,8 +30,8 @@ export default function Books({books}) {
               {/* Book Cover */}
               <div className="relative h-[280px] overflow-hidden">
                 <img
-                  src={book.thumbnail_path}
-                  alt={book.title}
+                  src={book.attributes["cat-Books-Thumbnail"].attribute_value.value}
+                  alt={book.name}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -47,12 +47,12 @@ export default function Books({books}) {
               {/* Book Info */}
               <div className="p-4">
                 <h3 className="text-lg font-semibold text-heading mb-1.2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {book.title}
+                  {book.name}
                 </h3>
                 
                 <div className="flex items-center gap-1.5 mb-3 text-subheading">
                   <User2 className="h-3.5 w-3.5" />
-                  <span className="text-md text-semibold">{book.author}</span>
+                  <span className="text-md text-semibold">{book.attributes["cat-Books-Author"].attribute_value.value}</span>
                 </div>
 
                 {/* <div className="flex flex-wrap gap-1.5">
@@ -85,8 +85,8 @@ export default function Books({books}) {
               {/* Book Cover */}
               <div className="relative h-[250px] overflow-hidden ">
                 <img
-                  src={book.thumbnail_path}
-                  alt={book.title}
+                  src={book.attributes["cat-Books-Thumbnail"].attribute_value.value}
+                  alt={book.name}
                   className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -102,12 +102,12 @@ export default function Books({books}) {
               {/* Book Info */}
               <div className="p-4">
                 <h3 className="text-xl font-semibold text-heading mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                  {book.title}
+                  {book.name}
                 </h3>
                 
                 <div className="flex items-center gap-2 mb-4 text-subheading">
                   <User2 className="h-4 w-4" />
-                  <span className="text-md text-bold">{book.author}</span>
+                  <span className="text-md text-bold">{book.attributes["cat-Books-Author"].attribute_value.value}</span>
                 </div>
 
                 {/* <div className="flex flex-wrap gap-2">

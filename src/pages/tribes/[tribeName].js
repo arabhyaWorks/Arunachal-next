@@ -780,7 +780,7 @@ export default function TribePage() {
         )}
 
         <div id="books" className="mb-12">
-          <Books books={tribes[0].media.documents} />
+          <Books books={tribes[0].categories.Books} />
         </div>
 
         <div id="food">
