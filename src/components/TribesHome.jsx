@@ -1,50 +1,38 @@
 import { ArrowRight } from "lucide-react";
 import Marquee from "react-fast-marquee";
-
-const tribes = [
-  {
-    name: "Adi",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
-  },
-  {
-    name: "Khamba",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Khamba1.jpg",
-  },
-  {
-    name: "Nocte",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/nocte1.jpg",
-  },
-  {
-    name: "Tangsa",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/tangsa1.jpg",
-  },
-  {
-    name: "Apatani",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg",
-  },
-  {
-    name: "Kaman",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Kaman1.jpg",
-  },
-  {
-    name: "Puroik",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/puroik1.jpg",
-  },
-  {
-    name: "Tutsa",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/tutsa1.jpg",
-  },
-];
+import { useState, useEffect } from "react";
 
 export default function Tribes() {
+  const [tribes, setTribes] = useState([]);
+
+  useEffect(() => {
+    async function fetchTribes() {
+      try {
+        const response = await fetch("http://localhost:3000/api/tribe");
+        const data = await response.json();
+        if (data?.data) {
+          const transformedTribes = data.data.map((tribe) => ({
+            id: tribe.tribe_id,
+            name: tribe.name,
+            location:
+              tribe.attributes["tribe-Regions"]?.attribute_value?.value?.[0] ||
+              "Unknown",
+            population:
+              tribe.attributes["tribe-PopulationInNumbers"]?.attribute_value
+                ?.value || "N/A",
+            image:
+              tribe.attributes["tribe-BannerImage"]?.attribute_value?.value ||
+              "/placeholder.jpg",
+          }));
+          setTribes(transformedTribes);
+        }
+      } catch (error) {
+        console.error("Error fetching tribes:", error);
+      }
+    }
+    fetchTribes();
+  }, []);
+
   return (
     <div id="tribes" className="pt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -12,7 +12,7 @@ import Video from '../../components/VideoHome';
 import classNames from 'classnames';
 import MusicPlayer from '../../components/MusicPlayer'; 
 import Header from '../../components/Header';           
-import Tribes from '../../components/Tribes';           
+import Tribes from '../../components/TribesHome';           
 import Festivals from '../../components/FestivalsHome';     
 import Foods from '../../components/DishesHome';             
 import DetailedFestivals from '../../components/DetailedFestivals'; 
