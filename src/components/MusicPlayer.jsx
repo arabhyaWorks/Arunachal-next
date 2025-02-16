@@ -1,25 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  Play, 
-  Pause, 
-  SkipBack, 
-  SkipForward, 
-  Volume2, 
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Play,
+  Pause,
+  SkipBack,
+  SkipForward,
+  Volume2,
   VolumeX,
   X,
   Heart,
   Shuffle,
   ListMusic,
-  Clock
-} from 'lucide-react';
-
+  Clock,
+} from "lucide-react";
 
 const MusicPlayer = ({ songs }) => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [currentTime, setCurrentTime] = useState('0:00');
+  const [currentTime, setCurrentTime] = useState("0:00");
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [isLiked, setIsLiked] = useState(new Array(songs.length).fill(false));
   const [isShuffle, setIsShuffle] = useState(false);
@@ -41,11 +40,11 @@ const MusicPlayer = ({ songs }) => {
   const formatTime = (time) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handlePlayPause = (index) => {
-    if (typeof index === 'number') {
+    if (typeof index === "number") {
       if (index === currentSongIndex) {
         setIsPlaying(!isPlaying);
       } else {
@@ -63,7 +62,7 @@ const MusicPlayer = ({ songs }) => {
       const randomIndex = Math.floor(Math.random() * songs.length);
       setCurrentSongIndex(randomIndex);
     } else {
-      setCurrentSongIndex((prevIndex) => 
+      setCurrentSongIndex((prevIndex) =>
         prevIndex === 0 ? songs.length - 1 : prevIndex - 1
       );
     }
@@ -74,7 +73,7 @@ const MusicPlayer = ({ songs }) => {
       const randomIndex = Math.floor(Math.random() * songs.length);
       setCurrentSongIndex(randomIndex);
     } else {
-      setCurrentSongIndex((prevIndex) => 
+      setCurrentSongIndex((prevIndex) =>
         prevIndex === songs.length - 1 ? 0 : prevIndex + 1
       );
     }
@@ -82,7 +81,8 @@ const MusicPlayer = ({ songs }) => {
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      const progress = (audioRef.current.currentTime / audioRef.current.duration) * 100;
+      const progress =
+        (audioRef.current.currentTime / audioRef.current.duration) * 100;
       setProgress(progress);
       setCurrentTime(formatTime(audioRef.current.currentTime));
     }
@@ -91,7 +91,8 @@ const MusicPlayer = ({ songs }) => {
   const handleProgressClick = (e) => {
     if (audioRef.current) {
       const progressBar = e.currentTarget;
-      const clickPosition = e.clientX - progressBar.getBoundingClientRect().left;
+      const clickPosition =
+        e.clientX - progressBar.getBoundingClientRect().left;
       const progressBarWidth = progressBar.offsetWidth;
       const percentage = (clickPosition / progressBarWidth) * 100;
       const newTime = (percentage / 100) * audioRef.current.duration;
@@ -146,7 +147,9 @@ const MusicPlayer = ({ songs }) => {
                 </h3>
                 <div className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 rounded-full bg-teal-500"></div>
-                  <p className="text-xs text-subheading truncate">{song["Tribe Name"]}</p>
+                  <p className="text-xs text-subheading truncate">
+                    {song["Tribe Name"]}
+                  </p>
                 </div>
               </div>
             </div>
@@ -154,7 +157,9 @@ const MusicPlayer = ({ songs }) => {
             {/* Duration */}
             <div className="flex items-center gap-2 mb-3">
               <Clock className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
-              <span className="text-xs text-subheading">{song["Duration"]}</span>
+              <span className="text-xs text-subheading">
+                {song["Duration"]}
+              </span>
             </div>
 
             {/* Controls */}
@@ -169,16 +174,18 @@ const MusicPlayer = ({ songs }) => {
                   <Play className="h-6 w-6 group-hover:scale-110 transition-transform" />
                 )}
               </button>
-              
+
               <button
                 onClick={() => toggleLike(index)}
                 className={`p-2 rounded-full transition-colors ${
-                  isLiked[index] 
-                    ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20' 
-                    : 'text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700'
+                  isLiked[index]
+                    ? "text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    : "text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700"
                 }`}
               >
-                <Heart className={`h-6 w-6 ${isLiked[index] ? 'fill-current' : ''}`} />
+                <Heart
+                  className={`h-6 w-6 ${isLiked[index] ? "fill-current" : ""}`}
+                />
               </button>
             </div>
           </div>
@@ -197,8 +204,12 @@ const MusicPlayer = ({ songs }) => {
                   className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div>
-                  <h4 className="font-semibold text-heading">{currentSong["title"]}</h4>
-                  <p className="text-sm text-subheading">{currentSong["Tribe Name"]}</p>
+                  <h4 className="font-semibold text-heading">
+                    {currentSong["title"]}
+                  </h4>
+                  <p className="text-sm text-subheading">
+                    {currentSong["Tribe Name"]}
+                  </p>
                 </div>
               </div>
 
@@ -206,7 +217,9 @@ const MusicPlayer = ({ songs }) => {
                 <button
                   onClick={() => setIsShuffle(!isShuffle)}
                   className={`p-2 rounded-full transition-colors ${
-                    isShuffle ? 'text-teal-500 bg-teal-50 dark:bg-teal-900/20' : 'text-gray-400'
+                    isShuffle
+                      ? "text-teal-500 bg-teal-50 dark:bg-teal-900/20"
+                      : "text-gray-400"
                   }`}
                 >
                   <Shuffle className="h-5 w-5" />
@@ -214,7 +227,9 @@ const MusicPlayer = ({ songs }) => {
                 <button
                   onClick={() => setShowPlaylist(!showPlaylist)}
                   className={`p-2 rounded-full transition-colors ${
-                    showPlaylist ? 'text-teal-500 bg-teal-50 dark:bg-teal-900/20' : 'text-gray-400'
+                    showPlaylist
+                      ? "text-teal-500 bg-teal-50 dark:bg-teal-900/20"
+                      : "text-gray-400"
                   }`}
                 >
                   <ListMusic className="h-5 w-5" />
@@ -235,7 +250,7 @@ const MusicPlayer = ({ songs }) => {
               >
                 <SkipBack className="h-5 w-5 text-heading" />
               </button>
-              
+
               <button
                 onClick={() => handlePlayPause()}
                 className="w-12 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-blue-600 to-teal-500 text-white hover:shadow-lg transition-all"
@@ -265,7 +280,9 @@ const MusicPlayer = ({ songs }) => {
                     style={{ width: `${progress}%` }}
                   />
                 </div>
-                <span className="text-sm text-gray-500">{currentSong["Duration"]}</span>
+                <span className="text-sm text-gray-500">
+                  {currentSong["Duration"]}
+                </span>
               </div>
 
               <button
@@ -297,7 +314,9 @@ const MusicPlayer = ({ songs }) => {
                     setIsPlaying(true);
                   }}
                   className={`flex items-center gap-4 p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
-                    currentSongIndex === index ? 'bg-gray-50 dark:bg-gray-700' : ''
+                    currentSongIndex === index
+                      ? "bg-gray-50 dark:bg-gray-700"
+                      : ""
                   }`}
                 >
                   <img
@@ -306,10 +325,16 @@ const MusicPlayer = ({ songs }) => {
                     className="w-12 h-12 rounded object-cover"
                   />
                   <div className="flex-grow">
-                    <h5 className="font-medium text-heading">{song["title"]}</h5>
-                    <p className="text-sm text-subheading">{song["Tribe Name"]}</p>
+                    <h5 className="font-medium text-heading">
+                      {song["title"]}
+                    </h5>
+                    <p className="text-sm text-subheading">
+                      {song["Tribe Name"]}
+                    </p>
                   </div>
-                  <span className="text-sm text-gray-500">{song["Duration"]}</span>
+                  <span className="text-sm text-gray-500">
+                    {song["Duration"]}
+                  </span>
                 </div>
               ))}
             </div>
@@ -317,12 +342,14 @@ const MusicPlayer = ({ songs }) => {
         </div>
       )}
 
-      <audio
-        ref={audioRef}
-        src={currentSong["file_path"]}
-        onTimeUpdate={handleTimeUpdate}
-        onEnded={handleNext}
-      />
+      {songs.length > 0 && (
+        <audio
+          ref={audioRef}
+          src={currentSong["file_path"]}
+          onTimeUpdate={handleTimeUpdate}
+          onEnded={handleNext}
+        />
+      )}
     </div>
   );
 };

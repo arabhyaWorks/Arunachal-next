@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   User,
   ChevronRight,
@@ -6,84 +6,44 @@ import {
   Eye,
   MessageSquare,
   ArrowRight,
-} from 'lucide-react';
-import Marquee from 'react-fast-marquee';
-import Video from '../../components/VideoHome'; 
-import classNames from 'classnames';
-import MusicPlayer from '../../components/MusicPlayer'; 
-import Header from '../../components/Header';           
-import Tribes from '../../components/TribesHome';           
-import Festivals from '../../components/FestivalsHome';     
-import Foods from '../../components/DishesHome';             
-import DetailedFestivals from '../../components/DetailedFestivals'; 
-import Books from '../../components/BooksHome';             
-import Sports from '../../components/SportsHome';           
-import Footer from '../../components/Footer';           
+} from "lucide-react";
+import Marquee from "react-fast-marquee";
+import Video from "../../components/VideoHome";
+import classNames from "classnames";
+import MusicPlayer from "../../components/MusicPlayer";
+import Header from "../../components/Header";
+import Tribes from "../../components/TribesHome";
+import Festivals from "../../components/FestivalsHome";
+import Foods from "../../components/DishesHome";
+import DetailedFestivals from "../../components/DetailedFestivals";
+import Books from "../../components/BooksHome";
+import Sports from "../../components/SportsHome";
+import Footer from "../../components/Footer";
 
 export default function Home() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false); 
-  const [activeTab, setActiveTab] = useState('Folk Music');
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [activeTab, setActiveTab] = useState("Folk Music");
+  const [musicData, setMusicData] = useState([]);
 
-  const musicData = [
-    {
-      'Music Name': 'Adi Tribe Music',
-      'Thumb Image Link':
-        'https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg',
-      'Singer Name': 'Adi',
-      'Tribe Name': 'Adi Tribe',
-      Duration: '03:45',
-      'Music Link':
-        'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81236KONGKU_RAYO_DANCE_OF_ADI.mp3',
-    },
-    {
-      'Music Name': 'Khemba Tribe Music',
-      'Thumb Image Link':
-        'https://indigenous.arunachal.gov.in/upload/tribes/Content/Khamba1.jpg',
-      'Singer Name': 'Adi',
-      'Tribe Name': 'Khemba Tribe',
-      Duration: '04:10',
-      'Music Link':
-        'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81237TRIBAL_SONG.mp3',
-    },
-    {
-      'Music Name': 'Tangsa Tribe Music',
-      'Thumb Image Link':
-        'https://indigenous.arunachal.gov.in/upload/tribes/Content/tangsa1.jpg',
-      'Singer Name': 'Adi',
-      'Tribe Name': 'Tangsa Tribe',
-      Duration: '03:55',
-      'Music Link':
-        'https://indigenous.arunachal.gov.in/upload/adi/2/December2024/audio/81238ADI_FESTIVAL_SONG.mp3',
-    },
-    {
-      'Music Name': 'Apatani tribe Music',
-      'Thumb Image Link':
-        'https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg',
-      'Singer Name': 'Apatani',
-      'Tribe Name': 'Apatani Tribe',
-      Duration: '10:05',
-      'Music Link':
-        'https://indigenous.arunachal.gov.in/upload/aptani/2/December2024/audio/60679DAMINDA_DANCE_OF_APATANI.mp3',
-    },
-    {
-      'Music Name': 'Galo Folk',
-      'Thumb Image Link':
-        'https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/galo/5/December2024/image/10320Galo_3_11zon.jpg&width=550&height=750',
-      'Singer Name': 'Galo',
-      'Tribe Name': 'Galo Tribe',
-      Duration: '04:56',
-      'Music Link':
-        'https://indigenous.arunachal.gov.in/upload/galo/6/December2024/audio/16694XIRJU_HOMEN_NYIRJU_HOMEN_DANCE_OF_GALO.mp3',
-    },
-  ];
-
-  // On mount, safely check localStorage for theme
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedTheme = localStorage.getItem('theme');
-      if (storedTheme === 'dark') {
+    async function fetchMusic() {
+      const response = await fetch(
+        "http://localhost:3000/api/category/audio"
+      );
+      const data = await response.json();
+      if (data?.data) {
+        setMusicData(data.data);
+      }
+    }
+    fetchMusic();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme");
+      if (storedTheme === "dark") {
         setIsDarkMode(true);
       }
     }
@@ -91,13 +51,13 @@ export default function Home() {
 
   // Whenever isDarkMode changes, update <html> class and localStorage
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       if (isDarkMode) {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
+        document.documentElement.classList.add("dark");
+        localStorage.setItem("theme", "dark");
       } else {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
+        document.documentElement.classList.remove("dark");
+        localStorage.setItem("theme", "light");
       }
     }
   }, [isDarkMode]);
@@ -107,15 +67,15 @@ export default function Home() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <div
       className={classNames(
-        'min-h-screen dark:bg-[#2d3748] transition-colors text-[#083644] dark:text-white',
-        'bg-[#f0ffff]'
+        "min-h-screen dark:bg-[#2d3748] transition-colors text-[#083644] dark:text-white",
+        "bg-[#f0ffff]"
       )}
     >
       {/* Header */}
@@ -136,27 +96,27 @@ export default function Home() {
           {[
             {
               icon: Calendar,
-              title: 'Upcoming Festivals',
-              count: '12',
-              color: 'from-blue-500 to-cyan-500',
+              title: "Upcoming Festivals",
+              count: "12",
+              color: "from-blue-500 to-cyan-500",
             },
             {
               icon: Eye,
-              title: 'Recently Viewed',
-              count: '24',
-              color: 'from-teal-500 to-emerald-500',
+              title: "Recently Viewed",
+              count: "24",
+              color: "from-teal-500 to-emerald-500",
             },
             {
               icon: MessageSquare,
-              title: 'Folk Stories',
-              count: '156',
-              color: 'from-cyan-500 to-blue-500',
+              title: "Folk Stories",
+              count: "156",
+              color: "from-cyan-500 to-blue-500",
             },
             {
               icon: User,
-              title: 'All Tribes',
-              count: '22',
-              color: 'from-emerald-500 to-teal-500',
+              title: "All Tribes",
+              count: "22",
+              color: "from-emerald-500 to-teal-500",
             },
           ].map((item) => (
             <div
@@ -181,7 +141,6 @@ export default function Home() {
           ))}
         </div>
       </div>
-
       {/* Luxurious Festival Scroll with Golden Accents */}
       <Festivals />
 
