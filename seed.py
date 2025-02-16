@@ -754,3 +754,59 @@ const tribes = [
   'Tagin',
   'Tangsa'
 ];
+
+
+const videos: Video[] = [
+  {
+    title: "Traditional Dance Performance",
+    tribe: "Apatani",
+    tribeLogo: "https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg",
+    videoId: "lv_WGEHNtSo",
+    views: "2.3K",
+    duration: "4:15",
+    date: "2024-01-15",
+    category: "Dance"
+  },
+  {
+    title: "Cultural Celebration",
+    tribe: "Nyishi",
+    tribeLogo: "https://indigenous.arunachal.gov.in/upload/tribes/Content/nyishi1.jpg",
+    videoId: "PTcoEqRmWp0",
+    views: "1.8K",
+    duration: "3:45",
+    date: "2024-01-20",
+    category: "Festival"
+  },
+  {
+    title: "Nocte Ceremony",
+    tribe: "Nocte",
+    tribeLogo: "https://indigenous.arunachal.gov.in/upload/tribes/Content/nocte1.jpg",
+    videoId: "YrZkKMkbDk8",
+    views: "3.1K",
+    duration: "5:20",
+    date: "2024-01-25",
+    category: "Ceremony"
+  }
+];
+
+const tribes = [
+  'All Tribes',
+  'Adi',
+  'Apatani',
+  'Buguns',
+  'Galo',
+  'Nocte',
+  'Nyishi',
+  'Tagin',
+  'Monpa'
+];
+
+const categories = [
+  'All Categories',
+  'Dance',
+  'Music',
+  'Festival',
+  'Ceremony',
+  'Craft',
+  'Food'
+];
