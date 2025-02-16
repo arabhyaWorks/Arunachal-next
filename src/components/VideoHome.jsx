@@ -23,7 +23,7 @@ export default function App() {
   const handleVideoEnd = () => {
     if (selectedVideo) {
       const currentIndex = videos.findIndex(
-        (v) => v.videoId === selectedVideo.videoId
+        (v) => v.file_path === selectedVideo.file_path
       );
       const nextIndex = (currentIndex + 1) % videos.length;
       setSelectedVideo(videos[nextIndex]);
@@ -41,7 +41,7 @@ export default function App() {
           >
             <div className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 shadow-lg">
               <img
-                src={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
+                src={`${video.thumbnail_path}`}
                 alt={video.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
               />
@@ -74,7 +74,7 @@ export default function App() {
 
       {selectedVideo && (
         <VideoModal
-          videoId={selectedVideo.videoId}
+          file_path={selectedVideo.file_path}
           isOpen={!!selectedVideo}
           onClose={() => setSelectedVideo(null)}
           selectedVideo={selectedVideo}
