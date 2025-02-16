@@ -30,6 +30,7 @@ import Header from "../../components/Header";
 import Video from "../../components/video";
 import Books from "../../components/Book";
 import Foods from "../../components/Foods";
+import Sports from "../../components/Sports";
 import MusicPlayer from "../../components/MusicPlayer";
 import { useRouter } from "next/router";
 import ExpandableText from "./ExpandableText";
@@ -755,45 +756,95 @@ export default function TribePage() {
       <AnimatePresence>
         {selectedImage && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-            onClick={() => setSelectedImage(null)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="relative max-w-5xl w-full"
-            >
+              >
               <button
                 onClick={() => setSelectedImage(null)}
                 className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
-              >
+                >
                 <X className="h-6 w-6" />
               </button>
               <img
                 src={selectedImage}
                 alt="Gallery Preview"
                 className="w-full h-auto rounded-lg shadow-2xl"
+                />
+            </motion.div>
+          </motion.div>
+        )}
+        </AnimatePresence>
+
+        {tribes[0].categories["Cuisine/Delicacies"]?.length > 0 && (
+          <motion.div
+            id="food"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
+            >
+              <Foods dishes={tribes[0].categories["Cuisine/Delicacies"]} />
+            </motion.div>
+          </motion.div>
+        )}
+
+        {tribes[0].categories["Cuisine/Delicacies"]?.length > 0 && (
+          <motion.div
+            id="food"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
+            >
+              <Sports
+                sports={
+                  tribes[0].categories["Traditional Sports of the tribes"]
+                }
               />
             </motion.div>
           </motion.div>
         )}
 
-        <div id="books" className="mb-12">
-          {tribes[0].categories["Books of the tribe"]?.length > 0 && (
-            <Books books={tribes[0].categories["Books of the tribe"]} />
-          )}
-        </div>
-
-        <div id="food">
-          {tribes[0].categories.Foods?.length > 0 && (
-            <Foods dishes={tribes[0].categories.Foods} />
-          )}
-        </div>
-      </AnimatePresence>
+        {tribes[0].categories["Books of the tribe"]?.length > 0 && (
+          <motion.div
+            id="books"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="relative z-10 flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
+            >
+              <Books books={tribes[0].categories["Books of the tribe"]} />
+            </motion.div>
+          </motion.div>
+        )}
+        
     </div>
   );
 }

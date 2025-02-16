@@ -1,7 +1,7 @@
 import pool from "../../../utils/db";
 import attributeTypes from "../../../utils/attributeTypes";
-import processMediaIfNeeded from '../../../utils/processMedia';
-import processMediaAttributes from '../../../utils/processMediaAttribute'
+import processMediaIfNeeded from "../../../utils/processMedia";
+import processMediaAttributes from "../../../utils/processMediaAttribute";
 
 // Assumed constant for "Relations" type (i.e. for tribe references)
 const RELATIONS_TYPE_ID = 6;
@@ -33,10 +33,10 @@ export default async function handler(req, res) {
  *   "description": "Tribal dance from region X",
  *   "user_id": 1,
  *   "attributes": [
- *      { 
- *         "attribute_id": 99, 
- *         "attribute_type_id": 6, 
- *         "attribute_name": "Tribes", 
+ *      {
+ *         "attribute_id": 99,
+ *         "attribute_type_id": 6,
+ *         "attribute_name": "Tribes",
  *         "attribute_value": {
  *             "value": [
  *               { "associated_table": "tribes", "associated_table_id": 1, "name": "Adi" },
@@ -44,10 +44,10 @@ export default async function handler(req, res) {
  *             ]
  *         }
  *      },
- *      { 
- *         "attribute_id": 100, 
- *         "attribute_type_id": 1, 
- *         "attribute_name": "Type of dance", 
+ *      {
+ *         "attribute_id": 100,
+ *         "attribute_type_id": 1,
+ *         "attribute_name": "Type of dance",
  *         "attribute_value": { "value": "ritualistic" }
  *      },
  *      ...
@@ -107,7 +107,11 @@ async function createCategoryItem(req, res) {
         break;
       }
     }
-    if (!tribeReferences || !tribeReferences.value || !Array.isArray(tribeReferences.value)) {
+    if (
+      !tribeReferences ||
+      !tribeReferences.value ||
+      !Array.isArray(tribeReferences.value)
+    ) {
       connection.release();
       return res.status(400).json({
         success: false,
@@ -129,10 +133,23 @@ async function createCategoryItem(req, res) {
     // 5) Process each attribute:
     if (Array.isArray(attributes)) {
       for (const attr of attributes) {
-        const { attribute_id, attribute_type_id, attribute_name, attribute_value } = attr;
+        const {
+          attribute_id,
+          attribute_type_id,
+          attribute_name,
+          attribute_value,
+        } = attr;
 
         // Process media if needed; otherwise, use the value directly.
-        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, associated_tribe_id, category_id, itemId);
+        let storedValue = await processMediaIfNeeded(
+          connection,
+          attribute_type_id,
+          attribute_value,
+          user_id,
+          associated_tribe_id,
+          category_id,
+          itemId
+        );
 
         // Insert into the content table with status 'pending'
         const [contentResult] = await connection.query(
@@ -184,7 +201,9 @@ async function getCategoryItems(req, res) {
       );
       if (rows.length === 0) {
         connection.release();
-        return res.status(404).json({ success: false, error: "Item not found" });
+        return res
+          .status(404)
+          .json({ success: false, error: "Item not found" });
       }
       const item = rows[0];
 
@@ -221,8 +240,10 @@ async function getCategoryItems(req, res) {
         };
       });
 
-      const processedAttributes = await processMediaAttributes(connection, attributes);
-
+      const processedAttributes = await processMediaAttributes(
+        connection,
+        attributes
+      );
 
       return res.status(200).json({
         success: true,
@@ -231,17 +252,73 @@ async function getCategoryItems(req, res) {
           category_id: item.category_id,
           name: item.name,
           description: item.description,
-          attributes : processedAttributes,
+          attributes: processedAttributes,
         },
       });
     } else if (category_id) {
-      // Fetch all items for a specific category
+      // Fetch all items for a specific category with their attributes and content
       const [rows] = await connection.query(
-        `SELECT * FROM category_items WHERE category_id = ?`,
+        `SELECT 
+    ci.*,
+    a.id as attribute_id,
+    a.name as attribute_name,
+    c.value as attribute_value
+   FROM category_items ci
+   LEFT JOIN content c ON c.associated_table = 'category_item' 
+    AND c.associated_table_id = ci.id
+   LEFT JOIN attributes a ON a.id = c.attribute_id
+   WHERE ci.category_id = ?`,
         [category_id]
       );
+
+      // Restructure the data to group attributes by category item
+      const itemsMap = new Map();
+
+      rows.forEach((row) => {
+        if (!itemsMap.has(row.id)) {
+          // Initialize category item
+          itemsMap.set(row.id, {
+            id: row.id,
+            category_id: row.category_id,
+            name: row.name,
+            description: row.description,
+            created_at: row.created_at,
+            created_by: row.created_by,
+            attributes: [],
+          });
+        }
+
+        // Add attribute if it exists
+        if (row.attribute_id) {
+          const item = itemsMap.get(row.id);
+          let parsedValue = row.attribute_value;
+
+          // Safely try to parse JSON
+          try {
+            parsedValue = JSON.parse(row.attribute_value);
+          } catch (e) {
+            console.log(
+              "Error parsing JSON for attribute:",
+              row.attribute_id,
+              e
+            );
+            // Keep original value if parsing fails
+          }
+
+          item.attributes.push({
+            id: row.attribute_id,
+            name: row.attribute_name,
+            value: parsedValue,
+          });
+        }
+      });
+
       connection.release();
-      return res.status(200).json({ success: true, data: rows });
+      return res.status(200).json({
+        success: true,
+        data: Array.from(itemsMap.values()),
+      });
+      
     } else {
       // Fetch all category items across all categories
       const [all] = await connection.query(`SELECT * FROM category_items`);
@@ -263,16 +340,16 @@ async function getCategoryItems(req, res) {
  *   "name": "New dance name",
  *   "description": "Some description",
  *   "attributes": [
- *      { 
- *         "attribute_id": 99, 
- *         "attribute_type_id": 6, 
- *         "attribute_name": "Tribes", 
- *         "attribute_value": { ... } 
+ *      {
+ *         "attribute_id": 99,
+ *         "attribute_type_id": 6,
+ *         "attribute_name": "Tribes",
+ *         "attribute_value": { ... }
  *      },
- *      { 
- *         "attribute_id": 100, 
- *         "attribute_type_id": 1, 
- *         "attribute_name": "Type of dance", 
+ *      {
+ *         "attribute_id": 100,
+ *         "attribute_type_id": 1,
+ *         "attribute_name": "Type of dance",
  *         "attribute_value": { "value": "celebratory" }
  *      }
  *   ],
@@ -340,7 +417,11 @@ async function updateCategoryItem(req, res) {
         tribeReferences = JSON.parse(tribeRows[0].value);
       }
     }
-    if (!tribeReferences || !tribeReferences.value || !Array.isArray(tribeReferences.value)) {
+    if (
+      !tribeReferences ||
+      !tribeReferences.value ||
+      !Array.isArray(tribeReferences.value)
+    ) {
       connection.release();
       return res.status(400).json({
         success: false,
@@ -351,8 +432,19 @@ async function updateCategoryItem(req, res) {
     // 3) Process each attribute update
     if (Array.isArray(attributes) && attributes.length > 0) {
       for (const attr of attributes) {
-        const { attribute_id, attribute_type_id, attribute_name, attribute_value } = attr;
-        let storedValue = await processMediaIfNeeded(connection, attribute_type_id, attribute_value, user_id, null, );
+        const {
+          attribute_id,
+          attribute_type_id,
+          attribute_name,
+          attribute_value,
+        } = attr;
+        let storedValue = await processMediaIfNeeded(
+          connection,
+          attribute_type_id,
+          attribute_value,
+          user_id,
+          null
+        );
 
         // Check if a content row exists for this attribute
         const [existingRow] = await connection.query(
@@ -394,13 +486,14 @@ async function updateCategoryItem(req, res) {
     }
 
     connection.release();
-    return res.status(200).json({ success: true, message: "Item updated successfully" });
+    return res
+      .status(200)
+      .json({ success: true, message: "Item updated successfully" });
   } catch (error) {
     console.error("Error updating category item:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 }
-
 
 /**
  * upsertApprovalsForTribes:
@@ -408,8 +501,16 @@ async function updateCategoryItem(req, res) {
  * with a "value" array) and for each referenced tribe (where associated_table is "tribes"),
  * find that tribe's committee and upsert a content_approval record.
  */
-async function upsertApprovalsForTribes(connection, contentId, tribeReferences) {
-  if (!tribeReferences || !tribeReferences.value || !Array.isArray(tribeReferences.value)) {
+async function upsertApprovalsForTribes(
+  connection,
+  contentId,
+  tribeReferences
+) {
+  if (
+    !tribeReferences ||
+    !tribeReferences.value ||
+    !Array.isArray(tribeReferences.value)
+  ) {
     return;
   }
   for (const ref of tribeReferences.value) {

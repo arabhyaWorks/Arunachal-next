@@ -609,3 +609,148 @@ const festivals = [
   ];
 
 
+const tribes = [
+  {
+    name: "Adi",
+    location: "Siang",
+    population: "150,000+",
+    image: "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
+  },
+  {
+    name: "Apatani",
+    location: "Lower Subansiri",
+    population: "60,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg",
+  },
+  {
+    name: "Buguns",
+    location: "West Kameng",
+    population: "2,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Bugun1.jpg",
+  },
+  {
+    name: "Galo",
+    location: "West Siang",
+    population: "80,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/upload/tribes/Content/galo1.jpg",
+  },
+  {
+    name: "Hrusso And Koro Aka",
+    location: "East Kameng",
+    population: "6,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/hrusso-and-koro-aka/21/January2025/image/71719AKA_HRUSSO.jpeg&width=550&height=750",
+  },
+  {
+    name: "Idu",
+    location: "Dibang Valley",
+    population: "12,000+",
+    image: "https://indigenous.arunachal.gov.in/upload/tribes/Content/Idu2.jpg",
+  },
+  {
+    name: "Khamba",
+    location: "Tawang",
+    population: "13,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Khamba1.jpg",
+  },
+  {
+    name: "Kaman",
+    location: "Tawang",
+    population: "6,000+",
+    image:
+      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Kaman1.jpg",
+  },
+];
+
+const regions = [
+  "All Regions",
+  "East Siang",
+  "West Siang",
+  "Upper Siang",
+  "Lower Siang",
+  "Tawang",
+  "West Kameng",
+  "East Kameng",
+  "Lower Subansiri",
+  "Upper Subansiri",
+  "Dibang Valley",
+];
+
+const festivals = [
+  {
+    name: 'Si Donyi Hilo',
+    tribe: 'Tagin',
+    district: 'Upper Subansiri',
+    date: 'January 5-6',
+    description: 'A major agricultural festival celebrating the Sun and Moon God',
+    image: 'https://indigenous.arunachal.gov.in/upload/tribes/Content/tagin1.jpg',
+    month: 'January',
+    participants: '5000+',
+    duration: '2 days'
+  },
+  {
+    name: 'Reh',
+    tribe: 'Idu Mishmi',
+    district: 'Lower Dibang Valley',
+    date: 'February 1',
+    description: 'Festival of prosperity and social bonding',
+    image: 'https://indigenous.arunachal.gov.in/upload/tribes/Content/Idu2.jpg',
+    month: 'February',
+    participants: '3000+',
+    duration: '1 day'
+  },
+  {
+    name: 'Losar',
+    tribe: 'Monpa',
+    district: 'Tawang',
+    date: 'February-March',
+    description: 'New Year festival of the Monpa tribe',
+    image: 'https://indigenous.arunachal.gov.in/upload/tribes/Content/Monpa1.jpg',
+    month: 'February',
+    participants: '10000+',
+    duration: '15 days'
+  },
+  {
+    name: 'Mopin',
+    tribe: 'Galo',
+    district: 'West Siang',
+    date: 'April 5',
+    description: 'Harvest festival for prosperity and good fortune',
+    image: 'https://indigenous.arunachal.gov.in/upload/tribes/Content/galo1.jpg',
+    month: 'April',
+    participants: '7000+',
+    duration: '4 days'
+  }
+];
+
+const months = [
+  'All Months',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
+
+const tribes = [
+  'All Tribes',
+  'Adi',
+  'Apatani',
+  'Galo',
+  'Idu Mishmi',
+  'Monpa',
+  'Nyishi',
+  'Tagin',
+  'Tangsa'
+];

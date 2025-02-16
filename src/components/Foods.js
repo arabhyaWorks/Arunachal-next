@@ -72,18 +72,24 @@ export default function Foods({ dishes }) {
             className="group relative bg-white dark:bg-[#2d3748] rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300"
           >
             <div className="aspect-[4/3] rounded-t-xl overflow-hidden relative">
-              <img
-                src={dish.attributes["cat-Foods-Image"].attribute_value.value}
-                alt={dish.name}
-                className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
-              />
+              {dish.attributes["cat-Cuisine/Delicacies-Image"]?.attribute_value
+                ?.value && (
+                <img
+                  src={
+                    dish.attributes["cat-Cuisine/Delicacies-Image"]
+                      .attribute_value.value
+                  }
+                  alt={dish.name}
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+                />
+              )}
               {/* Gradient overlay - always visible but more pronounced on hover */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
 
               {/* Category tag positioned over the image */}
               <div className="absolute bottom-3 left-3 z-10">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/90 text-white shadow-lg backdrop-blur-sm">
-                  {dish.attributes["cat-Foods-FoodType"].attribute_value.value}
+                  {dish.category_name}
                 </span>
               </div>
             </div>
@@ -98,7 +104,7 @@ export default function Foods({ dishes }) {
 
               <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                 <span className="font-medium">Tribe:</span>{" "}
-                {dish.attributes["cat-Foods-Tribe"].attribute_value.value
+                {dish.attributes["cat-Cuisine/Delicacies-Tribe"].attribute_value.value
                   .map((item) => item.name)
                   .join(", ")}
               </p>

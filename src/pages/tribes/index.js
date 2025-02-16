@@ -1,95 +1,46 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MapPin, Users, Filter, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header.js";
 import { motion } from "framer-motion";
 
-const tribes = [
-  {
-    name: "Adi",
-    location: "Siang",
-    population: "150,000+",
-    image: "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
-  },
-  {
-    name: "Apatani",
-    location: "Lower Subansiri",
-    population: "60,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/apatani1.jpg",
-  },
-  {
-    name: "Buguns",
-    location: "West Kameng",
-    population: "2,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Bugun1.jpg",
-  },
-  {
-    name: "Galo",
-    location: "West Siang",
-    population: "80,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/galo1.jpg",
-  },
-  {
-    name: "Hrusso And Koro Aka",
-    location: "East Kameng",
-    population: "6,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/hrusso-and-koro-aka/21/January2025/image/71719AKA_HRUSSO.jpeg&width=550&height=750",
-  },
-  {
-    name: "Idu",
-    location: "Dibang Valley",
-    population: "12,000+",
-    image: "https://indigenous.arunachal.gov.in/upload/tribes/Content/Idu2.jpg",
-  },
-  {
-    name: "Khamba",
-    location: "Tawang",
-    population: "13,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Khamba1.jpg",
-  },
-  {
-    name: "Kaman",
-    location: "Tawang",
-    population: "6,000+",
-    image:
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/Kaman1.jpg",
-  },
-];
-
-const regions = [
-  "All Regions",
-  "East Siang",
-  "West Siang",
-  "Upper Siang",
-  "Lower Siang",
-  "Tawang",
-  "West Kameng",
-  "East Kameng",
-  "Lower Subansiri",
-  "Upper Subansiri",
-  "Dibang Valley",
-];
-
 export default function TribeListPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("All Regions");
+  const [tribes, setTribes] = useState([]);
   const router = useRouter();
 
+  useEffect(() => {
+    async function fetchTribes() {
+      try {
+        const response = await fetch("http://localhost:3000/api/tribe");
+        const data = await response.json();
+        if (data?.data) {
+          const transformedTribes = data.data.map((tribe) => ({
+            id: tribe.tribe_id,
+            name: tribe.name,
+            location: tribe.attributes["tribe-Regions"]?.attribute_value?.value?.[0] || "Unknown",
+            population: tribe.attributes["tribe-PopulationInNumbers"]?.attribute_value?.value || "N/A",
+            image: tribe.attributes["tribe-BannerImage"]?.attribute_value?.value || "/placeholder.jpg",
+          }));
+          setTribes(transformedTribes);
+        }
+      } catch (error) {
+        console.error("Error fetching tribes:", error);
+      }
+    }
+    fetchTribes();
+  }, []);
+
   const filteredTribes = tribes.filter((tribe) => {
-    const matchesSearch = tribe.name
-      .toLowerCase()
-      .includes(searchQuery.toLowerCase());
-    const matchesRegion =
-      selectedRegion === "All Regions" || tribe.location === selectedRegion;
+    const matchesSearch = tribe.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesRegion = selectedRegion === "All Regions" || tribe.location === selectedRegion;
     return matchesSearch && matchesRegion;
   });
+
+  const regions = ["All Regions", ...new Set(tribes.map((tribe) => tribe.location))];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 relative">
@@ -110,7 +61,7 @@ export default function TribeListPage() {
           transition={{ duration: 0.6, delay: 0.1 }}
           className="text-xl text-gray-600 dark:text-gray-300"
         >
-          Discover the rich cultural heritage of 22 indigenous tribes
+          Discover the rich cultural heritage of indigenous tribes
         </motion.p>
       </div>
 
@@ -152,7 +103,7 @@ export default function TribeListPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {filteredTribes.map((tribe, index) => (
             <motion.div
-              key={tribe.name}
+              key={tribe.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
