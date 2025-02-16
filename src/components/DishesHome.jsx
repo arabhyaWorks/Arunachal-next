@@ -1,43 +1,44 @@
 import { Info } from "lucide-react";
 import { motion } from "framer-motion";
-
-const dishes = [
-  {
-    name: "PO'ROK Amin",
-    image: 'https://indigenous.arunachal.gov.in/assets/food/Ami.jpeg',
-    category: 'Main Course',
-    tribe: 'Traditional',
-    description:
-      'A traditional dish from Arunachal Pradesh made using local ingredients and traditional cooking methods.',
-  },
-  {
-    name: 'Khow Lam',
-    image: 'https://indigenous.arunachal.gov.in/assets/food/KhowLa.jpeg',
-    category: 'Appetizer',
-    tribe: 'Traditional',
-    description:
-      'A traditional pancake from the region, showcasing the rich culinary heritage of Arunachal Pradesh.',
-  },
-  {
-    name: 'Zan',
-    image: 'https://indigenous.arunachal.gov.in/assets/food/Za.jpeg',
-    category: 'Staple',
-    tribe: 'Traditional',
-    description:
-      'A hearty and nutritious dish made with millet or maize flour, also known as "Thukpa" in some regions.',
-  },
-  {
-    name: 'Mirung Etting',
-    image:
-      'https://indigenous.arunachal.gov.in/assets/food/Mirung_Ettin.jpeg',
-    category: 'Side Dish',
-    tribe: 'Traditional',
-    description:
-      'A traditional rice cake often prepared during festivals and special occasions using rice flour and banana leaves.',
-  },
-];
+import { useEffect, useState } from "react";
 
 export default function Foods() {
+  const [dishes, setDishesData] = useState([]);
+  
+  useEffect(() => {
+    async function fetchDishes() {
+      const response = await fetch(
+        "http://localhost:3000/api/category/items?category_id=5"
+      );
+      const data = await response.json();
+      if (data?.data) {
+        // Transform the data to include the correct image URL and tribe information
+        const transformedDishes = data.data.map(dish => {
+          const attributes = dish.attributes || [];
+          
+          // Find the image attribute
+          const imageAttribute = attributes.find(
+            attr => attr.name === "cat-Cuisine/Delicacies-Image"
+          );
+          
+          // Find the tribe attribute
+          const tribeAttribute = attributes.find(
+            attr => attr.name === "cat-Cuisine/Delicacies-Tribe"
+          );
+
+          return {
+            ...dish,
+            image: imageAttribute?.value?.value || "/placeholder-food.jpg", // Add a fallback image
+            tribe: tribeAttribute?.value?.value?.[0]?.name || "Unknown Tribe"
+          };
+        });
+
+        setDishesData(transformedDishes);
+      }
+    }
+    fetchDishes();
+  }, []);
+
   return (
     <div
       id="cuisine"
@@ -56,7 +57,7 @@ export default function Foods() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         {dishes.map((dish) => (
           <motion.div
-            key={dish.name}
+            key={dish.id}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -75,7 +76,7 @@ export default function Foods() {
               {/* Category Tag */}
               <div className="absolute bottom-3 left-3 z-10">
                 <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-teal-500/90 text-white shadow-lg backdrop-blur-sm">
-                  {dish.category}
+                  Traditional
                 </span>
               </div>
             </div>
