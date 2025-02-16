@@ -32,6 +32,7 @@ import Books from "../../components/Book";
 import Foods from "../../components/Foods";
 import MusicPlayer from "../../components/MusicPlayer";
 import { useRouter } from "next/router";
+import ExpandableText from "./ExpandableText";
 
 const tribeData = {
   name: "Adi Tribe",
@@ -413,7 +414,6 @@ export default function TribePage() {
             </div>
           </motion.div>
         </div>
-
         {/* Festival Calendar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -452,12 +452,16 @@ export default function TribePage() {
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {festival.name}
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                      {festival.description}
-                    </p>
+                    {/* Use the reusable ExpandableText component */}
+                    <ExpandableText text={festival.description} limit={100} />
                     <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
                       <Calendar className="h-4 w-4" />
-                      <span>{festival.attributes["cat-Festivals-DateOfCelebration"].attribute_value.value}</span>
+                      <span>
+                        {
+                          festival.attributes["cat-Festivals-DateOfCelebration"]
+                            .attribute_value.value
+                        }
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -465,7 +469,7 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div>
-
+        ;
         {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -515,7 +519,6 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div> */}
-
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -646,7 +649,6 @@ export default function TribePage() {
             </div>
           </motion.div>
         </div>
-
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -696,7 +698,6 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div>
-
         <div className="space-y-6 mt-6">
           {/* Videos Section */}
           <motion.div
@@ -712,14 +713,16 @@ export default function TribePage() {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {tribeData.name} Videos
+                  {tribes[0].name} Videos
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400">
                   Watch our traditions come alive
                 </p>
               </div>
             </div>
-            <Video videos={tribes[0].media.videos} />
+            {tribes[0].media.videos.length > 0 && (
+              <Video videos={tribes[0].media.videos} />
+            )}
           </motion.div>
 
           {/* Music Section */}
@@ -743,9 +746,10 @@ export default function TribePage() {
                 </p>
               </div>
             </div>
-            <MusicPlayer songs={tribes[0].media.audios} />
+            {tribes[0].media.audios?.length > 0 && (
+              <MusicPlayer songs={tribes[0].media.audios} />
+            )}
           </motion.div>
-
         </div>
       </div>
 
@@ -780,11 +784,15 @@ export default function TribePage() {
         )}
 
         <div id="books" className="mb-12">
-          <Books books={tribes[0].categories.Books} />
+          {tribes[0].categories["Books Of The tribe"]?.length > 0 && (
+            <Books books={tribes[0].categories["Books Of The tribe"]} />
+          )}
         </div>
 
         <div id="food">
-          <Foods dishes={tribes[0].categories.Foods} />
+          {tribes[0].categories.Foods?.length > 0 && (
+            <Foods dishes={tribes[0].categories.Foods} />
+          )}
         </div>
       </AnimatePresence>
     </div>

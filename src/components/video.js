@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 import VideoModal from "./VideoModal";
 
-function App({videos}) {
+function  App({videos}) {
   const [selectedVideo, setSelectedVideo] = useState(null);
 
   const handleVideoEnd = () => {
@@ -30,7 +30,8 @@ function App({videos}) {
           >
             <div className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden mb-3 sm:mb-4 shadow-lg">
               <img
-                src={`https://img.youtube.com/vi/${video.file_path}/maxresdefault.jpg`}
+                // src={`https://img.youtube.com/vi/${video.file_path}/maxresdefault.jpg`}
+                src={`${video.thumbnail_path}`}
                 alt={video.title}
                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
               />

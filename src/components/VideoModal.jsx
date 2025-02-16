@@ -45,7 +45,7 @@ const VideoModal = ({
       if (controlsTimeoutRef.current) {
         clearTimeout(controlsTimeoutRef.current);
       }
-      
+
       controlsTimeoutRef.current = setTimeout(() => {
         if (isPlaying) {
           setShowControls(false);
@@ -139,7 +139,9 @@ const VideoModal = ({
   const handleProgressClick = (e) => {
     if (playerRef.current) {
       const progressBar = e.currentTarget;
-      const clickPosition = (e.clientX - progressBar.getBoundingClientRect().left) / progressBar.offsetWidth;
+      const clickPosition =
+        (e.clientX - progressBar.getBoundingClientRect().left) /
+        progressBar.offsetWidth;
       const newTime = clickPosition * duration;
       playerRef.current.seekTo(newTime);
       setProgress(clickPosition * 100);
@@ -171,6 +173,13 @@ const VideoModal = ({
 
   if (!isOpen) return null;
 
+  const extractYouTubeID = (url) => {
+    const match = url.match(
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([^"&?/ ]{11})/
+    );
+    return match ? match[1] : url; // If no match, return the original value
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div
@@ -193,7 +202,7 @@ const VideoModal = ({
           onMouseLeave={() => isPlaying && setShowControls(false)}
         >
           <YouTube
-            file_path={file_path}
+            videoId={extractYouTubeID(file_path)}
             opts={{
               width: "100%",
               height: "100%",

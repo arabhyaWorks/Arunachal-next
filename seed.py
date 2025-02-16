@@ -367,7 +367,7 @@ const musicData = [
   {
     "Music Name": "Myth, Memory & FolktaleMyth, Memory & Folktale",
     "Thumb Image Link":
-      "https://indigenous.arunachal.gov.in/upload/tribes/Content/adi1.jpg",
+      "Myth, Memory & FolktaleMyth, Memory & Folktale",
     "Singer Name": "Traditional",
     "Tribe Name": "Adi Tribe",
     Duration: "03:45",
@@ -607,3 +607,5 @@ const festivals = [
       ],
     },
   ];
+
+
