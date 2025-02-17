@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   Search,
   Plus,
@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import ManageAttributes from "./ManageAttributes";
 import ManageTribes from "./ManageTribes";
 import CreateTribeForm from "./createTribeForm";
+import SuspenseWrapper from "./Suspense";
 
 export default function MasterData() {
   const [searchQuery, setSearchQuery] = useState("");

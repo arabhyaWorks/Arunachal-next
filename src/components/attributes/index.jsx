@@ -19,6 +19,8 @@ import {
 
 export const VideoInput = ({ value = [], setValue }) => {
   const addNewVideo = () => {
+    event.preventDefault();
+
     setValue([
       ...value,
       {
@@ -115,6 +117,7 @@ export const VideoInput = ({ value = [], setValue }) => {
 
 export const DocumentInput = ({ value = [], setValue }) => {
   const addNewDocument = () => {
+    event.preventDefault();
     setValue([
       ...value,
       {
@@ -211,6 +214,7 @@ export const DocumentInput = ({ value = [], setValue }) => {
 
 export const AudioInput = ({ value = [], setValue }) => {
   const addNewAudio = () => {
+    event.preventDefault();
     setValue([
       ...value,
       {
@@ -365,6 +369,7 @@ export const AudioInput = ({ value = [], setValue }) => {
 
 export const ImageInput = ({ value = [], setValue }) => {
   const addNewImage = () => {
+    event.preventDefault();
     setValue([
       ...value,
       {
@@ -481,6 +486,8 @@ export const TribeInput = ({ value = [], setValue }) => {
   }, []);
 
   const addNewTribeAssociation = () => {
+    event.preventDefault();
+
     setValue([
       ...value,
       {
@@ -564,6 +571,8 @@ export const TribeInput = ({ value = [], setValue }) => {
 };
 
 const ArrayInput = ({ value, setValue }) => {
+  // If submit is getting triggered it was from here
+  
   return (
     <div className="space-y-2">
       {value.map((item, index) => (
@@ -589,7 +598,14 @@ const ArrayInput = ({ value, setValue }) => {
           </Button>
         </div>
       ))}
-      <Button onClick={() => setValue([...value, ""])} className="w-full">
+      <Button
+        type="button"
+        onClick={(event) => {
+          event.preventDefault();
+          setValue([...value, ""]);
+        }}
+        className="w-full"
+      >
         Add
       </Button>
     </div>

@@ -1,0 +1,263 @@
+{
+    "tribe_id": 12,
+    "name": "Tangsa Tribe",
+    "attributes": {
+        "tribe-About": {
+            "attribute_id": 1,
+            "attribute_name": "tribe-About",
+            "attribute_description": "Description about the tribe",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "The term Tangsa is an umbrella term given to an ethnic group comprising a number of subtribes and living in the valleys of Changlang district, Arunachal Pradesh. The meaning of 'Tangsa' is 'hill people', Tang - hill, Sa - people. The other ethymological meaning for Tangsa means, \"the people living on kills\". Many Tangsas tell of their origin from a place called Masoi Sinrapum what is now Mongolia, migrated through the South - West China Province of Yunan into Myanmar, thence to India in the 1740s and dispersed to places where they live at present. The Tangsas with a population of around 30,000 (29,538 as per 2011 census) are Tibeto Burmese of mongoloid stock and speak Tangsa language which is a Sino-Tibeto or Tibeto-Burman language family or language cluster. The Tangsas are animist, and they believe in Supreme Being, and personify him under the name of Sikia, Pra or Rang Kau Hawa. He lives in the sky and bestows his blessings on mankind. The major community festival of the Tangsas is Moh-Mol celebrated during the month of May every year. The festival signifies an end of an agricultural activity or beginning of crop season. The Tangsas in the past were accustomed to war and head - hunting. The Tangsa notion of head-hunting was that it brought fertility to the village and it was feared that the heads, if not taken, might turn into an evil spirit called Chawthang, capable of doing harm to the whole village. The Tangsas reckon their kinship through the male line. The clans are all ancestral, and they donot trace their original from any totemic object. The tribe used to have a well constituted council of elders and the councils adjucate all the disputes and maintain law and order in the village."
+            }
+        },
+        "tribe-History": {
+            "attribute_id": 2,
+            "attribute_name": "tribe-History",
+            "attribute_description": "Historical information of tribe",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "The term Tangsa is an umbrella term given to an ethnic group comprising a number of subtribes and living in the valleys of Changlang district, Arunachal Pradesh. The meaning of 'Tangsa' is 'hill people', Tang - hill, Sa - people. The other ethymological meaning for Tangsa means, \"the people living on kills\". Many Tangsas tell of their origin from a place called Masoi Sinrapum what is now Mongolia, migrated through the South - West China Province of Yunan into Myanmar, thence to India in the 1740s and dispersed to places where they live at present. The Tangsas with a population of around 30,000 (29,538 as per 2011 census) are Tibeto Burmese of mongoloid stock and speak Tangsa language which is a Sino-Tibeto or Tibeto-Burman language family or language cluster. The Tangsas are animist, and they believe in Supreme Being, and personify him under the name of Sikia, Pra or Rang Kau Hawa. He lives in the sky and bestows his blessings on mankind. The major community festival of the Tangsas is Moh-Mol celebrated during the month of May every year. The festival signifies an end of an agricultural activity or beginning of crop season. The Tangsas in the past were accustomed to war and head - hunting. The Tangsa notion of head-hunting was that it brought fertility to the village and it was feared that the heads, if not taken, might turn into an evil spirit called Chawthang, capable of doing harm to the whole village. The Tangsas reckon their kinship through the male line. The clans are all ancestral, and they donot trace their original from any totemic object. The tribe used to have a well constituted council of elders and the councils adjucate all the disputes and maintain law and order in the village."
+            }
+        },
+        "tribe-Regions": {
+            "attribute_id": 3,
+            "attribute_name": "tribe-Regions",
+            "attribute_description": "Regions of the tribe",
+            "attribute_type_id": 2,
+            "attribute_value": {
+                "value": [
+                    "Changiang"
+                ]
+            }
+        },
+        "tribe-PopulationInNumbers": {
+            "attribute_id": 4,
+            "attribute_name": "tribe-PopulationInNumbers",
+            "attribute_description": "Population of the tribe",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "10000"
+            }
+        },
+        "tribe-Settlements": {
+            "attribute_id": 5,
+            "attribute_name": "tribe-Settlements",
+            "attribute_description": "Settlements of the tribe",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "Settelement 1"
+            }
+        },
+        "tribe-Language": {
+            "attribute_id": 6,
+            "attribute_name": "tribe-Language",
+            "attribute_description": "Language of the tribe",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "Tangsa Tribe Language"
+            }
+        },
+        "tribe-TraditionalDresses": {
+            "attribute_id": 7,
+            "attribute_name": "tribe-TraditionalDresses",
+            "attribute_description": "Traditional dresses of the tribe",
+            "attribute_type_id": 2,
+            "attribute_value": {
+                "value": [
+                    "Dress 1",
+                    "Dress 2",
+                    "Dress 3"
+                ]
+            }
+        },
+        "tribe-Arts&Crafts": {
+            "attribute_id": 8,
+            "attribute_name": "tribe-Arts&Crafts",
+            "attribute_description": "Arts & Crafts of the tribe",
+            "attribute_type_id": 2,
+            "attribute_value": {
+                "value": [
+                    "Craft 1",
+                    "Craft 2",
+                    "Craft 3"
+                ]
+            }
+        },
+        "tribe-TraditionalCuisine": {
+            "attribute_id": 9,
+            "attribute_name": "tribe-TraditionalCuisine",
+            "attribute_description": "Traditional Cuisine of the tribe",
+            "attribute_type_id": 2,
+            "attribute_value": {
+                "value": [
+                    "Food 1",
+                    "Food 2",
+                    "Food 3"
+                ]
+            }
+        },
+        "tribe-BannerImage": {
+            "attribute_id": 10,
+            "attribute_name": "tribe-BannerImage",
+            "attribute_description": "Link of the Banner Image",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/tangsa/19/December2024/image/31293Tangsa_1_11zon.jpg&width=550&height=750"
+            }
+        },
+        "tribe-ThumbnailImage": {
+            "attribute_id": 11,
+            "attribute_name": "tribe-ThumbnailImage",
+            "attribute_description": "Link of the thumbnail Image",
+            "attribute_type_id": 1,
+            "attribute_value": {
+                "value": "https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/tangsa/19/December2024/image/44973TANGSA_3_11zon.jpg&width=550&height=750"
+            }
+        }
+    },
+    "categories": {
+        "Festivals": [
+            {
+                "item_id": 36,
+                "category_id": 1,
+                "category_name": "Festivals",
+                "name": "Moh-Mol",
+                "description": "Moh-Mol is celebrated by the Tangsas who live in the verdant hills of Changlang district of Arunachal Pradesh, and who profess animism in beliefs and practices. Moh-Mol is an indigenous festival of the tribe celebrated to offer prayers to deities like Rangfra, and to propitiate hosts of benevolent and malevolent spirits call Thangs or Sangs or Jubedis. It is more of a seasonal festival corresponding to different phases of agriculture production or connected with fertility rites. The festival is celebrated in different dates in different celebration centres by each sub-tribes, usually inbetween April to August months of a year. Some observed it at the beginning of an agricultural activities, some at the time of sowing of paddy and some during pre-harvest season. However, in the recent past, centralised system of uniform celebrations on 25th of April every year have been introduced and accepted by the community people. The literary meaning of the term Moh-Mol in a ligter note means joy and merriment signifying a celebration with joyous, enthusiasm and gaity. The Moh as a whole comprises three forms of ceremonies; Simhom, Wawat-Chong and Rom. Simhom is performed with offering of animal blood, rice and rice beer to all the evil spirits, supra beings unseen and the diseases. While performing Simhom, people drew out their machetes from the sheaths, make loud vocal shouting, and resort to numerous gun firings to drive away everything which is evil. Next, the Wawat-Chong is performed to please Fra or Rangfra, the supreme god by offering bloods of animals, rice beer and cooked food. The performance of Rom is meant to appease the gods with offerings of edibles in order to be blessed with wealth in the form of paddy, with timely showers and light for good harvest. After driving away all the evil spirits and by invoking all gods and deities for favour, fortune and blessings, merriment starts with drinking of rice beer and dancing of Sapola in huge circles which continue throughout the night. The Tangsas attaches great significances in beating of Nong (drum) during the celebration of Moh-Mol. The festival creates a beautiful ambience and invitees everyone to participate and make it magnificent. Despite their diverse sub-tribe identities, all the community people do come together to celebrate the Moh-Mol, a testament to their unity and shared reverence for the land that sustains them.",
+                "attributes": {
+                    "cat-Festivals-Tribe": {
+                        "attribute_id": 13,
+                        "attribute_name": "cat-Festivals-Tribe",
+                        "attribute_description": "Tribe",
+                        "attribute_type_id": 6,
+                        "attribute_value": {
+                            "value": [
+                                {
+                                    "name": "Tangsa Tribe",
+                                    "associated_table": "tribes",
+                                    "associated_table_id": 12
+                                }
+                            ]
+                        },
+                        "content_status": "pending"
+                    },
+                    "cat-Festivals-DateOfCelebration": {
+                        "attribute_id": 14,
+                        "attribute_name": "cat-Festivals-DateOfCelebration",
+                        "attribute_description": "Date of celebration",
+                        "attribute_type_id": 1,
+                        "attribute_value": {
+                            "value": "Sunday, 23rd February"
+                        },
+                        "content_status": "pending"
+                    },
+                    "cat-Festivals-Duration": {
+                        "attribute_id": 15,
+                        "attribute_name": "cat-Festivals-Duration",
+                        "attribute_description": "Duration",
+                        "attribute_type_id": 1,
+                        "attribute_value": {
+                            "value": "1 Day"
+                        },
+                        "content_status": "pending"
+                    },
+                    "cat-Festivals-ImagesOfTheFestivals": {
+                        "attribute_id": 67,
+                        "attribute_name": "cat-Festivals-ImagesOfTheFestivals",
+                        "attribute_description": "Images of the festivals",
+                        "attribute_type_id": 7,
+                        "attribute_value": {
+                            "value": "https://indigenous.arunachal.gov.in/song/imagepath?url=/upload/tangsa/19/December2024/image/14505Tangsa_2_11zon.jpg&width=550&height=750"
+                        },
+                        "content_status": "pending"
+                    }
+                }
+            }
+        ],
+        "Folk Dance": [
+            {
+                "item_id": 39,
+                "category_id": 2,
+                "category_name": "Folk Dance",
+                "name": "Tangsa Handicraft",
+                "description": "-",
+                "attributes": {
+                    "cat-FolkDance-Tribe": {
+                        "attribute_id": 23,
+                        "attribute_name": "cat-FolkDance-Tribe",
+                        "attribute_description": "Tribe",
+                        "attribute_type_id": 6,
+                        "attribute_value": {
+                            "value": [
+                                {
+                                    "name": "Tangsa Tribe",
+                                    "associated_table": "tribes",
+                                    "associated_table_id": 12
+                                }
+                            ]
+                        },
+                        "content_status": "pending"
+                    }
+                }
+            },
+            {
+                "item_id": 40,
+                "category_id": 2,
+                "category_name": "Folk Dance",
+                "name": "Tangsa Handicraft",
+                "description": "-",
+                "attributes": {
+                    "cat-FolkDance-Tribe": {
+                        "attribute_id": 23,
+                        "attribute_name": "cat-FolkDance-Tribe",
+                        "attribute_description": "Tribe",
+                        "attribute_type_id": 6,
+                        "attribute_value": {
+                            "value": [
+                                {
+                                    "name": "Tangsa Tribe",
+                                    "associated_table": "tribes",
+                                    "associated_table_id": 12
+                                }
+                            ]
+                        },
+                        "content_status": "pending"
+                    },
+                    "cat-FolkDance-VideoOfTheDance": {
+                        "attribute_id": 33,
+                        "attribute_name": "cat-FolkDance-VideoOfTheDance",
+                        "attribute_description": "Video Of the dance",
+                        "attribute_type_id": 9,
+                        "attribute_value": {
+                            "value": [
+                                2
+                            ]
+                        },
+                        "content_status": "pending"
+                    }
+                }
+            }
+        ]
+    },
+    "media": {
+        "videos": [
+            {
+                "id": 2,
+                "title": "Tangsa Folk",
+                "description": "-",
+                "associated_tribe_id": 12,
+                "associated_category_id": 2,
+                "associated_category_item_id": 40,
+                "file_path": "https://www.youtube.com/watch?v=VYDIsgKqrDo&list=TLGGT2xlsLoUX1wxNjAyMjAyNQ",
+                "thumbnail_path": "https://img.youtube.com/vi/VYDIsgKqrDo/hqdefault.jpg",
+                "media_type": "video",
+                "mime_type": "video",
+                "status": "pending",
+                "created_at": "2025-02-16T07:23:46.000Z",
+                "updated_at": "2025-02-16T07:23:46.000Z",
+                "created_by": 1,
+                "updated_by": null
+            }
+        ]
+    }
+}

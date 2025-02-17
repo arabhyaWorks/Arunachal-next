@@ -1,10 +1,11 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Edit, Trash2, Info } from "lucide-react";
+import { Calendar, Edit, Trash2 } from "lucide-react";
+import TribeDetailModal from "./TribeDetailModal";
 
-export default function ManageTribes() {
+function TribeList() {
   const [tribes, setTribes] = useState([]);
+  const [fullTribes, setFullTribes] = useState([]); // Store full tribe data
 
   useEffect(() => {
     async function fetchTribes() {
@@ -12,6 +13,10 @@ export default function ManageTribes() {
         const response = await fetch("http://localhost:3000/api/tribe");
         const data = await response.json();
         if (data?.data) {
+          // Store the full tribe data
+          setFullTribes(data.data);
+          
+          // Transform data for card display
           const transformedTribes = data.data.map((tribe) => ({
             id: tribe.tribe_id,
             name: tribe.name,
@@ -24,6 +29,8 @@ export default function ManageTribes() {
             image:
               tribe.attributes["tribe-BannerImage"]?.attribute_value?.value ||
               "/placeholder.jpg",
+            createdAt: tribe.createdAt || new Date().toISOString(),
+            createdBy: tribe.createdBy || "Unknown",
           }));
           setTribes(transformedTribes);
         }
@@ -71,9 +78,9 @@ export default function ManageTribes() {
                 Created by: {tribe.createdBy}
               </div>
               <div className="flex items-center gap-2">
-                <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
-                  <Edit className="h-4 w-4 text-blue-600" />
-                </button>
+                <TribeDetailModal 
+                  tribe={fullTribes.find(ft => ft.tribe_id === tribe.id)} 
+                />
                 <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                   <Trash2 className="h-4 w-4 text-red-600" />
                 </button>
@@ -83,5 +90,13 @@ export default function ManageTribes() {
         </motion.div>
       ))}
     </div>
+  );
+}
+
+export default function ManageTribes() {
+  return (
+    <Suspense fallback={<div className="text-center text-gray-500">Loading tribes...</div>}>
+      <TribeList />
+    </Suspense>
   );
 }
