@@ -1,11 +1,15 @@
 import React, { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
-import { Calendar, Edit, Trash2 } from "lucide-react";
+import { Calendar, Edit, Trash2, Search, Plus } from "lucide-react";
 import TribeDetailModal from "./TribeDetailModal";
+import ManageAttributes from "./ManageAttributes";
+import CreateTribeForm from "./createTribeForm";
+import SuspenseWrapper from "./Suspense";
 
 function TribeList() {
   const [tribes, setTribes] = useState([]);
   const [fullTribes, setFullTribes] = useState([]); // Store full tribe data
+  const [showCreateTribe, setShowCreateTribe] = useState(false);
 
   useEffect(() => {
     async function fetchTribes() {
@@ -15,7 +19,7 @@ function TribeList() {
         if (data?.data) {
           // Store the full tribe data
           setFullTribes(data.data);
-          
+
           // Transform data for card display
           const transformedTribes = data.data.map((tribe) => ({
             id: tribe.tribe_id,
@@ -78,8 +82,8 @@ function TribeList() {
                 Created by: {tribe.createdBy}
               </div>
               <div className="flex items-center gap-2">
-                <TribeDetailModal 
-                  tribe={fullTribes.find(ft => ft.tribe_id === tribe.id)} 
+                <TribeDetailModal
+                  tribe={fullTribes.find((ft) => ft.tribe_id === tribe.id)}
                 />
                 <button className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors">
                   <Trash2 className="h-4 w-4 text-red-600" />
@@ -94,9 +98,90 @@ function TribeList() {
 }
 
 export default function ManageTribes() {
+  const [activeTab, setActiveTab] = useState("tribes");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showAddTribe, setShowAddTribe] = useState(false);
+
   return (
-    <Suspense fallback={<div className="text-center text-gray-500">Loading tribes...</div>}>
-      <TribeList />
-    </Suspense>
+    <div className="p-6">
+      {/* Tabs */}
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="flex gap-4">
+          <button
+            onClick={() => setActiveTab("tribes")}
+            className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "tribes"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            Tribes
+          </button>
+          <button
+            onClick={() => setActiveTab("attributes")}
+            className={`px-4 py-2 font-medium text-sm border-b-2 transition-colors ${
+              activeTab === "attributes"
+                ? "border-blue-600 text-blue-600"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            }`}
+          >
+            Attributes
+          </button>
+        </nav>
+      </div>
+
+      {/* Content */}
+      <div className="mt-6">
+        {activeTab === "tribes" ? (
+          // Tribes view
+          <div className="space-y-6">
+            {/* Search and Actions */}
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search Tribes..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <button
+                onClick={() => setShowAddTribe(true)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="h-5 w-5" />
+                <span>Create Tribe</span>
+              </button>
+            </div>
+
+            <Suspense
+              fallback={
+                <div className="text-center text-gray-500">
+                  Loading tribes...
+                </div>
+              }
+            >
+              {showAddTribe ? (
+                <CreateTribeForm setShowAddTribe={setShowAddTribe} />
+              ) : (
+                <TribeList />
+              )}
+            </Suspense>
+          </div>
+        ) : (
+          <Suspense
+            fallback={
+              <div className="text-center text-gray-500">
+                Loading attributes...
+              </div>
+            }
+          >
+            <ManageAttributes />
+          </Suspense>
+        )}
+      </div>
+    </div>
   );
 }

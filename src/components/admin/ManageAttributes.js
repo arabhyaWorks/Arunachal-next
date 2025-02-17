@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, Search, Edit, Trash2, Info } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from "react";
+import { Plus, Search, Edit, Trash2, Info, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 export default function ManageAttributes() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showCreateAttribute, setShowCreateAttribute] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState();
   const [newAttribute, setNewAttribute] = useState({
-    name: '',
-    description: '',
+    name: "",
+    description: "",
     attribute_type_id: 1,
     is_required: false,
-    is_active: true
+    is_active: true,
   });
   const [initialAttributes, setInitialAttributes] = useState([]);
-  
+
   useEffect(() => {
     fetchAttributes();
   }, []);
@@ -30,27 +32,69 @@ export default function ManageAttributes() {
     }
   };
 
-  const filteredAttributes = initialAttributes.filter(attr =>
-    attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    attr.description.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredAttributes = initialAttributes.filter(
+    (attr) =>
+      attr.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      attr.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Function to get attribute type name based on attribute_type_id
   const getAttributeTypeName = (typeId) => {
     const types = {
-      1: 'Text',
-      2: 'Array',
-      3: 'Date',
-      4: 'Number',
-      5: 'Boolean',
-      6: 'Relations',
-      7: 'Image',
-      8: 'Audio',
-      9: 'Video',
-      10: 'Document',
-      11: 'Advanced Image'
+      1: "Text",
+      2: "Array",
+      3: "Date",
+      4: "Number",
+      5: "Boolean",
+      6: "Relations",
+      7: "Image",
+      8: "Audio",
+      9: "Video",
+      10: "Document",
+      11: "Advanced Image",
     };
-    return types[typeId] || 'Unknown';
+    return types[typeId] || "Unknown";
+  };
+
+  const handleCreateAttribute = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch("/api/tribe/attributes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          attributes: [
+            {
+              name: newAttribute.name,
+              description: newAttribute.description,
+              is_required: newAttribute.is_required,
+              attribute_type_id: parseInt(newAttribute.attribute_type_id),
+            },
+          ],
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setNewAttribute({
+          name: "",
+          description: "",
+          is_required: false,
+          attribute_type_id: "",
+        });
+        fetchAttributes();
+        setError("");
+      } else {
+        setError(data.error || "Failed to create attribute");
+      }
+    } catch (error) {
+      setError("Error creating attribute: " + error.message);
+    }
+    setLoading(false);
+    setShowCreateAttribute(false);
   };
 
   return (
@@ -142,7 +186,7 @@ export default function ManageAttributes() {
               Create New Attribute
             </h3>
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleCreateAttribute}>
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   Attribute Name
@@ -165,7 +209,10 @@ export default function ManageAttributes() {
                 <textarea
                   value={newAttribute.description}
                   onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, description: e.target.value })
+                    setNewAttribute({
+                      ...newAttribute,
+                      description: e.target.value,
+                    })
                   }
                   placeholder="Description of what this attribute represents"
                   rows={3}
@@ -180,7 +227,10 @@ export default function ManageAttributes() {
                 <select
                   value={newAttribute.attribute_type_id}
                   onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, attribute_type_id: parseInt(e.target.value) })
+                    setNewAttribute({
+                      ...newAttribute,
+                      attribute_type_id: parseInt(e.target.value),
+                    })
                   }
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg"
                 >
@@ -189,12 +239,20 @@ export default function ManageAttributes() {
                   <option value={3}>Date - Date values</option>
                   <option value={4}>Number - Numeric values</option>
                   <option value={5}>Boolean - True/False values</option>
-                  <option value={6}>Relations - Stores references to other tables</option>
+                  <option value={6}>
+                    Relations - Stores references to other tables
+                  </option>
                   <option value={7}>Image - Simple image storage</option>
-                  <option value={8}>Audio - Audio storage with extended fields</option>
-                  <option value={9}>Video - Video storage with extended fields</option>
+                  <option value={8}>
+                    Audio - Audio storage with extended fields
+                  </option>
+                  <option value={9}>
+                    Video - Video storage with extended fields
+                  </option>
                   <option value={10}>Document - PDF or doc file storage</option>
-                  <option value={11}>Advanced Image - Advanced image storage</option>
+                  <option value={11}>
+                    Advanced Image - Advanced image storage
+                  </option>
                 </select>
               </div>
 
@@ -204,11 +262,17 @@ export default function ManageAttributes() {
                   id="required"
                   checked={newAttribute.is_required}
                   onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, is_required: e.target.checked })
+                    setNewAttribute({
+                      ...newAttribute,
+                      is_required: e.target.checked,
+                    })
                   }
                   className="h-4 w-4 text-blue-600 rounded border-gray-300"
                 />
-                <label htmlFor="required" className="text-sm text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="required"
+                  className="text-sm text-gray-700 dark:text-gray-300"
+                >
                   Required Attribute
                 </label>
               </div>
@@ -219,11 +283,17 @@ export default function ManageAttributes() {
                   id="active"
                   checked={newAttribute.is_active}
                   onChange={(e) =>
-                    setNewAttribute({ ...newAttribute, is_active: e.target.checked })
+                    setNewAttribute({
+                      ...newAttribute,
+                      is_active: e.target.checked,
+                    })
                   }
                   className="h-4 w-4 text-blue-600 rounded border-gray-300"
                 />
-                <label htmlFor="active" className="text-sm text-gray-700 dark:text-gray-300">
+                <label
+                  htmlFor="active"
+                  className="text-sm text-gray-700 dark:text-gray-300"
+                >
                   Active Attribute
                 </label>
               </div>
@@ -240,7 +310,7 @@ export default function ManageAttributes() {
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  Create Attribute
+                  {loading?<Loader2 className="w-4 h-4 animate-spin" />:<span>Create Attribute</span>}
                 </button>
               </div>
             </form>

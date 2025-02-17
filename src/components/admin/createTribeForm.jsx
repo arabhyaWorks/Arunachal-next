@@ -120,7 +120,7 @@ export default function CreateTribeForm({ setShowAddTribe }) {
               />
             </div>
 
-            <div>
+            {/* <div>
               <Label>Banner Image</Label>
               <Input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, setBannerImage)} />
               {bannerImage && <img src={bannerImage} alt="Banner Preview" className="mt-2 max-h-32 w-full object-contain" />}
@@ -130,7 +130,7 @@ export default function CreateTribeForm({ setShowAddTribe }) {
               <Label>Thumbnail Image</Label>
               <Input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, setThumbnailImage)} />
               {thumbnailImage && <img src={thumbnailImage} alt="Thumbnail Preview" className="mt-2 h-20 w-20 object-cover" />}
-            </div>
+            </div> */}
 
             {attributes.map((attr) => (
               <div key={attr.id} className="space-y-2">

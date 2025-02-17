@@ -1,18 +1,13 @@
 import { Suspense, useEffect, useState } from "react";
-import {
-  Search,
-  Plus,
-  Image as ImageIcon,
-} from "lucide-react";
+import { Search, Plus, Image as ImageIcon } from "lucide-react";
 import { motion } from "framer-motion";
 import ManageAttributes from "./ManageAttributes";
 import ManageTribes from "./ManageTribes";
-import CreateTribeForm from "./createTribeForm";
-import SuspenseWrapper from "./Suspense";
+import ManageCategories from "./ManageCategories";
+
 
 export default function MasterData() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [showCreateTribe, setShowCreateTribe] = useState(false);
   const [activeTab, setActiveTab] = useState("view"); // 'view' or 'attributes'
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showAddAttribute, setShowAddAttribute] = useState(false);
@@ -56,10 +51,6 @@ export default function MasterData() {
       ],
     },
   ]);
-
-  const handleEditTribe = (tribe) => {
-    // Implement edit tribe logic
-  };
 
   const handleEditAttribute = (categoryId, index) => {
     const category = categories.find((c) => c.id === categoryId);
@@ -215,37 +206,9 @@ export default function MasterData() {
         {/* Content */}
         <div className="mt-6">
           {activeTab === "tribes" ? (
-            // Tribes view
-            <div className="space-y-6">
-              {/* Search and Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search Tribes..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <button
-                  onClick={() => setShowAddTribe(true)}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <Plus className="h-5 w-5" />
-                  <span>Create Tribe</span>
-                </button>
-              </div>
-              {showAddTribe ? (
-                <CreateTribeForm  setShowAddTribe={setShowAddTribe}  />
-              ) : (
-                <ManageTribes />
-                )
-            }
-            </div>
+              <ManageTribes />
           ) : (
-            <ManageAttributes />
+           <ManageCategories />
           )}
         </div>
       </div>
