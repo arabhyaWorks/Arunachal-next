@@ -3,12 +3,13 @@ import { BulkDeleteBar } from "./CategoryComponents/BulkDeleter";
 import { AttributeModal } from "./CategoryComponents/AttributeModal";
 import { CategoryCard } from "./CategoryComponents/CategoryCard";
 import { useState, useEffect } from "react";
+import AddCategoryModal from "./CategoryComponents/AddCategoryModal";
 
 export default function ManageCategories() {
   const [categories, setCategories] = useState([]);
   const [IsLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
- 
+
   useEffect(() => {
     const fetchCategoryAttributes = async (categoryId) => {
       try {
@@ -101,18 +102,6 @@ export default function ManageCategories() {
     );
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.name.trim()) {
-      const category = {
-        id: Date.now().toString(),
-        name: newCategory.name,
-        attributes: newCategory.attributes,
-      };
-      setCategories([...categories, category]);
-      setShowAddCategory(false);
-      setNewCategory({ name: "", attributes: [] });
-    }
-  };
 
   const handleEditCategory = (category, e) => {
     e.stopPropagation();
@@ -223,6 +212,34 @@ export default function ManageCategories() {
     );
   };
 
+  const handleAddCategory = async (categoryData) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch("http://localhost:3000/api/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(categoryData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      // Add the new category to the state with empty attributes array
+      setCategories((prev) => [...prev, { ...result.data, attributes: [] }]);
+      setShowAddCategory(false);
+    } catch (error) {
+      setError(error.message);
+      console.error("Error adding category:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="p-6">
       <CategoryHeader onAddCategory={() => setShowAddCategory(true)} />
@@ -258,8 +275,15 @@ export default function ManageCategories() {
         ))}
       </div>
 
+      <AddCategoryModal
+        show={showAddCategory}
+        onClose={() => setShowAddCategory(false)}
+        onSubmit={handleAddCategory}
+      />
+
       <AttributeModal
         isOpen={showAttributeModal}
+        categoryId={attributeModalCategoryId}
         attribute={editingAttribute || newAttribute}
         onClose={() => {
           setShowAttributeModal(false);
@@ -269,8 +293,6 @@ export default function ManageCategories() {
         onSave={handleSaveAttributeModal}
         isEditing={!!editingAttribute}
       />
-
-      {/* Other modals remain the same... */}
     </div>
   );
 }

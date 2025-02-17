@@ -310,7 +310,11 @@ export default function ManageAttributes() {
                   type="submit"
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                 >
-                  {loading?<Loader2 className="w-4 h-4 animate-spin" />:<span>Create Attribute</span>}
+                  {loading ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <span>Create Attribute</span>
+                  )}
                 </button>
               </div>
             </form>

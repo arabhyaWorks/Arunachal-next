@@ -1,5 +1,9 @@
+import { X } from "lucide-react";
+import { AttributeForm } from "./AttributeForm";
+
 export const AttributeModal = ({
     isOpen,
+    categoryId,
     attribute,
     onClose,
     onSave,
@@ -22,6 +26,7 @@ export const AttributeModal = ({
             </button>
           </div>
           <AttributeForm
+          categoryId={categoryId}
             attribute={attribute}
             onSave={onSave}
             onCancel={onClose}
