@@ -162,18 +162,20 @@ const culturalElements = [
 export default function TribePage() {
   const router = useRouter();
   const [tribeName, setTribeName] = useState("");
-  // Handle tribeName changes from URL
+  const [tribes, setTribes] = useState([]);
+  const [activeSection, setActiveSection] = useState("about");
+  const [selectedMusic, setSelectedMusic] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [showHistoryFull, setShowHistoryFull] = useState(false);
+
+  // For "About" read-more
+  const [showAboutFull, setShowAboutFull] = useState(false);
 
   useEffect(() => {
     if (router.query.tribeName) {
       setTribeName(router.query.tribeName);
     }
   }, [router.query.tribeName]);
-  const [tribes, setTribes] = useState([]);
-  const [activeSection, setActiveSection] = useState("about");
-  const [selectedMusic, setSelectedMusic] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(null);
-  const [showHistoryFull, setShowHistoryFull] = useState(false);
 
   const scrollToSection = (sectionId) => {
     const section = document.getElementById(sectionId);
@@ -212,8 +214,8 @@ export default function TribePage() {
       <Header />
       <div className="bg-red-500"></div>
 
+      {/* Banner Section */}
       <div className="relative h-[70vh] overflow-hidden mt-[100px]">
-        {/* Banner Image */}
         <motion.div
           initial={{ scale: 1.1 }}
           animate={{ scale: 1 }}
@@ -249,9 +251,9 @@ export default function TribePage() {
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
                 <MapPin className="h-4 w-4" />
                 <span>
-                  {tribes[0]?.attributes[
-                    "tribe-Regions"
-                  ].attribute_value.value.join(", ")}
+                  {tribes[0]?.attributes["tribe-Regions"].attribute_value.value.join(
+                    ", "
+                  )}
                 </span>
               </div>
               <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm">
@@ -277,8 +279,10 @@ export default function TribePage() {
         </div>
       </div>
 
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* About the Tribe */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -298,27 +302,45 @@ export default function TribePage() {
                 </p>
               </div>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-              {tribes[0]?.attributes["tribe-About"].attribute_value.value}
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* Tradiotional dresses */}
+
+            {/* "About" with Read More (after ~3 lines) */}
+            <div
+              className={`relative overflow-hidden ${!showAboutFull ? "max-h-24" : ""
+                }`}
+            >
+              <p className="text-gray-600 dark:text-gray-300 leading-relaxed mb-6 whitespace-pre-line">
+                {tribes[0]?.attributes["tribe-About"].attribute_value.value}
+              </p>
+              {!showAboutFull && (
+                <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white dark:from-gray-800 to-transparent" />
+              )}
+            </div>
+            <button
+              onClick={() => setShowAboutFull(!showAboutFull)}
+              className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
+            >
+              {showAboutFull ? "Show Less" : "Read More"}
+            </button>
+
+            {/* Quick sub-sections: dresses, arts, cuisine */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-6">
+              {/* Traditional dresses */}
               <div className="p-4 rounded-xl bg-gray-50 dark:bg-gray-700/50">
                 <h3 className="font-medium text-gray-900 dark:text-white mb-2">
                   Traditional Dresses
                 </h3>
                 <ul className="space-y-1">
-                  {tribes[0]?.attributes[
-                    "tribe-TraditionalDresses"
-                  ].attribute_value.value.map((item, i) => (
-                    <li
-                      key={i}
-                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-                    >
-                      <div className="w-1 h-1 rounded-full bg-teal-500" />
-                      {item}
-                    </li>
-                  ))}
+                  {tribes[0]?.attributes["tribe-TraditionalDresses"].attribute_value.value.map(
+                    (item, i) => (
+                      <li
+                        key={i}
+                        className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                      >
+                        <div className="w-1 h-1 rounded-full bg-teal-500" />
+                        {item}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
 
@@ -328,17 +350,17 @@ export default function TribePage() {
                   Arts & Crafts
                 </h3>
                 <ul className="space-y-1">
-                  {tribes[0]?.attributes[
-                    "tribe-Arts&Crafts"
-                  ].attribute_value.value.map((item, i) => (
-                    <li
-                      key={i}
-                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-                    >
-                      <div className="w-1 h-1 rounded-full bg-teal-500" />
-                      {item}
-                    </li>
-                  ))}
+                  {tribes[0]?.attributes["tribe-Arts&Crafts"].attribute_value.value.map(
+                    (item, i) => (
+                      <li
+                        key={i}
+                        className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                      >
+                        <div className="w-1 h-1 rounded-full bg-teal-500" />
+                        {item}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
 
@@ -348,22 +370,23 @@ export default function TribePage() {
                   Traditional Cuisine
                 </h3>
                 <ul className="space-y-1">
-                  {tribes[0]?.attributes[
-                    "tribe-TraditionalCuisine"
-                  ].attribute_value.value.map((item, i) => (
-                    <li
-                      key={i}
-                      className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-                    >
-                      <div className="w-1 h-1 rounded-full bg-teal-500" />
-                      {item}
-                    </li>
-                  ))}
+                  {tribes[0]?.attributes["tribe-TraditionalCuisine"].attribute_value.value.map(
+                    (item, i) => (
+                      <li
+                        key={i}
+                        className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+                      >
+                        <div className="w-1 h-1 rounded-full bg-teal-500" />
+                        {item}
+                      </li>
+                    )
+                  )}
                 </ul>
               </div>
             </div>
           </motion.div>
 
+          {/* Quick Facts Card */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -415,6 +438,7 @@ export default function TribePage() {
             </div>
           </motion.div>
         </div>
+
         {/* Festival Calendar */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -453,9 +477,8 @@ export default function TribePage() {
                     <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                       {festival.name}
                     </h3>
-                    {/* Use the reusable ExpandableText component */}
                     <ExpandableText text={festival.description} limit={100} />
-                    <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
+                    <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400 mt-2">
                       <Calendar className="h-4 w-4" />
                       <span>
                         {
@@ -470,56 +493,10 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div>
-        {/* <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
-        >
-          <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Festival Calendar
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400">
-                Annual celebrations and events
-              </p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-            {tribeData.festivals.map((festival, index) => (
-              <motion.div
-                key={festival.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="relative rounded-xl bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-900/20 dark:to-pink-900/20 p-6 hover:shadow-lg transition-all border border-purple-100/50 dark:border-purple-700/30"
-              >
-                <div className="flex flex-col gap-4">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                    <Sparkles className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                      {festival.name}
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                      {festival.description}
-                    </p>
-                    <div className="flex items-center gap-2 text-sm text-purple-600 dark:text-purple-400">
-                      <Calendar className="h-4 w-4" />
-                      <span>{festival.date}</span>
-                    </div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div> */}
+
+        {/* History & Geographic Distribution */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          {/* History */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -541,7 +518,8 @@ export default function TribePage() {
             </div>
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <div
-                className={`relative ${!showHistoryFull && "max-h-48 overflow-hidden"}`}
+                className={`relative ${!showHistoryFull && "max-h-48 overflow-hidden"
+                  }`}
               >
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
                   {tribes[0]?.attributes["tribe-History"].attribute_value.value}
@@ -559,7 +537,7 @@ export default function TribePage() {
             </div>
           </motion.div>
 
-          {/* GeoGraphic Distribution */}
+          {/* Geographic Distribution */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -584,29 +562,31 @@ export default function TribePage() {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
                 className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
               >
                 <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
                   Main Areas
                 </h3>
                 <div className="space-y-2">
-                  {tribes[0]?.attributes[
-                    "tribe-Regions"
-                  ].attribute_value.value.map((item, i) => (
-                    <div key={i} className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-                      <span className="text-gray-700 dark:text-gray-300">
-                        {item}
-                      </span>
-                    </div>
-                  ))}
+                  {tribes[0]?.attributes["tribe-Regions"].attribute_value.value.map(
+                    (item, i) => (
+                      <div key={i} className="flex items-center gap-2">
+                        <div className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {item}
+                        </span>
+                      </div>
+                    )
+                  )}
                 </div>
               </motion.div>
+
+              {/* Population */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
                 className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
               >
                 <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
@@ -614,7 +594,6 @@ export default function TribePage() {
                 </h3>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
-                    {/* <div className="w-1.5 h-1.5 rounded-full bg-teal-500" /> */}
                     <span className="text-gray-700 dark:text-gray-300">
                       {
                         tribes[0]?.attributes["tribe-PopulationInNumbers"]
@@ -625,10 +604,12 @@ export default function TribePage() {
                   </div>
                 </div>
               </motion.div>
+
+              {/* Settlements */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 1 * 0.1 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
                 className="p-6 rounded-xl bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-900/20 dark:to-emerald-900/20 border border-teal-100/50 dark:border-teal-700/30"
               >
                 <h3 className="text-lg font-semibold text-teal-900 dark:text-teal-300 mb-3">
@@ -638,10 +619,9 @@ export default function TribePage() {
                   <div className="flex items-center gap-2">
                     <span className="text-gray-700 dark:text-gray-300">
                       {
-                        tribes[0]?.attributes["tribe-Settlements"]
-                          .attribute_value.value
-                      }{" "}
-                      {/* Approximately */}
+                        tribes[0]?.attributes["tribe-Settlements"].attribute_value
+                          .value
+                      }
                     </span>
                   </div>
                 </div>
@@ -649,6 +629,8 @@ export default function TribePage() {
             </div>
           </motion.div>
         </div>
+
+        {/* Photo Gallery */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -698,153 +680,189 @@ export default function TribePage() {
             ))}
           </div>
         </motion.div>
-        <div className="space-y-6 mt-6">
-          {/* Videos Section */}
-          <motion.div
-            id="videos"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mb-12"
-          >
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
-                <Play className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {tribes[0].name} Videos
-                </h2>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Watch our traditions come alive
-                </p>
-              </div>
-            </div>
-            {tribes[0].media.videos.length > 0 && (
-              <Video videos={tribes[0].media.videos} />
-            )}
-          </motion.div>
 
-          {/* Music Section */}
+        {/* ADI Videos */}
+        <motion.div
+          id="videos"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
+        >
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+              <Play className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {tribes[0].name} Videos
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Watch our traditions come alive
+              </p>
+            </div>
+          </div>
+          {tribes[0].media.videos.length > 0 && (
+            <Video videos={tribes[0].media.videos} />
+          )}
+        </motion.div>
+
+        {/* Music Section */}
+        <motion.div
+          id="music"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
+        >
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+              <Music className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {tribes[0].name} Music
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400">
+                Experience our traditional melodies
+              </p>
+            </div>
+          </div>
+          {tribes[0].media.audios?.length > 0 && (
+            <MusicPlayer songs={tribes[0].media.audios} />
+          )}
+        </motion.div>
+
+        {/* Cuisine/Delicacies */}
+        {tribes[0].categories["Cuisine/Delicacies"]?.length > 0 && (
           <motion.div
-            id="music"
+            id="food"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mb-12"
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
           >
             <div className="flex items-center gap-3 mb-8">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
-                <Music className="h-6 w-6 text-white" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 flex items-center justify-center">
+                <Cake className="h-6 w-6 text-white" />
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {tribeData.name} Music
+                  {tribes[0].name} Cuisine
                 </h2>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Experience our traditional melodies
+                  Explore the authentic flavors
                 </p>
               </div>
             </div>
-            {tribes[0].media.audios?.length > 0 && (
-              <MusicPlayer songs={tribes[0].media.audios} />
-            )}
+            <Foods dishes={tribes[0].categories["Cuisine/Delicacies"]} />
           </motion.div>
-        </div>
+        )}
+
+
+        {tribes[0].categories["Traditional Sports of the tribes"]?.length > 0 && (
+          <motion.div
+            id="sports"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6 relative"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center">
+                <Hammer className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Traditional Sports
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Discover our indigenous games
+                </p>
+              </div>
+            </div>
+            {/* Wrap the Sports component in a unique div */}
+            <div className="sports-hide-heading">
+              <Sports sports={tribes[0].categories["Traditional Sports of the tribes"]} />
+            </div>
+
+            {/* Global CSS override to hide h2 and p inside .sports-hide-heading */}
+            <style jsx global>{`
+      .sports-hide-heading h2,
+      .sports-hide-heading h4 {
+        display: none !important;
+      }
+    `}</style>
+          </motion.div>
+        )}
+
+
+        {/* Books of the tribe */}
+        {tribes[0].categories["Books of the tribe"]?.length > 0 && (
+          <motion.div
+            id="books"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-md mt-6"
+          >
+            <div className="flex items-center gap-3 mb-8">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  Folklore Stories &amp; Books
+                </h2>
+                <p className="text-gray-500 dark:text-gray-400">
+                  Dive into the literary heritage
+                </p>
+              </div>
+            </div>
+            <Books books={tribes[0].categories["Books of the tribe"]} />
+                        {/* Global CSS override to hide h2 and p inside .sports-hide-heading */}
+                        <style jsx global>{`
+      .sports-hide-heading h2,
+      .sports-hide-heading h4 {
+        display: none !important;
+      }
+    `}</style>
+
+          </motion.div>
+        )}
       </div>
 
+      {/* Fullscreen Image Preview */}
       <AnimatePresence>
         {selectedImage && (
           <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4"
+            onClick={() => setSelectedImage(null)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               className="relative max-w-5xl w-full"
-              >
+            >
               <button
                 onClick={() => setSelectedImage(null)}
                 className="absolute top-4 right-4 p-2 bg-black/50 hover:bg-black/70 rounded-full text-white transition-colors"
-                >
+              >
                 <X className="h-6 w-6" />
               </button>
               <img
                 src={selectedImage}
                 alt="Gallery Preview"
                 className="w-full h-auto rounded-lg shadow-2xl"
-                />
-            </motion.div>
-          </motion.div>
-        )}
-        </AnimatePresence>
-
-        {tribes[0].categories["Cuisine/Delicacies"]?.length > 0 && (
-          <motion.div
-            id="food"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative z-10 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
-            >
-              <Foods dishes={tribes[0].categories["Cuisine/Delicacies"]} />
-            </motion.div>
-          </motion.div>
-        )}
-
-        {tribes[0].categories["Cuisine/Delicacies"]?.length > 0 && (
-          <motion.div
-            id="food"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative z-10 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
-            >
-              <Sports
-                sports={
-                  tribes[0].categories["Traditional Sports of the tribes"]
-                }
               />
             </motion.div>
           </motion.div>
         )}
-
-        {tribes[0].categories["Books of the tribe"]?.length > 0 && (
-          <motion.div
-            id="books"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="relative z-10 flex items-center justify-center p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="relative max-w-5xl w-full bg-white dark:bg-gray-800 rounded-2xl border border-gray-300 dark:border-gray-700 p-6 shadow-2xl"
-            >
-              <Books books={tribes[0].categories["Books of the tribe"]} />
-            </motion.div>
-          </motion.div>
-        )}
-        
+      </AnimatePresence>
     </div>
   );
 }
