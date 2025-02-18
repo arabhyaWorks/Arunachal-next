@@ -10,7 +10,7 @@ export default function App() {
     useEffect(() => {
       async function fetchVideo() {
         const response = await fetch(
-          "http://localhost:3000/api/category/video"
+          "/api/category/video"
         );
         const data = await response.json();
         if (data?.data) {

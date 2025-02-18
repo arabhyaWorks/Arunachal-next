@@ -14,7 +14,7 @@ export default function ManageCategories() {
     const fetchCategoryAttributes = async (categoryId) => {
       try {
         const response = await fetch(
-          `http://localhost:3000/api/category/attributes?category_id=${categoryId}`
+          `/api/category/attributes?category_id=${categoryId}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,7 +35,7 @@ export default function ManageCategories() {
         setIsLoading(true);
         // Fetch main categories
         const categoriesResponse = await fetch(
-          "http://localhost:3000/api/category"
+          "/api/category"
         );
 
         if (!categoriesResponse.ok) {
@@ -215,7 +215,7 @@ export default function ManageCategories() {
   const handleAddCategory = async (categoryData) => {
     try {
       setIsLoading(true);
-      const response = await fetch("http://localhost:3000/api/category", {
+      const response = await fetch("/api/category", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

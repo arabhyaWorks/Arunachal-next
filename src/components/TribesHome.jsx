@@ -8,7 +8,7 @@ export default function Tribes() {
   useEffect(() => {
     async function fetchTribes() {
       try {
-        const response = await fetch("http://localhost:3000/api/tribe");
+        const response = await fetch("/api/tribe");
         const data = await response.json();
         if (data?.data) {
           const transformedTribes = data.data.map((tribe) => ({

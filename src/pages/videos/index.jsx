@@ -4,6 +4,7 @@ import VideoModal from "../../components/VideoModal";
 import Header from "../../components/Header";
 import VideoCard from "../../components/VideoCard";
 import { motion } from "framer-motion";
+import UserHeader from "@/components/user/UserHeader";
 
 function App() {
   const [videos, setVideos] = useState([]);
@@ -40,7 +41,7 @@ function App() {
     async function fetchVideos() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/category/items?category_id=2"
+          "/api/category/items?category_id=2"
         );
         const data = await response.json();
 
@@ -53,7 +54,7 @@ function App() {
             if (videoAttribute?.value?.value) {
               const videoId = videoAttribute.value.value;
               const videoResponse = await fetch(
-                `http://localhost:3000/api/category/video?video_id=${videoId}`
+                `/api/category/video?video_id=${videoId}`
               );
               const videoData = await videoResponse.json();
               return videoData.data;
@@ -126,12 +127,18 @@ function App() {
     }
   };
 
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+    // Check user role from localStorage or other auth state
+    const userRole = localStorage.getItem("userRole");
+    setIsAdmin(["Director", "Deputy Director", "Assistant Director", "CBO Member", "CMS Manager"].includes(userRole));
+  }, []);
   // const tribes = [...new Set(videos.map((video) => video.tribe))];
   // const categories = [...new Set(videos.map((video) => video.category))];
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+      {isAdmin ? <Header /> : <UserHeader />}
 
       {/* Hero Section */}
       <div className="pt-32 mt-[100px] pb-20 text-center relative z-10">

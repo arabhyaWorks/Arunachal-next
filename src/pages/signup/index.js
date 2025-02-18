@@ -175,6 +175,11 @@ export default function SignUp() {
         email: storedEmail,
       };
 
+       // Set flags for welcome modal
+       sessionStorage.setItem("newSignup", "true");
+       sessionStorage.setItem("userName", formData.firstName);
+ 
+
       console.log("Sending security setup payload:", payload);
 
       const response = await fetch("/api/auth/setup-security", {
@@ -197,7 +202,7 @@ export default function SignUp() {
       localStorage.removeItem("signup_email");
       localStorage.removeItem("auth_token");
 
-      router.push("/dashboard");
+      router.push("/user");
     } catch (error) {
       console.error("Security setup error:", error);
       alert(

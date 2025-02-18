@@ -22,7 +22,7 @@ export default function DetailedFestivals() {
     async function fetchFestivals() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/category/items?category_id=1"
+          "/api/category/items?category_id=1"
         );
         const data = await response.json();
         if (data?.data) {

@@ -7,7 +7,7 @@ export default function Books() {
   useEffect(() => {
     async function fetchBooks() {
       const response = await fetch(
-        "http://localhost:3000/api/category/items?category_id=4"
+        "/api/category/items?category_id=4"
       );
       const data = await response.json();
       if (data?.data) {

@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Header from "../../components/Header";
+import UserHeader from "@/components/user/UserHeader";
 
 export default function FestivalsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -13,11 +14,18 @@ export default function FestivalsPage() {
   const [selectedTribe, setSelectedTribe] = useState("All Tribes");
   const [viewMode, setViewMode] = useState("grid");
   const [festivals, setFestivals] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    // Check user role from localStorage or other auth state
+    const userRole = localStorage.getItem("userRole");
+    setIsAdmin(["Director", "Deputy Director", "Assistant Director", "CBO Member", "CMS Manager"].includes(userRole));
+  }, []);
 
   useEffect(() => {
     async function fetchFestivals() {
       try {
-        const response = await fetch("http://localhost:3000/api/category/items?category_id=1");
+        const response = await fetch("/api/category/items?category_id=1");
         const data = await response.json();
         if (data?.data) {
           const transformedFestivals = data.data.map((festival) => {
@@ -58,7 +66,8 @@ export default function FestivalsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
+      {/* <Header /> */}
+      {isAdmin ? <Header /> : <UserHeader />}
 
       {/* Hero Section */}
       <div className="pt-32 mt-[100px] pb-20 text-center relative">

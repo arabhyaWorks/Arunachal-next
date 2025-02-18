@@ -62,7 +62,7 @@ export const AttributeForm = ({
 
     try {
       const response = await fetch(
-        "http://localhost:3000/api/category/attributes",
+        "/api/category/attributes",
         {
           method: "POST",
           headers: {

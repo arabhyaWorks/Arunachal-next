@@ -8,7 +8,7 @@ export default function Sports() {
     async function fetchSports() {
       try {
         const response = await fetch(
-          "http://localhost:3000/api/category/items?category_id=6"
+          "/api/category/items?category_id=6"
         );
         const data = await response.json();
         if (data?.data) {

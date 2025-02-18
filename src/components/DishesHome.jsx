@@ -8,7 +8,7 @@ export default function Foods() {
   useEffect(() => {
     async function fetchDishes() {
       const response = await fetch(
-        "http://localhost:3000/api/category/items?category_id=5"
+        "/api/category/items?category_id=5"
       );
       const data = await response.json();
       if (data?.data) {
