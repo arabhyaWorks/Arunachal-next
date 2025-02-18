@@ -2,10 +2,15 @@
 
 import { Bell, Search, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import NotificationPanel from "@/pages/admin/notification";
+
 
 export default function AdminHeader({ toggleSidebar }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -18,6 +23,18 @@ export default function AdminHeader({ toggleSidebar }) {
     localStorage.setItem("theme", newDarkMode ? "dark" : "light");
     document.documentElement.classList.toggle("dark");
   };
+
+  // const handleNotification = ()=>{
+  //   return(<>
+  //   <NotificationPanel 
+  //             onClose={() => setShowNotifications(false)}
+  //             onViewAll={() => {
+  //               setShowNotifications(false);
+  //               // navigate('/admin/notifications');
+  //             }}
+  //           />
+  //   </>)
+  // }
 
   if (!mounted) {
     return (
@@ -53,9 +70,22 @@ export default function AdminHeader({ toggleSidebar }) {
             <button
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg relative"
               aria-label="Notifications"
+              onClick={() => setShowNotifications(!showNotifications)}
             >
               <Bell className="h-6 w-6 text-gray-500 dark:text-gray-400" />
-              <span className="absolute top-0 right-0 h-2 w-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-0 right-2 h-2 w-2 bg-red-500 rounded-full">
+              {showNotifications && (
+          <div className="absolute top-16 right-[-14rem] z-50">
+            <NotificationPanel 
+              onClose={() => setShowNotifications(false)}
+              onViewAll={() => {
+                setShowNotifications(false);
+                router.push(`/admin/notification`);
+              }}
+            />
+          </div>
+        )}
+              </span>
             </button>
 
             {/* Dark mode toggle */}

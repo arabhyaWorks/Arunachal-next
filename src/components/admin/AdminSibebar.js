@@ -15,6 +15,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  Clock
 } from "lucide-react";
 import classNames from "classnames";
 
@@ -25,6 +26,7 @@ export default function AdminSidebar({ isOpen, setIsOpen }) {
   const menuItems = [
     { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
     { icon: Users, label: "Users & Roles", path: "/admin/users" },
+    { icon: Clock, label: "Pending Request", path: "/admin/pending-requests" },
     { icon: FileText, label: "Content", path: "/admin/content" },
     { icon: Database, label: "Manage Master Data", path: "/admin/master-data" },
     { icon: Users2, label: "Committees", path: "/admin/committees" },
