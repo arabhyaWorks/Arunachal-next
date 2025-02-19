@@ -31,8 +31,6 @@ export default async function handler(req, res) {
 async function getAllContent(req, res) {
   try {
     const {
-      page = 1,
-      limit = 10,
       associated_table_id,
       search,
       level,
@@ -45,7 +43,6 @@ async function getAllContent(req, res) {
       });
     }
 
-    const offset = (page - 1) * limit;
     const connection = await pool.getConnection();
 
     // Build WHERE clause based on filters
@@ -67,7 +64,7 @@ async function getAllContent(req, res) {
 
     const whereClause = `WHERE ${whereConditions.join(" AND ")}`;
 
-    // Get total count for pagination
+    // Get total count (optional, useful for info)
     const [countRows] = await connection.query(
       `
         SELECT COUNT(*) as total 
@@ -77,7 +74,7 @@ async function getAllContent(req, res) {
       queryParams
     );
 
-    // Get content with related data
+    // Get content with related data (without LIMIT and OFFSET)
     const [rows] = await connection.query(
       `
         SELECT 
@@ -101,9 +98,8 @@ async function getAllContent(req, res) {
         INNER JOIN content_approval ca ON c.id = ca.content_id
         LEFT JOIN attributes a ON c.attribute_id = a.id
         ${whereClause}
-        ORDER BY c.created_at DESC
-        LIMIT ? OFFSET ?`,
-      [...queryParams, parseInt(limit), offset]
+        ORDER BY c.created_at DESC`,
+      queryParams
     );
 
     connection.release();
@@ -111,19 +107,13 @@ async function getAllContent(req, res) {
     return res.status(200).json({
       success: true,
       data: rows,
-      pagination: {
-        total: countRows[0].total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total_pages: Math.ceil(countRows[0].total / limit),
-      },
+      total: countRows[0].total, // Optional: return total count
     });
   } catch (error) {
     console.error("Error fetching content:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 }
-
 /**
  * GET /api/content?active=true
  * Returns only active content with same filtering options as getAllContent
